@@ -1,0 +1,64 @@
+version: '3'
+services:
+    apache:
+        container_name: vibin_apache
+        image: webdevops/apache:ubuntu-16.04
+        environment:
+            WEB_DOCUMENT_ROOT: /var/www/public
+            WEB_ALIAS_DOMAIN: vibin.localhost
+            WEB_PHP_SOCKET: php-fpm:9000
+        volumes: # Only shared dirs to apache (to be served)
+            - ./public:/var/www/public:cached
+            - ./storage:/var/www/storage:cached
+        networks:
+            - vibin-network
+        ports:
+            - "80:80"
+            - "443:443"
+    php-fpm:
+        container_name: vibin_php
+        image: cyberduck/php-fpm-laravel:7.2
+        volumes:
+            - ./:/var/www/
+            - ./ci:/var/www/ci:cached
+            - ./vendor:/var/www/vendor:delegated
+            - ./storage:/var/www/storage:delegated
+            - ./node_modules:/var/www/node_modules:cached
+            - ~/.ssh:/root/.ssh:cached
+            - ~/.composer/cache:/root/.composer/cache:delegated
+        networks:
+            - vibin-network
+    db:
+        container_name: vibin_db
+        image: mariadb:10.2
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: vibin
+            MYSQL_USER: vibin
+            MYSQL_PASSWORD: secret
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - vibin-network
+        ports:
+            - "33060:3306"
+    redis:
+        container_name: vibin_redis
+        image: redis:2.8.22
+        networks:
+            - vibin-network
+        ports:
+            - "6379:6379"
+    selenium:
+        container_name: vibin_selenium
+        image: selenium/standalone-chrome:3.13
+        volumes:
+            - /dev/shm:/dev/shm
+        networks:
+            - vibin-network
+networks:
+    vibin-network:
+        driver: "bridge"
+volumes:
+    db_data:
+        driver: "local"
