@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Vibin Home')
+@section('title', 'Vibon Home')
 
 @section('content')
 <div class="container">
