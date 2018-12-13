@@ -1,5 +1,7 @@
 <?php
 
+use SpotifyWebAPI\Session;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +19,22 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::get('/home', 'TrackController@index');
+
+Route::get('/callback', function () {
+    $session = new Session(
+        config('services.spotify.client_id'),
+        config('services.spotify.client_secret'),
+        config('services.spotify.redirect')
+    );
+
+    $session->requestAccessToken($_GET['code']);
+    $accessToken = $session->getAccessToken();
+    $_SESSION['accessToken'] = $accessToken;
+
+
+    return view('home');
+});

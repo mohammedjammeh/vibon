@@ -21,7 +21,7 @@ services:
         volumes:
             - ./:/var/www/
             - ./ci:/var/www/ci:cached
-            - ./vendor:/var/www/vendor:delegated
+            - ./vendor:/var/www/vendor
             - ./storage:/var/www/storage:delegated
             - ./node_modules:/var/www/node_modules:cached
             - ~/.ssh:/root/.ssh:cached
