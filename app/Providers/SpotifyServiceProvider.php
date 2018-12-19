@@ -28,20 +28,37 @@ class SpotifyServiceProvider extends ServiceProvider
     {
         $this->app->singleton('Spotify', function () {
 
-            $client = new SpotifyWebApi;
             $session = new Session(
                 config('services.spotify.client_id'),
                 config('services.spotify.client_secret'),
                 config('services.spotify.redirect')
             );
 
-            $session->requestCredentialsToken();
 
-            $accessToken = $session->getAccessToken();
+            $options = [
+                'scope' => [
+                    'playlist-read-private',
+                    'user-read-private',
+                ],
+            ];
 
-            $client->setAccessToken($accessToken);
+            header('Location: ' . $session->getAuthorizeUrl($options));
 
-            return $client;
+
+//            LINE 38 TO 43 HAS TO BE REMOVED ONCE THE LINE BELOW WORKS..
+
+//            The Code below ensures whether the user's access token has to be set or not.. If it is, send him to set it.. If not, he is all good to go..
+
+//            if (accessToken is not set) {
+//                $options = [
+//                    'scope' => [
+//                        'playlist-read-private',
+//                        'user-read-private',
+//                    ],
+//                ];
+//
+//                header('Location: ' . $session->getAuthorizeUrl($options));
+//            }
 
         });
     }

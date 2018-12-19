@@ -24,6 +24,10 @@ Auth::routes();
 
 Route::get('/home', 'TrackController@index');
 
+
+
+
+
 Route::get('/callback', function () {
     $session = new Session(
         config('services.spotify.client_id'),
@@ -31,10 +35,14 @@ Route::get('/callback', function () {
         config('services.spotify.redirect')
     );
 
+
+
+
+//    app('Spotify'); // this will use the Spotify service to do what is meant to be done by the code above
+
     $session->requestAccessToken($_GET['code']);
     $accessToken = $session->getAccessToken();
-    $_SESSION['accessToken'] = $accessToken;
 
 
-    return view('home');
+    dd($accessToken);
 });
