@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Track;
 use Illuminate\Http\Request;
+use SpotifyWebAPI\SpotifyWebAPI;
 
 class TrackController extends Controller
 {
@@ -14,7 +15,13 @@ class TrackController extends Controller
      */
     public function index()
     {
-        print_r( app('Spotify')->getTrack('7EjyzZcbLxW7PaaLua9Ksb') );
+//        print_r( app('Spotify')->getTrack('7EjyzZcbLxW7PaaLua9Ksb') );
+
+//        $api = new SpotifyWebAPI();
+
+//        $api->setAccessToken($accessToken);
+
+        dd(app('Spotify'));
     }
 
     /**
