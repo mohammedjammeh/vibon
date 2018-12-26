@@ -1,6 +1,6 @@
 <?php
 
-use SpotifyWebAPI\Session;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,27 +22,18 @@ Auth::routes();
 //Route::get('/home', 'HomeController@index')->name('home');
 
 
-Route::get('/home', 'TrackController@index');
+Route::apiResource('home', 'TrackController');
 
 
 
 
 
 Route::get('/callback', function () {
-    $session = new Session(
-        config('services.spotify.client_id'),
-        config('services.spotify.client_secret'),
-        config('services.spotify.redirect')
-    );
 
+    app('Spotify')->requestAccessToken($_GET['code']);
+    $accessToken = app('Spotify')->getAccessToken();
 
-
-
-//    app('Spotify'); // this will use the Spotify service to do what is meant to be done by the code above
-
-    $session->requestAccessToken($_GET['code']);
-    $accessToken = $session->getAccessToken();
-
-
-    dd($accessToken);
+    Session::put('accessToken', $accessToken);
+    Session::forget('credentialsToken');
+    return redirect('home');
 });
