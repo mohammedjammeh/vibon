@@ -4,10 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Track;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use SpotifyWebAPI\SpotifyWebAPI;
 
 class TrackController extends Controller
 {
+    private $spotifyAPI;
+
+    public function __construct()
+    {
+        $this->middleware('spotifySession');
+
+        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
+
+        $this->middleware(function ($request, $next) {
+            $this->spotifyAPI = new SpotifyWebAPI();
+
+            if (!Session::has('accessToken')) {
+                $this->spotifyAPI->setAccessToken(Session::get('credentialsToken'));
+            } else {
+                $this->spotifyAPI->setAccessToken(Session::get('accessToken'));
+            }
+
+            return $next($request);
+        });
+
+
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -15,13 +40,9 @@ class TrackController extends Controller
      */
     public function index()
     {
-//        print_r( app('Spotify')->getTrack('7EjyzZcbLxW7PaaLua9Ksb') );
-
-//        $api = new SpotifyWebAPI();
-
-//        $api->setAccessToken($accessToken);
-
-        dd(app('Spotify'));
+        print_r(
+            $this->spotifyAPI->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
+        );
     }
 
     /**
