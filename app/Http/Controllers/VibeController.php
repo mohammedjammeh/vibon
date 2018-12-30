@@ -2,37 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Track;
+use App\vibe;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use SpotifyWebAPI\SpotifyWebAPI;
 
-class TrackController extends Controller
+class VibeController extends Controller
 {
-    private $spotifyAPI;
-
-    public function __construct()
-    {
-        $this->middleware('spotifySession');
-
-        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
-
-        $this->middleware(function ($request, $next) {
-            $this->spotifyAPI = new SpotifyWebAPI();
-
-            if (!Session::has('accessToken')) {
-                $this->spotifyAPI->setAccessToken(Session::get('credentialsToken'));
-            } else {
-                $this->spotifyAPI->setAccessToken(Session::get('accessToken'));
-            }
-
-            return $next($request);
-        });
-
-
-    }
-
-
     /**
      * Display a listing of the resource.
      *
@@ -40,9 +14,7 @@ class TrackController extends Controller
      */
     public function index()
     {
-//        print_r(
-//            $this->spotifyAPI->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
-//        );
+        //
     }
 
     /**
@@ -52,7 +24,7 @@ class TrackController extends Controller
      */
     public function create()
     {
-        //
+        return view('vibe.create');
     }
 
     /**
@@ -63,16 +35,23 @@ class TrackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $vibe = new vibe();
+        $vibe->title = request('title');
+        $vibe->description = request('description');
+        $vibe->key = '123';
+        $vibe->save();
+
+
+        return redirect('/home');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Track  $track
+     * @param  \App\vibe  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Track $track)
+    public function show(vibe $id)
     {
         //
     }
@@ -80,10 +59,10 @@ class TrackController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Track  $track
+     * @param  \App\vibe  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Track $track)
+    public function edit(vibe $id)
     {
         //
     }
@@ -92,10 +71,10 @@ class TrackController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Track  $track
+     * @param  \App\vibe  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Track $track)
+    public function update(Request $request, vibe $id)
     {
         //
     }
@@ -103,10 +82,10 @@ class TrackController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Track  $track
+     * @param  \App\vibe  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Track $track)
+    public function destroy(vibe $id)
     {
         //
     }
