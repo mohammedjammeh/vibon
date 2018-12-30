@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class VibeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +45,6 @@ class VibeController extends Controller
         $vibe->description = request('description');
         $vibe->key = '123';
         $vibe->save();
-
 
         return redirect('/home');
     }
