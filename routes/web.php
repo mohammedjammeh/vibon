@@ -19,14 +19,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-//Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('home', 'HomeController');
 
+Route::apiResource('track', 'TrackController');
 
-Route::apiResource('home', 'TrackController');
+Route::resource('vibe', 'VibeController');
 
-
-
-
+Route::post('/vibe', 'VibeController@store');
 
 Route::get('/callback', function () {
 

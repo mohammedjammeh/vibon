@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Session;
 
 class SpotifyAuth
 {
@@ -15,15 +16,16 @@ class SpotifyAuth
      */
     public function handle($request, Closure $next)
     {
+        if (!Session::has('accessToken')) {
+            $options = [
+                'scope' => [
+                    'vibe-read-private',
+                    'user-read-private',
+                ],
+            ];
 
-//        $options = [
-//            'scope' => [
-//                'playlist-read-private',
-//                'user-read-private',
-//            ],
-//        ];
-//
-//        return redirect(app('Spotify')->getAuthorizeUrl($options));
+            return redirect(app('Spotify')->getAuthorizeUrl($options));
+        }
 
         return $next($request);
     }

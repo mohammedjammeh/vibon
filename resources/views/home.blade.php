@@ -16,7 +16,7 @@
                         </div>
                     @endif
 
-                        <a href="#">Create a vibe</a>
+                        <a href="/vibe/create">Start a vibe</a>
                         <br>
                         <a href="#">Join a vibe</a>
                 </div>
