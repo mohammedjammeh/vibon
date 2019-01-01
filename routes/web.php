@@ -28,11 +28,10 @@ Route::resource('vibe', 'VibeController');
 Route::post('/vibe', 'VibeController@store');
 
 Route::get('/callback', function () {
-
     app('Spotify')->requestAccessToken($_GET['code']);
     $accessToken = app('Spotify')->getAccessToken();
 
     Session::put('accessToken', $accessToken);
     Session::forget('credentialsToken');
-    return redirect('home');
+    return redirect('vibe/create');
 });

@@ -4,12 +4,30 @@ namespace App\Http\Controllers;
 
 use App\vibe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use SpotifyWebAPI\SpotifyWebAPI;
 
 class VibeController extends Controller
 {
+    private $spotifyAPI;
+
     public function __construct()
     {
+        $this->middleware('auth');
         $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
+
+        $this->middleware(function ($request, $next) {
+            $this->spotifyAPI = new SpotifyWebAPI();
+
+            if (!Session::has('accessToken')) {
+                $this->spotifyAPI->setAccessToken(Session::get('credentialsToken'));
+            } else {
+                $this->spotifyAPI->setAccessToken(Session::get('accessToken'));
+            }
+
+            return $next($request);
+        });
+
     }
 
     /**
@@ -41,10 +59,16 @@ class VibeController extends Controller
     public function store(Request $request)
     {
         $vibe = new vibe();
+        $vibe->user_id = '1';
         $vibe->title = request('title');
         $vibe->description = request('description');
         $vibe->key = '123';
         $vibe->save();
+
+
+        $this->spotifyAPI->createPlaylist([
+            'name' => 'My shiny playlist'
+        ]);
 
         return redirect('/home');
     }

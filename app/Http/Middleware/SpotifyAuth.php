@@ -19,7 +19,7 @@ class SpotifyAuth
         if (!Session::has('accessToken')) {
             $options = [
                 'scope' => [
-                    'vibe-read-private',
+                    'playlist-read-private',
                     'user-read-private',
                 ],
             ];
