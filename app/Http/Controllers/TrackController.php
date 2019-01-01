@@ -40,9 +40,9 @@ class TrackController extends Controller
      */
     public function index()
     {
-//        print_r(
-//            $this->spotifyAPI->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
-//        );
+        print_r(
+            $this->spotifyAPI->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
+        );
     }
 
     /**
