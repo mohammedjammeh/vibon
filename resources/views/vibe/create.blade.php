@@ -8,6 +8,11 @@
         <form method="POST" action="/vibe">
             @csrf
             <div>
+                @foreach($errors->all as $error)
+                    <li>$error</li>
+                @endforeach
+            </div>
+            <div>
                 <input type="text" name="title" placeholder="Title">
             </div>
 
