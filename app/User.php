@@ -29,6 +29,6 @@ class User extends Authenticatable
     ];
 
     public function vibes() {
-        return $this->hasMany(Vibe::class);
+        return $this->belongsToMany(Vibe::class)->withTimestamps();
     }
 }
