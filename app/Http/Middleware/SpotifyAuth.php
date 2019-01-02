@@ -19,8 +19,11 @@ class SpotifyAuth
         if (!Session::has('accessToken')) {
             $options = [
                 'scope' => [
+                    'playlist-modify-private',
+                    'playlist-modify',
                     'playlist-read-private',
                     'user-read-private',
+                    'user-library-modify',
                 ],
             ];
 

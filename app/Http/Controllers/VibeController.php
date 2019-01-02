@@ -43,16 +43,15 @@ class VibeController extends Controller
     public function store(Request $request)
     {
         $vibe = new vibe();
-        $vibe->user_id = '1';
         $vibe->title = request('title');
         $vibe->description = request('description');
         $vibe->key = '123';
         $vibe->save();
 
 
-//        $this->spotifyAPI->createPlaylist([
-//            'name' => 'My shiny playlist'
-//        ]);
+        $this->spotifyAPI()->createPlaylist([
+            'name' => request('title')
+        ]);
 
         return redirect('/home');
     }

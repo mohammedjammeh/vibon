@@ -19,7 +19,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('home', 'TrackController');
+Route::resource('home', 'HomeController');
 
 Route::apiResource('track', 'TrackController');
 
