@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Session;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,25 +11,12 @@ use Illuminate\Support\Facades\Session;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
+Route::get('/callback', 'CallbackController@spotifyAuth');
 
+Route::resource('/', 'HomeController');
 Route::resource('home', 'HomeController');
-
 Route::apiResource('track', 'TrackController');
+Route::resource('/vibe', 'VibeController');
 
-Route::resource('vibe', 'VibeController');
-
-Route::post('/vibe', 'VibeController@store');
-
-Route::get('/callback', function () {
-    app('Spotify')->requestAccessToken($_GET['code']);
-    $accessToken = app('Spotify')->getAccessToken();
-
-    Session::put('accessToken', $accessToken);
-    Session::forget('credentialsToken');
-    return redirect('vibe/create');
-});

@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class vibe extends Model
+class Vibe extends Model
 {
+    protected $guarded = [];
+
     public function users() {
         return $this->belongsToMany(User::class)->withTimestamps();
     }

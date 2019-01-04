@@ -22,8 +22,10 @@ class SpotifyAuth
                     'playlist-modify-private',
                     'playlist-modify',
                     'playlist-read-private',
-                    'user-read-private',
+//                    'user-read-private',
                     'user-library-modify',
+                    'user-library-read',
+                    'user-read-email',
                 ],
             ];
 
