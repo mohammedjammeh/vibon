@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Vibe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VibeController extends Controller
 {
@@ -42,62 +43,105 @@ class VibeController extends Controller
      */
     public function store(Request $request)
     {
-        $vibe = new vibe();
-        $vibe->title = request('title');
-        $vibe->description = request('description');
-        $vibe->key = '123';
-        $vibe->save();
-
+        $request->validate([
+            'title' => ['required', 'min:3', 'max:25'],
+            'description' => ['required', 'min:3', 'max:255']
+        ]);
 
         $this->spotifyAPI()->createPlaylist([
             'name' => request('title')
         ]);
 
-        return redirect('/home');
+        $playlists = $this->spotifyAPI()->getUserPlaylists($this->spotifyAPI()->me()->id);
+        $newPlaylistID = current($playlists->items)->id;
+
+        $vibes = Vibe::all();
+        $key = mt_rand(1000,9999);
+        for ($vibe = 0; $vibe < count($vibes); $vibe++) {
+            if ($key == $vibes[$vibe]->key) {
+                $key = mt_rand(1000,9999);
+                $vibe = 0;
+            }
+        }
+
+        $vibe = Vibe::create([
+            'title' => request('title'),
+            'api_id' => $newPlaylistID,
+            'description' => request('description'),
+            'key' => $key
+        ]);
+
+        $vibe->users()->attach(Auth::id(), ['vibe_dj' => 1]);
+
+        $vibeUrl = '/vibe/' . $vibe->id;
+        return redirect($vibeUrl);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\vibe  $id
+     * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function show(vibe $id)
+    public function show(Vibe $vibe)
     {
-        //
+        $vibe = Vibe::findOrFail($vibe)[0];
+        return view('vibe.show')->with('vibe', $vibe);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\vibe  $id
+     * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function edit(vibe $id)
+    public function edit(Vibe $vibe)
     {
-        //
+        $vibe = Vibe::findOrFail($vibe)[0];
+        return view('vibe.edit')->with('vibe', $vibe);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\vibe  $id
+     * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, vibe $id)
+    public function update(Request $request, Vibe $vibe)
     {
-        //
+        $request->validate([
+            'title' => ['required', 'min:3', 'max:25'],
+            'description' => ['required', 'min:3', 'max:255']
+        ]);
+
+        $vibe = Vibe::findOrFail($vibe)[0];
+        $vibe->title = request('title');
+        $vibe->description = request('description');
+        $vibe->save();
+
+        $this->spotifyAPI()->updatePlaylist($vibe->api_id, [
+            'name' => request('title')
+        ]);
+
+        $vibeUrl = '/vibe/' . $vibe->id;
+        return redirect($vibeUrl);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\vibe  $id
+     * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(vibe $id)
+    public function destroy(Vibe $vibe)
     {
-        //
+        $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
+
+        $vibe = Vibe::findOrFail($vibe)[0];
+        $vibe->users()->detach(Auth::id());
+        $vibe->delete();
+
+        return redirect('/home');
     }
 }

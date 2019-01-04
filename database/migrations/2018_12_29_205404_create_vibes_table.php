@@ -15,9 +15,10 @@ class CreateVibesTable extends Migration
     {
         Schema::create('vibes', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('api_id')->nullable();
             $table->string('title');
             $table->text('description');
-            $table->string('key');
+            $table->string('key')->unique();
             $table->timestamps();
         });
     }
