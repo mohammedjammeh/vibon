@@ -10,11 +10,9 @@
 
             @if($errors->any())
                 <div>
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                    @foreach($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
                 </div>
             @endif
 

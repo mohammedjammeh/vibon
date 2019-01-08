@@ -20,3 +20,5 @@ Route::resource('home', 'HomeController');
 Route::apiResource('track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
+Route::post('/UserVibe', 'UserVibeController@store');
+

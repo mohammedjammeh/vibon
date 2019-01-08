@@ -55,13 +55,13 @@ class VibeController extends Controller
         $playlists = $this->spotifyAPI()->getUserPlaylists($this->spotifyAPI()->me()->id);
         $newPlaylistID = current($playlists->items)->id;
 
-        $vibes = Vibe::all();
         $key = mt_rand(1000,9999);
-        for ($vibe = 0; $vibe < count($vibes); $vibe++) {
-            if ($key == $vibes[$vibe]->key) {
-                $key = mt_rand(1000,9999);
-                $vibe = 0;
-            }
+
+        $vibeFound = Vibe::where('key', $key)->get();
+
+        while(!$vibeFound->isEmpty()) {
+            $key = mt_rand(1000,9999);
+            $vibeFound = Vibe::where('key', $key)->get();
         }
 
         $vibe = Vibe::create([
@@ -73,8 +73,7 @@ class VibeController extends Controller
 
         $vibe->users()->attach(Auth::id(), ['vibe_dj' => 1]);
 
-        $vibeUrl = '/vibe/' . $vibe->id;
-        return redirect($vibeUrl);
+        return redirect('/vibe/' . $vibe->id);
     }
 
     /**
@@ -85,8 +84,8 @@ class VibeController extends Controller
      */
     public function show(Vibe $vibe)
     {
-        $vibe = Vibe::findOrFail($vibe)[0];
-        return view('vibe.show')->with('vibe', $vibe);
+        $vibeFound = Vibe::findOrFail($vibe->id);
+        return view('vibe.show')->with('vibe', $vibeFound);
     }
 
     /**
@@ -99,8 +98,8 @@ class VibeController extends Controller
     {
         $this->authorize('update', $vibe);
 
-        $vibe = Vibe::findOrFail($vibe)[0];
-        return view('vibe.edit')->with('vibe', $vibe);
+        $vibeFound = Vibe::findOrFail($vibe->id);
+        return view('vibe.edit')->with('vibe', $vibeFound);
     }
 
     /**
@@ -119,17 +118,16 @@ class VibeController extends Controller
             'description' => ['required', 'min:3', 'max:255']
         ]);
 
-        $vibe = Vibe::findOrFail($vibe)[0];
-        $vibe->title = request('title');
-        $vibe->description = request('description');
-        $vibe->save();
+        $vibeFound = Vibe::findOrFail($vibe->id);
+        $vibeFound->title = request('title');
+        $vibeFound->description = request('description');
+        $vibeFound->save();
 
-        $this->spotifyAPI()->updatePlaylist($vibe->api_id, [
+        $this->spotifyAPI()->updatePlaylist($vibeFound->api_id, [
             'name' => request('title')
         ]);
 
-        $vibeUrl = '/vibe/' . $vibe->id;
-        return redirect($vibeUrl);
+        return redirect('/vibe/' . $vibeFound->id);
     }
 
     /**
@@ -140,14 +138,15 @@ class VibeController extends Controller
      */
     public function destroy(Vibe $vibe)
     {
-        $this->authorize('update', $vibe);
+        $this->authorize('delete', $vibe);
         
         $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
 
-        $vibe = Vibe::findOrFail($vibe)[0];
-        $vibe->users()->detach(Auth::id());
-        $vibe->delete();
+        $vibeFound = Vibe::findOrFail($vibe->id);
+        $message = $vibeFound->title . ' has been deleted.';
+        $vibeFound->users()->detach(Auth::id());
+        $vibeFound->delete();
 
-        return redirect('/home');
+        return redirect('/home')->with('message', $message);
     }
 }
