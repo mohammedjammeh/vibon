@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Vibe;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -12,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -22,7 +24,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $vibes = Vibe::all();
+        $user = User::find(Auth::id());
+
+        if ($user) {
+            $vibes = $user->vibes()->where('user_id', Auth::id())->get();
+        } else {
+            $vibes = Vibe::all();
+        }
+        
         return view('home')->with('vibes', $vibes);
     }
 }
