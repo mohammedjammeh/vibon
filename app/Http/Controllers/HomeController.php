@@ -27,7 +27,7 @@ class HomeController extends Controller
         $user = User::find(Auth::id());
 
         if ($user) {
-            $vibes = $user->vibes()->where('user_id', Auth::id())->get();
+            $vibes = $user->vibes()->where('user_id', Auth::id())->where('vibe_dj', 1)->get();
         } else {
             $vibes = Vibe::all();
         }
