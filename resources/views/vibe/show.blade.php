@@ -8,15 +8,17 @@
         <p>{{ $vibe->description }}</p>
         <p>{{ $vibe->key }}</p>
 
-        <a href="/vibe/{{ $vibe->id }}/edit">Edit</a>
+        @can('update', $vibe)
+            <a href="/vibe/{{ $vibe->id }}/edit">Edit</a>
 
-        <form method="POST" action="/vibe/{{ $vibe->id }}">
-            @csrf
-            @method('DELETE')
+            <form method="POST" action="/vibe/{{ $vibe->id }}">
+                @csrf
+                @method('DELETE')
 
-            <div>
-                <input type="submit" name="delete-submit" value="Delete">
-            </div>
-        </form>
+                <div>
+                    <input type="submit" name="delete-submit" value="Delete">
+                </div>
+            </form>
+        @endcan
     </div>
 @endsection

@@ -10,9 +10,9 @@ class VibeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
         $this->middleware('spotifySession');
-        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
+        $this->middleware('auth', ['only' => ['create', 'store', 'edit', 'destroy']]);
+        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'destroy']]);
     }
 
     /**
@@ -97,6 +97,8 @@ class VibeController extends Controller
      */
     public function edit(Vibe $vibe)
     {
+        $this->authorize('update', $vibe);
+
         $vibe = Vibe::findOrFail($vibe)[0];
         return view('vibe.edit')->with('vibe', $vibe);
     }
@@ -110,6 +112,8 @@ class VibeController extends Controller
      */
     public function update(Request $request, Vibe $vibe)
     {
+        $this->authorize('update', $vibe);
+
         $request->validate([
             'title' => ['required', 'min:3', 'max:25'],
             'description' => ['required', 'min:3', 'max:255']
@@ -136,6 +140,8 @@ class VibeController extends Controller
      */
     public function destroy(Vibe $vibe)
     {
+        $this->authorize('update', $vibe);
+        
         $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
 
         $vibe = Vibe::findOrFail($vibe)[0];
