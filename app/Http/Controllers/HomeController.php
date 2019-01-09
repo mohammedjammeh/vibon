@@ -14,7 +14,12 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
+        $this->middleware('spotifySession');
+    }
+
+    public function content($vibes, $tracks) {
+        $homeContent = array('vibes' => $vibes, 'tracks' => $tracks);
+        return view('home')->with('homeContent', $homeContent);
     }
 
     /**
@@ -26,12 +31,14 @@ class HomeController extends Controller
     {
         $user = User::find(Auth::id());
 
-        if ($user) {
-            $vibes = $user->vibes()->where('user_id', Auth::id())->where('vibe_dj', 1)->get();
-        } else {
+        if (!$user) {
             $vibes = Vibe::all();
-        }
-        
-        return view('home')->with('vibes', $vibes);
+            $tracks = $this->spotifyAPI()->search('two love', 'track')->tracks->items;
+            return $this->content($vibes, $tracks);
+        } 
+
+        $vibes = $user->vibes()->where('user_id', Auth::id())->where('vibe_dj', 1)->get();
+        $tracks = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
+        return $this->content($vibes, $tracks);
     }
 }

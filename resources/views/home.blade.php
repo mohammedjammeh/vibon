@@ -29,10 +29,18 @@
 
         <br><br>
 
-        @if(count($vibes) > 0)
-            @foreach($vibes as $vibe)
+        @if(count($homeContent['vibes']) > 0)
+            @foreach($homeContent['vibes'] as $vibe)
                 <a href="/vibe/{{ $vibe->id }}">{{ $vibe->title }}</a>
                 <br>
+            @endforeach
+        @endif
+
+        <br><br>
+
+        @if(count($homeContent['tracks']) > 0)
+            @foreach($homeContent['tracks'] as $track)
+                <p>{{ $track->name }}</p>
             @endforeach
         @endif
     </div>

@@ -21,9 +21,8 @@ class TrackController extends Controller
      */
     public function index()
     {
-        print_r(
-            $this->spotifyAPI()->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
-        );
+        // $haha = $this->spotifyAPI()->getTrack('7EjyzZcbLxW7PaaLua9Ksb')
+        // return redirect('/home')->with('message', $message);
     }
 
     /**

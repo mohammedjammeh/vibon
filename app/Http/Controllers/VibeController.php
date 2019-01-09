@@ -22,7 +22,7 @@ class VibeController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -55,7 +55,7 @@ class VibeController extends Controller
         $playlists = $this->spotifyAPI()->getUserPlaylists($this->spotifyAPI()->me()->id);
         $newPlaylistID = current($playlists->items)->id;
 
-        $key = mt_rand(1000,9999);
+        $key = mt_rand(1000,9999) ;
 
         $vibeFound = Vibe::where('key', $key)->get();
 
