@@ -28,7 +28,7 @@
             </div>
 
             <div>
-                <input type="submit" name="edit-update" value="Update">
+                <input type="submit" name="update-vibe" value="Update">
             </div>
         </form>
     </div>

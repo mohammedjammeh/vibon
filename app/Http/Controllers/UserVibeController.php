@@ -27,7 +27,7 @@ class UserVibeController extends Controller
     		return redirect('home')->with('message', 'Sorry, you are already part of this vibe.');
     	}
 
-    	$vibe[0]->users()->attach(Auth::id(), ['vibe_dj' => 0]);
+    	$vibe[0]->users()->attach(Auth::id(), ['owner' => 0]);
 		return redirect('/vibe/' . $vibe[0]->id)->with('message', 'Welcome to the ' . $vibe[0]->title . ' vibe.');
     }
 

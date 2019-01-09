@@ -22,7 +22,7 @@ class VibeController extends Controller
      */
     public function index()
     {
-        
+
     }
 
     /**
@@ -71,7 +71,7 @@ class VibeController extends Controller
             'key' => $key
         ]);
 
-        $vibe->users()->attach(Auth::id(), ['vibe_dj' => 1]);
+        $vibe->users()->attach(Auth::id(), ['owner' => 1]);
 
         return redirect('/vibe/' . $vibe->id);
     }
@@ -86,6 +86,12 @@ class VibeController extends Controller
     {
         $vibeFound = Vibe::findOrFail($vibe->id);
         return view('vibe.show')->with('vibe', $vibeFound);
+
+
+        //for track suggestions, randomly get them from:
+        // 1. user's library
+        // 2. user's playlists
+        // 3. songs related to the ones currently playing
     }
 
     /**

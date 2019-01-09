@@ -25,7 +25,7 @@
             </div>
 
             <div>
-                <input type="submit" name="create-submit" value="Start">
+                <input type="submit" name="create-vibe" value="Start">
             </div>
         </form>
     </div>

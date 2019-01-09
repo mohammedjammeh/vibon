@@ -39,7 +39,7 @@ class VibePolicy
      */
     public function delete(User $user, Vibe $vibe)
     {
-        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->where('vibe_dj', 1)->get();
+        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->where('owner', 1)->get();
         return $this->policyCheck($user, $vibe, $userVibe);
     }
 
