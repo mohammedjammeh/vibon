@@ -9,7 +9,7 @@ class Vibe extends Model
     protected $guarded = [];
 
     public function users() {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsToMany(User::class)->withPivot('owner')->withTimestamps();
     }
 
     public function tracks() {

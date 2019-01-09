@@ -22,7 +22,7 @@
                 @method('DELETE')
 
                 <div>
-                    <input type="submit" name="delete-submit" value="Delete">
+                    <input type="submit" name="delete-vibe" value="Delete">
                 </div>
             </form>
         @endcan
