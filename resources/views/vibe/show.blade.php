@@ -8,16 +8,16 @@
             <p>{{ session('message') }}</p>
         @endif
 
-        <p>{{ $vibe->title }}</p>
-        <p>{{ $vibe->description }}</p>
-        <p>{{ $vibe->key }}</p>
+        <p>{{ $vibeToShow['vibe']->title }}</p>
+        <p>{{ $vibeToShow['vibe']->description }}</p>
+        <p>{{ $vibeToShow['vibe']->key }}</p>
 
-        @can('update', $vibe)
-            <a href="/vibe/{{ $vibe->id }}/edit">Edit</a>
+        @can('update', $vibeToShow['vibe'])
+            <a href="/vibe/{{ $vibeToShow['vibe']->id }}/edit">Edit</a>
         @endcan
 
-        @can('delete', $vibe)
-            <form method="POST" action="/vibe/{{ $vibe->id }}">
+        @can('delete', $vibeToShow['vibe'])
+            <form method="POST" action="/vibe/{{ $vibeToShow['vibe']->id }}">
                 @csrf
                 @method('DELETE')
 

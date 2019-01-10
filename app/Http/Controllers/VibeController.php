@@ -85,7 +85,21 @@ class VibeController extends Controller
     public function show(Vibe $vibe)
     {
         $vibeFound = Vibe::findOrFail($vibe->id);
-        return view('vibe.show')->with('vibe', $vibeFound);
+
+
+
+        // $lol = $vibeFound->tracks()->get()[0]->api_id;
+
+        $vibeFoundTracks = $vibeFound->tracks()->get();
+
+        $tracks = array();
+        for ($i=0; $i < count($vibeFoundTracks); $i++) { 
+            $tracks[] = $this->spotifyAPI()->getTrack($vibeFoundTracks[$i]->api_id);
+        }
+
+        $vibeToShow = array('vibe' => $vibeFound, 'tracks' => $tracks);
+
+        return view('vibe.show')->with('vibeToShow', $vibeToShow);
 
 
         //for track suggestions, randomly get them from:
