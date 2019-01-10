@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Vibe;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,8 @@ class HomeController extends Controller
     }
 
 
-    public function content($vibes, $tracks) {
-        $homeContent = array('vibes' => $vibes, 'tracks' => $tracks);
+    public function content($user, $trackRecommendations) {
+        $homeContent = array('user' => $user, 'trackRecommendations' => $trackRecommendations);
         return view('home')->with('homeContent', $homeContent);
     }
 
@@ -33,16 +34,23 @@ class HomeController extends Controller
         $user = User::find(Auth::id());
 
         if (!$user) {
-            $vibes = Vibe::all();
-            $tracks = $this->spotifyAPI()->search('two love', 'track')->tracks->items;
+            // $vibes = Vibe::all();
+            // $tracks = $this->spotifyAPI()->search('two love', 'track')->tracks->items;
 
-            return $this->content($vibes, $tracks);
+            // return $this->content($vibes, $tracks);
         } 
 
 
-        $vibes = $user->vibes()->where('user_id', Auth::id())->get();
-        $tracks = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
+        // $vibes = $user->vibes()->where('user_id', Auth::id())->get();
+        // dd($vibes->user());
 
-        return $this->content($vibes, $tracks);
+        $user = $user::with('vibes.tracks')->where('id', Auth::id())->get();
+
+
+
+        // dd($user[0]->vibes[0]->tracks[0]->pivot->vibe_id);
+
+        $trackRecommendations = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
+        return $this->content($user, $trackRecommendations);
     }
 }
