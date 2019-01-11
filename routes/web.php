@@ -21,5 +21,8 @@ Route::apiResource('track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
 Route::post('/uservibe', 'UserVibeController@store');
+Route::delete('uservibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy');
+
 Route::post('/trackvibe', 'TrackVibeController@store');
+Route::delete('trackvibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy');
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,22 +86,19 @@ class VibeController extends Controller
     public function show(Vibe $vibe)
     {
         $vibeFound = Vibe::findOrFail($vibe->id);
-
-
-
-        // $lol = $vibeFound->tracks()->get()[0]->api_id;
-
         $vibeFoundTracks = $vibeFound->tracks()->get();
+        $vibeFoundMembers = $vibeFound->users()->orderBy('user_vibe.created_at', 'asc')->get();
 
         $tracks = array();
         for ($i=0; $i < count($vibeFoundTracks); $i++) { 
             $tracks[] = $this->spotifyAPI()->getTrack($vibeFoundTracks[$i]->api_id);
         }
 
-        $vibeToShow = array('vibe' => $vibeFound, 'tracks' => $tracks);
+        $user = User::find(Auth::id());
+        $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->get();
 
-        return view('vibe.show')->with('vibeToShow', $vibeToShow);
-
+        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'user' => $userVibesTracks, 'members' => $vibeFoundMembers);
+        return view('vibe.show')->with('showContent', $showContent);
 
         //for track suggestions, randomly get them from:
         // 1. user's library
@@ -116,7 +114,7 @@ class VibeController extends Controller
      */
     public function edit(Vibe $vibe)
     {
-        $this->authorize('update', $vibe);
+        $this->authorize('member', $vibe);
 
         $vibeFound = Vibe::findOrFail($vibe->id);
         return view('vibe.edit')->with('vibe', $vibeFound);
@@ -131,7 +129,7 @@ class VibeController extends Controller
      */
     public function update(Request $request, Vibe $vibe)
     {
-        $this->authorize('update', $vibe);
+        $this->authorize('member', $vibe);
 
         $request->validate([
             'title' => ['required', 'min:3', 'max:25'],
@@ -158,7 +156,7 @@ class VibeController extends Controller
      */
     public function destroy(Vibe $vibe)
     {
-        $this->authorize('delete', $vibe);
+        $this->authorize('owner', $vibe);
         
         $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
 

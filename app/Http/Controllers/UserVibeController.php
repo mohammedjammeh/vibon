@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,8 +32,10 @@ class UserVibeController extends Controller
 		return redirect('/vibe/' . $vibe[0]->id)->with('message', 'Welcome to the ' . $vibe[0]->title . ' vibe.');
     }
 
-    public function destroy() 
+    public function destroy(Vibe $vibe, User $user) 
     {
-    	
+    	$vibe->users()->detach($user->id);
+        return redirect()->back();
+
     }
 }
