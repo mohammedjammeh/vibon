@@ -32,7 +32,7 @@
     
         @if(count($homeContent['user']) > 0)
 
-            <h1>My Vibes</h1>
+            <h3>My Vibes</h3>
             @foreach($homeContent['user'][0]['vibes'] as $vibe)
                  @if($vibe->pivot->owner == 1)
                     <a href="/vibe/{{ $vibe->id }}">{{ $vibe->title }}</a>
@@ -42,7 +42,7 @@
 
             <br><br>
 
-            <h1>Random Tracks</h1>
+            <h3>Random Tracks</h3>
             @foreach($homeContent['trackRecommendations'] as $trackRecommendation)
                 <img src="{{ $trackRecommendation->album->images[0]->url }}">
                 <p>{{ $trackRecommendation->name }}</p>
@@ -52,26 +52,35 @@
                     <form method="POST" action="/trackvibe">
                         @csrf
 
-                        <div>
-                            <input type="hidden" name="api_id" value="{{ $trackRecommendation->id }}">
-                        </div>
+                        <input type="hidden" name="track-api-id" value="{{ $trackRecommendation->id }}">
 
-                        <div>
-                            <input type="hidden" name="vibe-id" value="{{ $vibe->id }}">
-                        </div>
+                        <input type="hidden" name="vibe-api-id" value="{{ $vibe->api_id }}">
 
-                        <div>
-                            <input type="submit" name="delete-submit" value="{{ $vibe->title }}" style="
-                            @for ($track = 0; $track < count($vibe->tracks); $track++)
-                                @if($trackRecommendation->id == $vibe->tracks[$track]->api_id)
-                                    background:red;
-                                    @break
-                                @endif
-                            @endfor
-                            ">
-                        </div>
+                        <input type="hidden" name="vibe-id" value="{{ $vibe->id }}">
+
+                        <input type="submit" name="delete-submit" value="{{ $vibe->title }}" style="
+                        @for ($track = 0; $track < count($vibe->tracks); $track++)
+                            @if($trackRecommendation->id == $vibe->tracks[$track]->api_id)
+                                background:red;
+                                @break
+                            @endif
+                        @endfor
+                        ">
                     </form>
-                
+
+                    @for ($track = 0; $track < count($vibe->tracks); $track++)
+                        @if($trackRecommendation->id == $vibe->tracks[$track]->api_id)
+                            <form method="POST" action="/trackvibe/vibe/{{ $vibe->tracks[$track]->pivot->vibe_id }}/track/{{ $vibe->tracks[$track]->pivot->track_id }}">
+                                @csrf
+                                @method('DELETE')
+
+                                <input type="submit" name="track-vibe-delete" value="Remove">
+                            </form>
+                            @break
+                        @endif
+                    @endfor
+
+                    <br>
                 @endforeach
 
                 <br><br><br><br><br>

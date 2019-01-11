@@ -15,7 +15,7 @@ class CreateTracksTable extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('api_id');
+            $table->string('api_id')->unique();
             $table->timestamps();
         });
     }
