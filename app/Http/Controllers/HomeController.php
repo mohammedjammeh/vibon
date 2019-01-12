@@ -40,10 +40,6 @@ class HomeController extends Controller
             // return $this->content($vibes, $tracks);
         } 
 
-
-        // $vibes = $user->vibes()->where('user_id', Auth::id())->get();
-        // dd($vibes->user());
-
         $user = $user::with('vibes.tracks')->where('id', Auth::id())->get();
 
 
