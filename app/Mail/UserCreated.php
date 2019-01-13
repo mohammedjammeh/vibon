@@ -28,6 +28,6 @@ class UserCreated extends Mailable
      */
     public function build()
     {
-        return $this->markdown('email.user-created');
+        return $this->markdown('emails.user-created');
     }
 }

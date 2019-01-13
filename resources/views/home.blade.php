@@ -11,7 +11,7 @@
             <p>{{ session('message') }}</p>
         @endif
         
-        <form method="POST" action="/uservibe">
+        <!-- <form method="POST" action="/uservibe">
             @csrf
 
             @if($errors->any())
@@ -27,7 +27,7 @@
             <input type="submit" name="submit-key" value="Join">
         </form>
 
-        <br><br>
+        <br><br> -->
 
     
         @if(count($homeContent['user']) > 0)
