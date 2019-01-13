@@ -20,6 +20,7 @@ Route::resource('home', 'HomeController');
 Route::apiResource('track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
+Route::get('/uservibe/{vibe}', 'UserVibeController@notify');
 Route::post('/uservibe', 'UserVibeController@store');
 Route::delete('uservibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy');
 

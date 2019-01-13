@@ -10,7 +10,6 @@
 
         <p>{{ $showContent['vibe']->title }}</p>
         <p>{{ $showContent['vibe']->description }}</p>
-        <p>{{ $showContent['vibe']->key }}</p>
 
         @can('member', $showContent['vibe'])
             <a href="/vibe/{{ $showContent['vibe']->id }}/edit">Edit</a>
@@ -27,6 +26,9 @@
             </form>
         @endcan
 
+
+        <a href="/uservibe/{{ $showContent['vibe']->id }}">Join</a>
+
         <br><br><br>
 
         <h3>Members</h3>
@@ -42,6 +44,9 @@
                         <input type="submit" name="vibe-member-delete" value="Remove">
                     </form>
                 @endcan
+
+            @else 
+                <p>Vibe Admin</p>
             @endif
 
             <br><br>
