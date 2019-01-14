@@ -90,14 +90,24 @@ class VibeController extends Controller
         $vibeFoundMembers = $vibeFound->users()->orderBy('user_vibe.created_at', 'asc')->get();
 
         $tracks = array();
-        for ($i=0; $i < count($vibeFoundTracks); $i++) { 
-            $tracks[] = $this->spotifyAPI()->getTrack($vibeFoundTracks[$i]->api_id);
+        for ($track=0; $track < count($vibeFoundTracks); $track++) { 
+            $tracks[] = $this->spotifyAPI()->getTrack($vibeFoundTracks[$track]->api_id);
         }
 
         $user = User::find(Auth::id());
         $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->get();
 
-        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'user' => $userVibesTracks, 'members' => $vibeFoundMembers);
+        $vibeOwner = $vibe->users()->where('owner', 1)->first();
+        $joinRequest = $vibeOwner->notifications->where('data.requester_id', Auth::id())->where('data.vibe_id', $vibe->id)->first();
+
+
+        $unacceptedRequests = $vibeOwner->unreadNotifications->where('data.accepted', 0);
+        $unacceptedUsers = array();
+        for ($unacceptedRequest=0; $unacceptedRequest < count($unacceptedRequests); $unacceptedRequest++) { 
+            $unacceptedUsers[] = User::findOrFail($unacceptedRequests[$unacceptedRequest]->data['requester_id']);
+        }
+
+        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'user' => $userVibesTracks, 'members' => $vibeFoundMembers, 'joinRequest' => $joinRequest, 'unacceptedUsers' => $unacceptedUsers);
         return view('vibe.show')->with('showContent', $showContent);
 
         //for track suggestions, randomly get them from:
@@ -114,7 +124,7 @@ class VibeController extends Controller
      */
     public function edit(Vibe $vibe)
     {
-        $this->authorize('member', $vibe);
+        $this->authorize('update', $vibe);
 
         $vibeFound = Vibe::findOrFail($vibe->id);
         return view('vibe.edit')->with('vibe', $vibeFound);
@@ -129,7 +139,7 @@ class VibeController extends Controller
      */
     public function update(Request $request, Vibe $vibe)
     {
-        $this->authorize('member', $vibe);
+        $this->authorize('update', $vibe);
 
         $request->validate([
             'title' => ['required', 'min:3', 'max:25'],
@@ -156,7 +166,7 @@ class VibeController extends Controller
      */
     public function destroy(Vibe $vibe)
     {
-        $this->authorize('owner', $vibe);
+        $this->authorize('delete', $vibe);
         
         $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
 

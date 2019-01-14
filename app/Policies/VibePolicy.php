@@ -24,7 +24,7 @@ class VibePolicy
      * @param  \App\Vibe  $vibe
      * @return mixed
      */
-    public function member(User $user, Vibe $vibe)
+    public function update(User $user, Vibe $vibe)
     {
         $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->get();
         return $this->policyCheck($user, $vibe, $userVibe);
@@ -37,7 +37,7 @@ class VibePolicy
      * @param  \App\Vibe  $vibe
      * @return mixed
      */
-    public function owner(User $user, Vibe $vibe)
+    public function delete(User $user, Vibe $vibe)
     {
         $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->where('owner', 1)->get();
         return $this->policyCheck($user, $vibe, $userVibe);

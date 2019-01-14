@@ -11,11 +11,13 @@
         <p>{{ $showContent['vibe']->title }}</p>
         <p>{{ $showContent['vibe']->description }}</p>
 
-        @can('member', $showContent['vibe'])
+        @can('update', $showContent['vibe'])
             <a href="/vibe/{{ $showContent['vibe']->id }}/edit">Edit</a>
         @endcan
 
-        @can('owner', $showContent['vibe'])
+        <br>
+
+        @can('delete', $showContent['vibe'])
             <form method="POST" action="/vibe/{{ $showContent['vibe']->id }}">
                 @csrf
                 @method('DELETE')
@@ -24,10 +26,49 @@
                     <input type="submit" name="delete-vibe" value="Delete">
                 </div>
             </form>
+
+            <br><br>
+
+
+            @if(count($showContent['unacceptedUsers']))
+                @foreach($showContent['unacceptedUsers'] as $unacceptedUsers)
+                    <p>{{ $unacceptedUsers->name }}</p>
+                    <a href="#">Accept</a>
+                    <a href="#">Reject</a>
+                    <br><br>
+                @endforeach
+            @endif
+
+
+
+        @endcan
+
+        <br>
+
+        @cannot('delete', $showContent['vibe'])
+
+            @if(empty($showContent['joinRequest']))
+
+                <a href="/uservibe/{{ $showContent['vibe']->id }}">Join Vibe</a>
+
+            @else 
+
+                @if($showContent['joinRequest']->data['accepted'] == 0)
+
+                    <a href="#">Cancel Join Request</a>
+
+                @else 
+
+                    <a href="#">Leave Vibe</a>
+
+                @endif
+
+            @endif
+
         @endcan
 
 
-        <a href="/uservibe/{{ $showContent['vibe']->id }}">Join</a>
+        <br>
 
         <br><br><br>
 
@@ -36,7 +77,7 @@
             <p>{{ $member->name }}</p>
 
             @if($member->pivot->owner == 0)
-                @can('owner', $showContent['vibe'])
+                @can('delete', $showContent['vibe'])
                     <form method="POST" action="/uservibe/vibe/{{ $member->pivot->vibe_id }}/user/{{ $member->id }}">
                         @csrf
                         @method('DELETE')
