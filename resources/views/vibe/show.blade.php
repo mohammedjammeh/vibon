@@ -31,31 +31,47 @@
 
 
             @if(count($showContent['unacceptedUsers']))
-                @foreach($showContent['unacceptedUsers'] as $unacceptedUsers)
-                    <p>{{ $unacceptedUsers->name }}</p>
-                    <a href="#">Accept</a>
-                    <a href="#">Reject</a>
+
+                @foreach($showContent['unacceptedUsers'] as $unacceptedUser)
+
+                    <p>{{ $unacceptedUser->name }}</p>
+
+                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}/user/{{ $unacceptedUser->id }}">
+                        @csrf
+                        @method('PATCH')
+
+                        <input type="submit" name="accept" value="Accept">
+
+                        <input type="submit" name="reject" value="Reject">
+                    </form>
+
+
                     <br><br>
                 @endforeach
+
             @endif
-
-
 
         @endcan
 
-        <br>
 
         @cannot('delete', $showContent['vibe'])
 
             @if(empty($showContent['joinRequest']))
 
-                <a href="/uservibe/{{ $showContent['vibe']->id }}">Join Vibe</a>
+                <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
+                    @csrf
+                    <input type="submit" name="join-request" value="Join Vibe">
+                </form>
 
             @else 
 
                 @if($showContent['joinRequest']->data['accepted'] == 0)
 
-                    <a href="#">Cancel Join Request</a>
+                <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
+                    @csrf
+                    @method('DELETE')
+                    <input type="submit" name="cancel-request" value="Cancel Join Request">
+                </form>
 
                 @else 
 
@@ -65,25 +81,29 @@
 
             @endif
 
+             <br><br><br>
+             
         @endcan
 
 
-        <br>
 
-        <br><br><br>
 
         <h3>Members</h3>
         @foreach($showContent['members'] as $member)
+
             <p>{{ $member->name }}</p>
 
             @if($member->pivot->owner == 0)
+
                 @can('delete', $showContent['vibe'])
+
                     <form method="POST" action="/uservibe/vibe/{{ $member->pivot->vibe_id }}/user/{{ $member->id }}">
                         @csrf
                         @method('DELETE')
 
                         <input type="submit" name="vibe-member-delete" value="Remove">
                     </form>
+
                 @endcan
 
             @else 
@@ -95,47 +115,59 @@
 
         <br><br><br>
 
-        <h3>Tracks</h3>
-        @foreach($showContent['tracks'] as $thisVibeTrack)
-            <img src="{{ $thisVibeTrack->album->images[0]->url }}">
-            <p>{{ $thisVibeTrack->name }}</p>
+        @if(count($showContent['tracks'])) 
+            <h3>Tracks</h3>
 
-            @foreach($showContent['user'][0]['vibes'] as $vibe)
-                <form method="POST" action="/trackvibe">
-                    @csrf
+            @foreach($showContent['tracks'] as $thisVibeTrack)
 
-                    <input type="hidden" name="track-api-id" value="{{ $thisVibeTrack->id }}">
+                <img src="{{ $thisVibeTrack->album->images[0]->url }}">
 
-                    <input type="hidden" name="vibe-api-id" value="{{ $vibe->api_id }}">
+                <p>{{ $thisVibeTrack->name }}</p>
 
-                    <input type="hidden" name="vibe-id" value="{{ $vibe->id }}">
+                @foreach($showContent['user'][0]['vibes'] as $vibe)
+                    <form method="POST" action="/trackvibe">
+                        @csrf
 
-                    <input type="submit" name="track-vibe-submit" value="{{ $vibe->title }}" style="
-                        @for($track = 0; $track < count($vibe->tracks); $track++)
-                            @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
-                                background:red;
-                                @break
-                            @endif
-                        @endfor
-                    ">
-                </form>
+                        <input type="hidden" name="track-api-id" value="{{ $thisVibeTrack->id }}">
 
-                @for($track = 0; $track < count($vibe->tracks); $track++)
-                    @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
-                        <form method="POST" action="/trackvibe/vibe/{{ $vibe->tracks[$track]->pivot->vibe_id }}/track/{{ $vibe->tracks[$track]->pivot->track_id }}">
-                            @csrf
-                            @method('DELETE')
+                        <input type="hidden" name="vibe-api-id" value="{{ $vibe->api_id }}">
 
-                            <input type="submit" name="track-vibe-delete" value="Remove">
-                        </form>
-                        @break
-                    @endif
-                @endfor
+                        <input type="hidden" name="vibe-id" value="{{ $vibe->id }}">
 
-                <br>
+                        <input type="submit" name="track-vibe-submit" value="{{ $vibe->title }}" style="
+                            @for($track = 0; $track < count($vibe->tracks); $track++)
+                                @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
+                                    background:red;
+                                    @break
+                                @endif
+                            @endfor
+                        ">
+                    </form>
+
+                    @for($track = 0; $track < count($vibe->tracks); $track++)
+
+                        @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
+
+                            <form method="POST" action="/trackvibe/vibe/{{ $vibe->tracks[$track]->pivot->vibe_id }}/track/{{ $vibe->tracks[$track]->pivot->track_id }}">
+                                @csrf
+                                @method('DELETE')
+
+                                <input type="submit" name="track-vibe-delete" value="Remove">
+                            </form>
+
+                            @break
+
+                        @endif
+
+                    @endfor
+
+                    <br>
+
+                @endforeach
+
+                <br><br><br><br><br>
+
             @endforeach
-
-            <br><br><br><br><br>
-        @endforeach
+        @endif
     </div>
 @endsection

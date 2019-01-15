@@ -17,28 +17,10 @@ class UserVibeController extends Controller
         $this->middleware('spotifyAuth');
     }
 
-    public function requestToJoin(Vibe $vibe) 
+    public function store(Vibe $vibe)
     {
-        $vibeOwner = $vibe->users()->where('owner', 1)->first();
-        $vibeOwner->notify(new RequestToJoinAVibe(Auth::id(), $vibe->id));
-
-        return redirect('vibe/' . $vibe->id)->with('message', 'Your request has been sent.');
-    }
-
-
-    public function cancelRequestToJoin(Vibe $vibe) 
-    {
-
-    }
-
-
-    public function store(Request $request)
-    {
-
-        // $vibe[0]->users()->attach(Auth::id(), ['owner' => 0]);
-		// return redirect('/vibe/' . $vibe[0]->id)->with('message', 'Welcome to the ' . $vibe[0]->title . ' vibe.');
-
-        dd('store');
+        $vibe->users()->attach(Auth::id(), ['owner' => 0]);
+		return redirect('/vibe/' . $vibe->id)->with('message', 'Welcome to the ' . $vibe->title . ' vibe.');
     }
 
     public function destroy(Vibe $vibe, User $user) 
