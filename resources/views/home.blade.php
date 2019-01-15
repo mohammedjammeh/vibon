@@ -7,47 +7,50 @@
         <a href="/vibe/create">Start a vibe</a>
         <br><br>
 
-        @if (session('message'))
+        @if(session('message'))
             <p>{{ session('message') }}</p>
         @endif
+
+
+        @if(count($homeContent['notifications']) > 0)
+            <h3>Notifications</h3>
+
+            @foreach($homeContent['notifications'] as $notification)
+
+                @foreach($homeContent['userVibesTracks']['vibes'] as $vibe)
+
+                    @if($vibe->id == $notification->data['vibe_id'])
+
+                        <p>Your request to join '{{ $vibe->title }}' has been accepted.</p>
+
+                    @endif
+
+                @endforeach
+
+            @endforeach
+        @endif
+
+        <br>
         
-        <!-- <form method="POST" action="/uservibe">
-            @csrf
-
-            @if($errors->any())
-                <div>
-                    @foreach($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
-
-            <input type="number" name="key" placeholder="Join a vibe..">
-
-            <input type="submit" name="submit-key" value="Join">
-        </form>
-
-        <br><br> -->
-
     
-        @if(count($homeContent['user']) > 0)
+        @if($homeContent['userVibesTracks'])
 
             <h3>My Vibes</h3>
-            @foreach($homeContent['user'][0]['vibes'] as $vibe)
+            @foreach($homeContent['userVibesTracks']['vibes'] as $vibe)
                  @if($vibe->pivot->owner == 1)
                     <a href="/vibe/{{ $vibe->id }}">{{ $vibe->title }}</a>
                     <br>
                 @endif
             @endforeach
 
-            <br><br>
+            <br><br><br>
 
             <h3>Random Tracks</h3>
             @foreach($homeContent['trackRecommendations'] as $trackRecommendation)
                 <img src="{{ $trackRecommendation->album->images[0]->url }}">
                 <p>{{ $trackRecommendation->name }}</p>
 
-                @foreach($homeContent['user'][0]['vibes'] as $vibe)
+                @foreach($homeContent['userVibesTracks']['vibes'] as $vibe)
 
                     <form method="POST" action="/trackvibe">
                         @csrf

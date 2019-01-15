@@ -101,7 +101,7 @@ class VibeController extends Controller
         $joinRequest = $vibeOwner->notifications->where('data.requester_id', Auth::id())->where('data.vibe_id', $vibe->id)->first();
 
 
-        $unacceptedRequests = $vibeOwner->unreadNotifications->where('data.accepted', 0);
+        $unacceptedRequests = $vibeOwner->unreadNotifications->where('data.accepted', 0)->where('data.vibe_id', $vibe->id);
         $unacceptedUsers = array();
         for ($unacceptedRequest=0; $unacceptedRequest < count($unacceptedRequests); $unacceptedRequest++) { 
             $unacceptedUsers[] = User::findOrFail($unacceptedRequests[$unacceptedRequest]->data['requester_id']);
