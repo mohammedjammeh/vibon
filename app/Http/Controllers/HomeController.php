@@ -16,6 +16,8 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('spotifySession');
+        $this->middleware('auth');
+        $this->middleware('spotifyAuth');
     }
 
 
@@ -37,7 +39,7 @@ class HomeController extends Controller
         } 
 
         $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->first();
-        $notifications = $user->notifications->where('type', 'App\Notifications\ResponseToJoinAVibe');
+        $notifications = $user->notifications;
         $trackRecommendations = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
 
         return $this->content($userVibesTracks, $notifications, $trackRecommendations);

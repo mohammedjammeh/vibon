@@ -35,12 +35,19 @@ class JoinVibeRequestController extends Controller
     	return redirect('vibe/' . $vibe->id)->with('message', 'Your request to join has been cancelled.');
     }
 
+    public function leave(Vibe $vibe, User $user) 
+    {
+    	$this->vibeOwner($vibe)->notifications->where('data.requester_id', Auth::id())->where('data.vibe_id', $vibe->id)->first()->delete();
+    	$vibe->users()->detach($user->id);
+        return redirect()->back();
+    }
+
     public function respond(Request $request, Vibe $vibe, User $user) 
     {
     	$notification = $this->vibeOwner($vibe)->unreadNotifications->where('data.requester_id', $user->id)->where('data.vibe_id', $vibe->id)->first();
     	$notification->markAsRead();
 
-    	if(!$request->input('accept')) {
+    	if($request->input('reject')) {
     		return redirect('/vibe/' . $vibe->id);
     	}
 

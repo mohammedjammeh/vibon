@@ -27,6 +27,5 @@ class UserVibeController extends Controller
     {
     	$vibe->users()->detach($user->id);
         return redirect()->back();
-
     }
 }

@@ -95,7 +95,7 @@ class VibeController extends Controller
         }
 
         $user = User::find(Auth::id());
-        $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->get();
+        $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->first();
 
         $vibeOwner = $vibe->users()->where('owner', 1)->first();
         $joinRequest = $vibeOwner->notifications->where('data.requester_id', Auth::id())->where('data.vibe_id', $vibe->id)->first();
@@ -107,7 +107,7 @@ class VibeController extends Controller
             $unacceptedUsers[] = User::findOrFail($unacceptedRequests[$unacceptedRequest]->data['requester_id']);
         }
 
-        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'user' => $userVibesTracks, 'members' => $vibeFoundMembers, 'joinRequest' => $joinRequest, 'unacceptedUsers' => $unacceptedUsers);
+        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'userVibesTracks' => $userVibesTracks, 'members' => $vibeFoundMembers, 'joinRequest' => $joinRequest, 'unacceptedUsers' => $unacceptedUsers);
         return view('vibe.show')->with('showContent', $showContent);
 
         //for track suggestions, randomly get them from:
