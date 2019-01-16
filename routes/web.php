@@ -22,6 +22,7 @@ Route::resource('/vibe', 'VibeController');
 
 Route::post('/joinvibe/{vibe}', 'JoinVibeRequestController@join');
 Route::delete('/joinvibe/{vibe}', 'JoinVibeRequestController@cancel');
+Route::delete('/joinvibe/{vibe}/user/{user}', 'JoinVibeRequestController@leave');
 Route::patch('/joinvibe/{vibe}/user/{user}', 'JoinVibeRequestController@respond');
 
 Route::post('/uservibe/{vibe}', 'UserVibeController@store');

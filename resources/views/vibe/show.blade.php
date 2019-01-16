@@ -13,9 +13,9 @@
 
         @can('update', $showContent['vibe'])
             <a href="/vibe/{{ $showContent['vibe']->id }}/edit">Edit</a>
+            <br><br>
         @endcan
 
-        <br>
 
         @can('delete', $showContent['vibe'])
             <form method="POST" action="/vibe/{{ $showContent['vibe']->id }}">
@@ -67,15 +67,19 @@
 
                 @if($showContent['joinRequest']->data['accepted'] == 0)
 
-                <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
-                    @csrf
-                    @method('DELETE')
-                    <input type="submit" name="cancel-request" value="Cancel Join Request">
-                </form>
+                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" name="cancel-request" value="Cancel Join Request">
+                    </form>
 
                 @else 
 
-                    <a href="#">Leave Vibe</a>
+                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}/user/{{ $showContent['userVibesTracks']->id }}">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" name="leave-vibe" value="Leave Vibe">
+                    </form>
 
                 @endif
 
@@ -124,7 +128,7 @@
 
                 <p>{{ $thisVibeTrack->name }}</p>
 
-                @foreach($showContent['user'][0]['vibes'] as $vibe)
+                @foreach($showContent['userVibesTracks']['vibes'] as $vibe)
                     <form method="POST" action="/trackvibe">
                         @csrf
 
