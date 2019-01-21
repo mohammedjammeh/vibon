@@ -11,18 +11,18 @@ class RequestToJoinAVibe extends Notification
 {
     use Queueable;
 
-    public $requesterID;
-    public $vibeID;
+    public $requester_id;
+    public $vibe_id;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($requesterID, $vibeID)
+    public function __construct($requester_id, $vibe_id)
     {
-        $this->requesterID = $requesterID;
-        $this->vibeID = $vibeID;
+        $this->requester_id = $requester_id;
+        $this->vibe_id = $vibe_id;
     }
 
     /**
@@ -45,9 +45,8 @@ class RequestToJoinAVibe extends Notification
     public function toArray($notifiable)
     {
         return [
-            'requester_id' => $this->requesterID,
-            'vibe_id' => $this->vibeID,
-            'accepted' => 0
+            'requester_id' => $this->requester_id,
+            'vibe_id' => $this->vibe_id
         ];
     }
 }

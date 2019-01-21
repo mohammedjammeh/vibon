@@ -13,21 +13,43 @@
 
 
 Auth::routes();
+
 Route::get('/callback', 'CallbackController@spotifyAuth');
 
+
+
+
 Route::resource('/', 'HomeController');
+
 Route::resource('home', 'HomeController');
+
 Route::apiResource('track', 'TrackController');
+
 Route::resource('/vibe', 'VibeController');
 
-Route::post('/joinvibe/{vibe}', 'JoinVibeRequestController@join');
-Route::delete('/joinvibe/{vibe}', 'JoinVibeRequestController@cancel');
-Route::delete('/joinvibe/{vibe}/user/{user}', 'JoinVibeRequestController@leave');
-Route::patch('/joinvibe/{vibe}/user/{user}', 'JoinVibeRequestController@respond');
 
-Route::post('/uservibe/{vibe}', 'UserVibeController@store');
-Route::delete('uservibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy');
 
-Route::post('/trackvibe', 'TrackVibeController@store');
-Route::delete('trackvibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy');
+
+Route::post('/join-request/{vibe}', 'JoinRequestController@join')->name('join-request.join');
+
+Route::delete('/join-request/{vibe}', 'JoinRequestController@cancel')->name('join-request.cancel');
+
+Route::delete('/join-request/{vibe}/user/{user}', 'JoinRequestController@leave')->name('join-request.leave');
+
+Route::patch('/join-request/{vibe}/user/{user}', 'JoinRequestController@respond')->name('join-request.respond');
+
+
+
+
+
+Route::post('/uservibe/{vibe}', 'UserVibeController@store')->name('uservibe.store');
+
+Route::delete('uservibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy')->name('uservibe.destroy');
+
+
+
+
+Route::post('/trackvibe', 'TrackVibeController@store')->name('trackvibe.store');
+
+Route::delete('trackvibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('trackvibe.destroy');
 

@@ -11,16 +11,18 @@ class ResponseToJoinAVibe extends Notification
 {
     use Queueable;
 
-     public $vibeID;
+    public $vibe_id;
+    public $response;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($vibeID)
+    public function __construct($vibe_id, $response)
     {
-        $this->vibeID = $vibeID;
+        $this->vibe_id = $vibe_id;
+        $this->response = $response;
     }
 
     /**
@@ -43,7 +45,8 @@ class ResponseToJoinAVibe extends Notification
     public function toArray($notifiable)
     {
         return [
-            'vibe_id' => $this->vibeID
+            'vibe_id' => $this->vibe_id,
+            'response' => $this->response
         ];
     }
 }

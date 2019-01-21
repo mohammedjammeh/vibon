@@ -15,15 +15,13 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+
         $this->middleware('spotifySession');
+
         $this->middleware('auth');
+
         $this->middleware('spotifyAuth');
-    }
 
-
-    public function content($userVibesTracks, $notifications, $trackRecommendations) {
-        $homeContent = array('userVibesTracks' => $userVibesTracks, 'notifications' => $notifications, 'trackRecommendations' => $trackRecommendations);
-        return view('home')->with('homeContent', $homeContent);
     }
 
     /**
@@ -32,16 +30,67 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    
     {
+
         $user = User::find(Auth::id());
 
-        if (!$user) {
-        } 
-
         $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->first();
-        $notifications = $user->notifications;
+
+        $responseNotifications = $user->notifications->where('type', 'App\Notifications\ResponseToJoinAVibe');
+
+        $requestNotifications = $user->unreadNotifications->where('type', 'App\Notifications\RequestToJoinAVibe');
+
+        $vibes = Vibe::all();
+
+
+
+
+
+
         $trackRecommendations = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
 
-        return $this->content($userVibesTracks, $notifications, $trackRecommendations);
+
+
+        foreach ($trackRecommendations as $trackRecommendation) {
+
+            $trackRecommendation->belongs_to_user_vibes = array();
+
+
+            foreach ($userVibesTracks['vibes'] as $userVibe) {
+                
+                for ($i=0; $i < count($userVibe->tracks); $i++) { 
+
+                    if($trackRecommendation->id == $userVibe->tracks[$i]->api_id) {
+
+                        $trackRecommendation->belongs_to_user_vibes[] = $userVibe->id;
+
+                        $trackRecommendation->vibon_id = $userVibe->tracks[$i]->id;
+
+                    } 
+
+                }
+
+            }
+
+        }
+
+
+
+
+        return view('home', [
+
+            'userVibesTracks' => $userVibesTracks, 
+
+            'responseNotifications' => $responseNotifications, 
+
+            'requestNotifications' => $requestNotifications, 
+
+            'trackRecommendations' => $trackRecommendations, 
+
+            'vibes' => $vibes
+
+        ]);
+
     }
 }
