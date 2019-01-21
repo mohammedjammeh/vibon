@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVibesTable extends Migration
+class CreateJoinRequestTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateVibesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vibes', function (Blueprint $table) {
+        Schema::create('join_requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('api_id');
-            $table->string('title');
-            $table->text('description');
-            $table->boolean('type');
-            $table->boolean('auto_dj');
+            $table->unsignedInteger('vibe_id');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateVibesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vibes');
+        Schema::dropIfExists('join_requests');
     }
 }

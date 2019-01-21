@@ -3,50 +3,108 @@
 @section('title', 'Start a vibe')
 
 @section('content')
+
     <div class="container">
+
+
+
         @if (session('message'))
+
             <p>{{ session('message') }}</p>
+
         @endif
 
-        <p>{{ $showContent['vibe']->title }}</p>
-        <p>{{ $showContent['vibe']->description }}</p>
 
-        @can('update', $showContent['vibe'])
-            <a href="/vibe/{{ $showContent['vibe']->id }}/edit">Edit</a>
+
+
+        <p>{{ $vibe->title }}</p>
+
+        <p>{{ $vibe->description }}</p>
+
+
+
+
+        <p>
+
+            @if($vibe->type == 1)
+                <p>Private Account</p>
+            @else
+                <p>Public Account</p>
+            @endif
+
+        </p>
+
+
+
+
+        <p>
+            
+            @if($vibe->auto_dj == 0)
+                <p>Manual DJ</p>
+            @else
+                <p>Auto DJ</p>
+            @endif
+
+        </p>
+
+        
+
+
+
+
+        @can('update', $vibe)
+
+            <a href="{{ route('vibe.edit', ['id' => $vibe->id]) }}">Edit</a>
+
             <br><br>
+
         @endcan
 
 
-        @can('delete', $showContent['vibe'])
-            <form method="POST" action="/vibe/{{ $showContent['vibe']->id }}">
+
+
+
+
+
+        @can('delete', $vibe)
+
+            <form method="POST" action="{{ route('vibe.destroy', ['id' => $vibe->id]) }}">
+
                 @csrf
+
                 @method('DELETE')
 
                 <div>
-                    <input type="submit" name="delete-vibe" value="Delete">
+                    <input type="submit" name="vibe-delete" value="Delete">
                 </div>
+
             </form>
 
             <br><br>
 
 
-            @if(count($showContent['unacceptedUsers']))
+            @if(count($pendingRequesters) > 0)
 
-                @foreach($showContent['unacceptedUsers'] as $unacceptedUser)
+                <h3>Requests</h3>
 
-                    <p>{{ $unacceptedUser->name }}</p>
+                @foreach($pendingRequesters as $pendingRequester)
 
-                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}/user/{{ $unacceptedUser->id }}">
+                    <p>{{ $pendingRequester->name }}</p>
+
+                    <form method="POST" action="{{ route('join-request.respond', ['vibe' => $vibe->id, 'user' => $pendingRequester->id]) }}">
+
                         @csrf
+
                         @method('PATCH')
 
                         <input type="submit" name="accept" value="Accept">
 
                         <input type="submit" name="reject" value="Reject">
+
                     </form>
 
-
                     <br><br>
+
                 @endforeach
 
             @endif
@@ -54,36 +112,63 @@
         @endcan
 
 
-        @cannot('delete', $showContent['vibe'])
 
-            @if(empty($showContent['joinRequest']))
 
-                <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
+
+
+
+        @cannot('delete', $vibe)
+
+            @if(isset($isUserAMember)) 
+
+                <form method="POST" action="{{ route('uservibe.destroy', ['vibe' => $vibe->id, 'user' => $userVibesTracks->id]) }}">
+
                     @csrf
-                    <input type="submit" name="join-request" value="Join Vibe">
+
+                    @method('DELETE')
+
+                    <input type="submit" name="vibe-leave" value="Leave Vibe">
+
                 </form>
 
-            @else 
+            @elseif(isset($userJoinRequest))
 
-                @if($showContent['joinRequest']->data['accepted'] == 0)
+                <form method="POST" action="{{ route('join-request.cancel', ['vibe' => $vibe->id]) }}">
 
-                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}">
+                    @csrf
+
+                    @method('DELETE')
+
+                    <input type="submit" name="vibe-join-cancel" value="Cancel Join Request">
+
+                </form>
+
+            @else
+
+                @if($vibe->privateType())
+
+                    <form method="POST" action="{{ route('join-request.join', ['vibe' => $vibe->id]) }}">
+
                         @csrf
-                        @method('DELETE')
-                        <input type="submit" name="cancel-request" value="Cancel Join Request">
+
+                        <input type="submit" name="vibe-join" value="Join Vibe">
+
                     </form>
 
                 @else 
 
-                    <form method="POST" action="/joinvibe/{{ $showContent['vibe']->id }}/user/{{ $showContent['userVibesTracks']->id }}">
+                    <form method="POST" action="{{ route('uservibe.store', ['vibe' => $vibe->id]) }}">
+
                         @csrf
-                        @method('DELETE')
-                        <input type="submit" name="leave-vibe" value="Leave Vibe">
+
+                        <input type="submit" name="vibe-join" value="Join Vibe">
+
                     </form>
 
                 @endif
 
             @endif
+
 
              <br><br><br>
              
@@ -92,26 +177,36 @@
 
 
 
+
+
+
+
         <h3>Members</h3>
-        @foreach($showContent['members'] as $member)
+
+        @foreach($members as $member)
 
             <p>{{ $member->name }}</p>
 
             @if($member->pivot->owner == 0)
 
-                @can('delete', $showContent['vibe'])
+                @can('delete', $vibe)
 
-                    <form method="POST" action="/uservibe/vibe/{{ $member->pivot->vibe_id }}/user/{{ $member->id }}">
+                    <form method="POST" action="{{ route('uservibe.destroy', ['vibe' => $member->pivot->vibe_id, 'user' => $member->id]) }}">
+
                         @csrf
+
                         @method('DELETE')
 
-                        <input type="submit" name="vibe-member-delete" value="Remove">
+                        <input type="submit" name="vibe-member-remove" value="Remove">
+
                     </form>
 
                 @endcan
 
             @else 
+
                 <p>Vibe Admin</p>
+
             @endif
 
             <br><br>
@@ -119,59 +214,72 @@
 
         <br><br><br>
 
-        @if(count($showContent['tracks'])) 
+
+
+
+
+
+        @if(count($tracks) > 0) 
+
             <h3>Tracks</h3>
 
-            @foreach($showContent['tracks'] as $thisVibeTrack)
+            @foreach($tracks as $track)
 
-                <img src="{{ $thisVibeTrack->album->images[0]->url }}">
+                <img src="{{ $track->album->images[0]->url }}">
 
-                <p>{{ $thisVibeTrack->name }}</p>
+                <p>{{ $track->name }}</p>
 
-                @foreach($showContent['userVibesTracks']['vibes'] as $vibe)
-                    <form method="POST" action="/trackvibe">
-                        @csrf
 
-                        <input type="hidden" name="track-api-id" value="{{ $thisVibeTrack->id }}">
 
-                        <input type="hidden" name="vibe-api-id" value="{{ $vibe->api_id }}">
+                @foreach($userVibesTracks['vibes'] as $userVibe)
 
-                        <input type="hidden" name="vibe-id" value="{{ $vibe->id }}">
+                    @if(in_array($userVibe->id, $track->belongs_to_user_vibes))
 
-                        <input type="submit" name="track-vibe-submit" value="{{ $vibe->title }}" style="
-                            @for($track = 0; $track < count($vibe->tracks); $track++)
-                                @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
-                                    background:red;
-                                    @break
-                                @endif
-                            @endfor
-                        ">
-                    </form>
+                        <form method="POST" action="{{ route('trackvibe.destroy', ['vibe' => $userVibe->id, 'track' => $track->vibon_id]) }}">
 
-                    @for($track = 0; $track < count($vibe->tracks); $track++)
+                            @csrf
 
-                        @if($thisVibeTrack->id == $vibe->tracks[$track]->api_id)
+                            @method('DELETE')
 
-                            <form method="POST" action="/trackvibe/vibe/{{ $vibe->tracks[$track]->pivot->vibe_id }}/track/{{ $vibe->tracks[$track]->pivot->track_id }}">
-                                @csrf
-                                @method('DELETE')
+                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->title }}" style="background:red;">
 
-                                <input type="submit" name="track-vibe-delete" value="Remove">
-                            </form>
+                        </form>
 
-                            @break
+                        <br>
 
-                        @endif
+                    @else 
 
-                    @endfor
+                        <form method="POST" action="{{ route('trackvibe.store') }}">
 
-                    <br>
+                            @csrf
+
+                            <input type="hidden" name="track-api-id" value="{{ $track->id }}">
+
+                            <input type="hidden" name="vibe-api-id" value="{{ $userVibe->api_id }}">
+
+                            <input type="hidden" name="vibe-id" value="{{ $userVibe->id }}">
+
+                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->title }}">
+
+                        </form>
+
+                        <br>
+
+                    @endif
 
                 @endforeach
 
-                <br><br><br><br><br>
-
             @endforeach
+
+
+            <br><br><br>
+
         @endif
+
+
+
+
+
     </div>
+    
 @endsection

@@ -4,17 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Vibe;
 use App\User;
+use App\joinRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreVibe;
 
 class VibeController extends Controller
 {
+
+
     public function __construct()
+
     {
         $this->middleware('spotifySession');
+
         $this->middleware('auth', ['only' => ['create', 'store', 'edit', 'destroy']]);
+
         $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'destroy']]);
     }
+
+
+
+
 
     /**
      * Display a listing of the resource.
@@ -22,9 +33,14 @@ class VibeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+
     {
 
     }
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -32,9 +48,16 @@ class VibeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
+
     {
+
         return view('vibe.create');
+
     }
+
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -42,40 +65,48 @@ class VibeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreVibe $request)
+
     {
-        $request->validate([
-            'title' => ['required', 'min:3', 'max:25'],
-            'description' => ['required', 'min:3', 'max:255']
-        ]);
 
         $this->spotifyAPI()->createPlaylist([
+
             'name' => request('title')
+
         ]);
+
 
         $playlists = $this->spotifyAPI()->getUserPlaylists($this->spotifyAPI()->me()->id);
+
         $newPlaylistID = current($playlists->items)->id;
 
-        $key = mt_rand(1000,9999) ;
-
-        $vibeFound = Vibe::where('key', $key)->get();
-
-        while(!$vibeFound->isEmpty()) {
-            $key = mt_rand(1000,9999);
-            $vibeFound = Vibe::where('key', $key)->get();
-        }
 
         $vibe = Vibe::create([
+
             'title' => request('title'),
+
             'api_id' => $newPlaylistID,
+
             'description' => request('description'),
-            'key' => $key
+
+            'type' => request('type'),
+
+            'auto_dj' => request('auto_dj')
+
         ]);
+
 
         $vibe->users()->attach(Auth::id(), ['owner' => 1]);
 
         return redirect('/vibe/' . $vibe->id);
+
     }
+
+
+
+
+
+
 
     /**
      * Display the specified resource.
@@ -85,36 +116,100 @@ class VibeController extends Controller
      */
     public function show(Vibe $vibe)
     {
-        $vibeFound = Vibe::findOrFail($vibe->id);
-        $vibeFoundTracks = $vibeFound->tracks()->get();
-        $vibeFoundMembers = $vibeFound->users()->orderBy('user_vibe.created_at', 'asc')->get();
+
+        $vibeTracks = $vibe->tracks()->get();
+
+        $vibeMembers = $vibe->users()->orderBy('user_vibe.created_at', 'asc')->get();
+
+        $isUserAMember = $vibe->users()->where('id', Auth::user()->id)->first();
+
+
+
+
+
+        $userVibesTracks = User::find(Auth::id())::with('vibes.tracks')->where('id', Auth::id())->first();
+ 
+        $userJoinRequest = $vibe->joinRequests()->where('user_id', Auth::user()->id)->first();
+
+
+
+
+
+
+        $pendingRequests = $vibe->joinRequests()->get();
+
+        
+        $pendingRequesters = array();
+
+        for ($pendingRequest=0; $pendingRequest < count($pendingRequests); $pendingRequest++) { 
+
+            $pendingRequesters[] = User::findOrFail($pendingRequests[$pendingRequest]->user_id);
+
+        }
+
+
 
         $tracks = array();
-        for ($track=0; $track < count($vibeFoundTracks); $track++) { 
-            $tracks[] = $this->spotifyAPI()->getTrack($vibeFoundTracks[$track]->api_id);
+
+        for ($track=0; $track < count($vibeTracks); $track++) { 
+
+            $tracks[] = $this->spotifyAPI()->getTrack($vibeTracks[$track]->api_id);
+
+            // $tracks[$track]->vibon_id = $vibeTracks[$track]->id;
+
         }
 
-        $user = User::find(Auth::id());
-        $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->first();
-
-        $vibeOwner = $vibe->users()->where('owner', 1)->first();
-        $joinRequest = $vibeOwner->notifications->where('data.requester_id', Auth::id())->where('data.vibe_id', $vibe->id)->first();
 
 
-        $unacceptedRequests = $vibeOwner->unreadNotifications->where('data.accepted', 0)->where('data.vibe_id', $vibe->id);
-        $unacceptedUsers = array();
-        for ($unacceptedRequest=0; $unacceptedRequest < count($unacceptedRequests); $unacceptedRequest++) { 
-            $unacceptedUsers[] = User::findOrFail($unacceptedRequests[$unacceptedRequest]->data['requester_id']);
+
+        foreach ($tracks as $track) {
+
+            $track->belongs_to_user_vibes = array();
+
+
+            foreach ($userVibesTracks['vibes'] as $userVibe) {
+                
+                for ($i=0; $i < count($userVibe->tracks); $i++) { 
+
+                    if($track->id == $userVibe->tracks[$i]->api_id) {
+
+                        $track->belongs_to_user_vibes[] = $userVibe->id;
+
+                        $track->vibon_id = $userVibe->tracks[$i]->id;
+
+                    } 
+
+                }
+
+            }
+
         }
 
-        $showContent = array('vibe' => $vibeFound, 'tracks' => $tracks, 'userVibesTracks' => $userVibesTracks, 'members' => $vibeFoundMembers, 'joinRequest' => $joinRequest, 'unacceptedUsers' => $unacceptedUsers);
-        return view('vibe.show')->with('showContent', $showContent);
 
-        //for track suggestions, randomly get them from:
-        // 1. user's library
-        // 2. user's playlists
-        // 3. songs related to the ones currently playing
+
+        return view('vibe.show', [
+
+            'vibe' => $vibe, 
+
+            'tracks' => $tracks, 
+
+            'userVibesTracks' => $userVibesTracks, 
+
+            'members' => $vibeMembers, 
+
+            'isUserAMember' => $isUserAMember,
+
+            'userJoinRequest' => $userJoinRequest, 
+
+            'pendingRequesters' => $pendingRequesters
+
+        ]);
+
     }
+
+
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -123,12 +218,19 @@ class VibeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Vibe $vibe)
-    {
-        $this->authorize('update', $vibe);
 
-        $vibeFound = Vibe::findOrFail($vibe->id);
-        return view('vibe.edit')->with('vibe', $vibeFound);
+    {
+
+        $this->authorize('update', $vibe);;
+
+        return view('vibe.edit')->with('vibe', $vibe);
+
     }
+
+
+
+
+
 
     /**
      * Update the specified resource in storage.
@@ -137,26 +239,41 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Vibe $vibe)
+    public function update(StoreVibe $request, Vibe $vibe)
+
     {
+
         $this->authorize('update', $vibe);
 
-        $request->validate([
-            'title' => ['required', 'min:3', 'max:25'],
-            'description' => ['required', 'min:3', 'max:255']
-        ]);
 
-        $vibeFound = Vibe::findOrFail($vibe->id);
-        $vibeFound->title = request('title');
-        $vibeFound->description = request('description');
-        $vibeFound->save();
 
-        $this->spotifyAPI()->updatePlaylist($vibeFound->api_id, [
+        $vibe->title = request('title');
+
+        $vibe->type = request('type');
+
+        $vibe->auto_dj = request('auto_dj');
+
+        $vibe->description = request('description');
+
+        $vibe->save();
+
+
+
+        $this->spotifyAPI()->updatePlaylist($vibe->api_id, [
+
             'name' => request('title')
+
         ]);
 
-        return redirect('/vibe/' . $vibeFound->id);
+
+        return redirect('/vibe/' . $vibe->id);
     }
+
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -166,14 +283,19 @@ class VibeController extends Controller
      */
     public function destroy(Vibe $vibe)
     {
+
         $this->authorize('delete', $vibe);
+
         
         $this->spotifyAPI()->unfollowPlaylistForCurrentUser($vibe->api_id);
 
-        $vibeFound = Vibe::findOrFail($vibe->id);
-        $message = $vibeFound->title . ' has been deleted.';
-        $vibeFound->users()->detach(Auth::id());
-        $vibeFound->delete();
+        $message = $vibe->title . ' has been deleted.';
+
+        $vibe->users()->detach(Auth::id());
+
+        $vibe->delete();
+
+
 
         return redirect('/home')->with('message', $message);
     }
