@@ -5,8 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Vibe extends Model
-{
 
+{
 
     protected $guarded = [];
 
@@ -22,6 +22,7 @@ class Vibe extends Model
 
 
 
+
     public function tracks() 
 
     {
@@ -29,6 +30,7 @@ class Vibe extends Model
         return $this->belongsToMany(Track::class)->withTimestamps();
 
     }
+
 
 
 
@@ -42,16 +44,21 @@ class Vibe extends Model
 
 
 
+
     public function privateType()
 
     {
 
         if($this->type !== 1) {
+
             return false;
+
         } 
 
         return true;
+
     }
+
 
 
 
@@ -60,11 +67,66 @@ class Vibe extends Model
     {
 
         if($this->auto_dj !== 1) {
+
             return false;
+
         } 
 
         return true;
 
     }
+
+
+
+
+    public function joinRequesters() 
+
+    {
+
+        $joinRequesters = [];
+
+        foreach($this->joinRequests as $joinRequest) {
+
+            $joinRequesters[] = $joinRequest->user;
+
+        }
+
+        return $joinRequesters;
+
+    }
+
+
+
+
+    public function members() 
+
+    {
+
+        return $this->users()->orderBy('user_vibe.created_at', 'asc')->get();
+
+    }
+
+
+
+
+    public function userIsAMember() 
+
+    {
+
+        return $this->users()->where('id', auth()->user()->id)->first();
+
+    }
+
+
+
+
+    public function userSentAJoinRequest() 
+
+    {
+
+        return $this->joinRequests()->where('user_id', auth()->user()->id)->first();
+
+    }
+
 
 }
