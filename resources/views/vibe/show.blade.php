@@ -83,15 +83,15 @@
             <br><br>
 
 
-            @if(count($pendingRequesters) > 0)
+            @if(count($vibe->joinRequesters()) > 0)
 
                 <h3>Requests</h3>
 
-                @foreach($pendingRequesters as $pendingRequester)
+                @foreach($vibe->joinRequesters() as $joinRequester)
 
-                    <p>{{ $pendingRequester->name }}</p>
+                    <p>{{ $joinRequester->name }}</p>
 
-                    <form method="POST" action="{{ route('join-request.respond', ['vibe' => $vibe->id, 'user' => $pendingRequester->id]) }}">
+                    <form method="POST" action="{{ route('join-request.respond', ['vibe' => $vibe->id, 'user' => $joinRequester->id]) }}">
 
                         @csrf
 
@@ -119,9 +119,9 @@
 
         @cannot('delete', $vibe)
 
-            @if(isset($isUserAMember)) 
+            @if($vibe->userIsAMember()) 
 
-                <form method="POST" action="{{ route('uservibe.destroy', ['vibe' => $vibe->id, 'user' => $userVibesTracks->id]) }}">
+                <form method="POST" action="{{ route('uservibe.destroy', ['vibe' => $vibe->id, 'user' => $user->id]) }}">
 
                     @csrf
 
@@ -131,7 +131,7 @@
 
                 </form>
 
-            @elseif(isset($userJoinRequest))
+            @elseif($vibe->userSentAJoinRequest())
 
                 <form method="POST" action="{{ route('join-request.cancel', ['vibe' => $vibe->id]) }}">
 
@@ -183,7 +183,7 @@
 
         <h3>Members</h3>
 
-        @foreach($members as $member)
+        @foreach($vibe->members() as $member)
 
             <p>{{ $member->name }}</p>
 
@@ -219,23 +219,23 @@
 
 
 
-        @if(count($tracks) > 0) 
+        @if(count($apiTracks) > 0) 
 
             <h3>Tracks</h3>
 
-            @foreach($tracks as $track)
+            @foreach($apiTracks as $apiTrack)
 
-                <img src="{{ $track->album->images[0]->url }}">
+                <img src="{{ $apiTrack->album->images[0]->url }}">
 
-                <p>{{ $track->name }}</p>
+                <p>{{ $apiTrack->name }}</p>
 
 
 
-                @foreach($userVibesTracks['vibes'] as $userVibe)
+                @foreach($user['vibes'] as $userVibe)
 
-                    @if(in_array($userVibe->id, $track->belongs_to_user_vibes))
+                    @if(in_array($userVibe->id, $apiTrack->vibes))
 
-                        <form method="POST" action="{{ route('trackvibe.destroy', ['vibe' => $userVibe->id, 'track' => $track->vibon_id]) }}">
+                        <form method="POST" action="{{ route('trackvibe.destroy', ['vibe' => $userVibe->id, 'track' => $apiTrack->vibon_id]) }}">
 
                             @csrf
 
@@ -253,7 +253,7 @@
 
                             @csrf
 
-                            <input type="hidden" name="track-api-id" value="{{ $track->id }}">
+                            <input type="hidden" name="track-api-id" value="{{ $apiTrack->id }}">
 
                             <input type="hidden" name="vibe-api-id" value="{{ $userVibe->api_id }}">
 

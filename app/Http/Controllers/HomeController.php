@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Vibe;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use App\Spotify\PlaylistTracks;
 
 class HomeController extends Controller
 {
@@ -14,6 +15,7 @@ class HomeController extends Controller
      * @return void
      */
     public function __construct()
+
     {
 
         $this->middleware('spotifySession');
@@ -33,62 +35,15 @@ class HomeController extends Controller
     
     {
 
-        $user = User::find(Auth::id());
-
-        $userVibesTracks = $user::with('vibes.tracks')->where('id', Auth::id())->first();
-
-        $responseNotifications = $user->notifications->where('type', 'App\Notifications\ResponseToJoinAVibe');
-
-        $requestNotifications = $user->unreadNotifications->where('type', 'App\Notifications\RequestToJoinAVibe');
-
-        $vibes = Vibe::all();
-
-
-
-
-
-
-        $trackRecommendations = $this->spotifyAPI()->search('Bob Marley', 'track')->tracks->items;
-
-
-
-        foreach ($trackRecommendations as $trackRecommendation) {
-
-            $trackRecommendation->belongs_to_user_vibes = array();
-
-
-            foreach ($userVibesTracks['vibes'] as $userVibe) {
-                
-                for ($i=0; $i < count($userVibe->tracks); $i++) { 
-
-                    if($trackRecommendation->id == $userVibe->tracks[$i]->api_id) {
-
-                        $trackRecommendation->belongs_to_user_vibes[] = $userVibe->id;
-
-                        $trackRecommendation->vibon_id = $userVibe->tracks[$i]->id;
-
-                    } 
-
-                }
-
-            }
-
-        }
-
-
-
+        $trackSuggestions = $this->spotifyAPI()->search('Peter Tosh', 'track')->tracks->items;
 
         return view('home', [
 
-            'userVibesTracks' => $userVibesTracks, 
+            'user' => auth()->user()->load('vibes.tracks'), 
 
-            'responseNotifications' => $responseNotifications, 
+            'apiTracks' => PlaylistTracks::check($trackSuggestions), 
 
-            'requestNotifications' => $requestNotifications, 
-
-            'trackRecommendations' => $trackRecommendations, 
-
-            'vibes' => $vibes
+            'vibes' => Vibe::all()
 
         ]);
 

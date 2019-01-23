@@ -24,23 +24,31 @@
 
 
 
-        @if(count($responseNotifications) > 0)
+        @if(count($user->notifications) > 0)
 
             <h3>Notifications</h3>
 
-            @foreach($responseNotifications as $responseNotification)
+            @foreach($user->notifications as $notification)
 
                 @foreach($vibes as $vibe)
 
-                    @if($vibe->id == $responseNotification->data['vibe_id'])
+                    @if($vibe->id == $notification->data['vibe_id'])
 
-                        @if($responseNotification->data['response'] == 1)
+                        @if($notification->type == 'App\Notifications\ResponseToJoinAVibe')
 
-                            <p>Your request to join '{{ $vibe->title }}' has been accepted.</p>
+                            @if($notification->data['response'] == 1)
 
-                        @elseif($responseNotification->data['response'] == 0)
+                                <p>Your request to join '{{ $vibe->title }}' has been accepted.</p>
 
-                            <p>Sorry, your request to join '{{ $vibe->title }}' has been rejected.</p>
+                            @elseif($notification->data['response'] == 0)
+
+                                <p>Sorry, your request to join '{{ $vibe->title }}' has been rejected.</p>
+
+                            @endif
+
+                        @elseif($notification->type == 'App\notification\RemovedFromAVibe')
+
+                            <p>You have been removed from the '{{ $vibe->title }}' vibe.</p>
 
                         @endif
 
@@ -58,11 +66,11 @@
 
 
     
-        @if(!empty($userVibesTracks))
+        @if(!empty($user))
 
             <h3>My Vibes</h3>
 
-            @foreach($userVibesTracks['vibes'] as $vibe)
+            @foreach($user['vibes'] as $vibe)
 
                 @if($vibe->pivot->owner == 1)
 
@@ -70,19 +78,19 @@
 
                         {{ $vibe->title }}
 
-                            @for($i = 0; $i < count($requestNotifications); $i++)
+                        @for($notification = 0; $notification < count($user->requestNotifications()); $notification++)
 
-                                @if($requestNotifications[$i]->data['vibe_id'] == $vibe->id)
-                                   
-                                    @if($i == count($requestNotifications) - 1)
+                            @if($user->requestNotifications()[$notification]->data['vibe_id'] == $vibe->id)
+                               
+                                @if($notification == count($user->requestNotifications()) - 1)
 
-                                        ({{ count($requestNotifications) }})
-                                        
-                                    @endif
-                                        
+                                    ({{ count($user->requestNotifications()) }})
+                                    
                                 @endif
+                                    
+                            @endif
 
-                            @endfor
+                        @endfor
 
                     </a>
 
@@ -99,18 +107,19 @@
 
             <h3>Random Tracks</h3>
 
-            @foreach($trackRecommendations as $trackRecommendation)
+            @foreach($apiTracks as $apiTrack)
 
-                <img src="{{ $trackRecommendation->album->images[0]->url }}">
+                <img src="{{ $apiTrack->album->images[0]->url }}">
 
-                <p>{{ $trackRecommendation->name }}</p>
+                <p>{{ $apiTrack->name }}</p>
 
 
-                @foreach($userVibesTracks['vibes'] as $userVibe)
 
-                    @if(in_array($userVibe->id, $trackRecommendation->belongs_to_user_vibes))
+                @foreach($user['vibes'] as $userVibe)
 
-                        <form method="POST" action="{{ route('trackvibe.destroy', ['vibe' => $userVibe->id, 'track' => $trackRecommendation->vibon_id]) }}">
+                    @if(in_array($userVibe->id, $apiTrack->vibes))
+
+                        <form method="POST" action="{{ route('trackvibe.destroy', ['vibe' => $userVibe->id, 'track' => $apiTrack->vibon_id]) }}">
 
                             @csrf
 
@@ -128,7 +137,7 @@
 
                             @csrf
 
-                            <input type="hidden" name="track-api-id" value="{{ $trackRecommendation->id }}">
+                            <input type="hidden" name="track-api-id" value="{{ $apiTrack->id }}">
 
                             <input type="hidden" name="vibe-api-id" value="{{ $userVibe->api_id }}">
 

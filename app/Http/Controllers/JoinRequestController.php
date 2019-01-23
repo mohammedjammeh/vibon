@@ -153,9 +153,9 @@ class JoinRequestController extends Controller
 
 
 
-       $user->notify(new ResponseToJoinAVibe($vibe->id, 1));
+        $user->notify(new ResponseToJoinAVibe($vibe->id, 1));
 
-    	$vibe->users()->attach($user->id, ['owner' => 0]);
+        $vibe->users()->attach($user->id, ['owner' => 0]);
 
     	return redirect('/vibe/' . $vibe->id)->with('message', $user->name . ' is now part of this vibe.');
 
