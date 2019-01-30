@@ -3,71 +3,73 @@
 namespace App\Spotify;
 
 use App\Vibe;
-use SpotifyWebAPI\SpotifyWebAPI;
+use App\Track;
+use App\Spotify\WebAPI;
 use Illuminate\Support\Facades\Session;
 
-class Playlist
+
+class Playlist extends WebAPI
 
 {
 
-
-
-
-
-    public static function all() 
+    public function create($title) 
 
     {
-        $user_id = Spotify::WebAPI()->me()->id;
 
-        return Spotify::WebAPI()->getUserPlaylists($user_id);
+        return $this->api->createPlaylist(['name' => $title]);
 
     }
 
 
 
 
-
-    public static function latest() 
+    public function update($id, $title)
 
     {
 
-        return current(static::all()->items);
+        return  $this->api->updatePlaylist($id, ['name' => $title]);
 
     }
 
 
 
 
-
-    public static function create($title) 
+    public function delete($id)
 
     {
 
-        return Spotify::WebAPI()->createPlaylist(['name' => $title]);
+        return  $this->api->unfollowPlaylistForCurrentUser($id);
+
+    }
+
+
+
+    public function addTrack($playlistId, $trackId) 
+
+
+    {
+
+        return $this->api->addPlaylistTracks($playlistId, [$trackId]);
 
     }
 
 
 
 
-    public static function update($id, $title)
+    public function deleteTrack($playlistId, $trackId) 
 
     {
 
-        return  Spotify::WebAPI()->updatePlaylist($id, ['name' => $title]);
+        $playlist = $this->api->getPlaylist($playlistId);
+
+        $tracks = [
+            'tracks' => [
+                ['id' => $trackId],
+            ],
+        ];
+
+        $this->api->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
 
     }
-
-
-
-
-    public static function delete($id)
-
-    {
-
-        return  Spotify::WebAPI()->unfollowPlaylistForCurrentUser($id);
-
-    }
-
 
 }

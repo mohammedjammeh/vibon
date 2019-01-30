@@ -14,42 +14,41 @@
 
 Auth::routes();
 
-Route::get('/callback', 'CallbackController@spotifyAuth');
+Route::get('/spotify', 'CallbackController@spotifyAuth');
 
 
 
 
 Route::resource('/', 'HomeController');
 
-Route::resource('home', 'HomeController');
+Route::resource('/home', 'HomeController');
 
-Route::apiResource('track', 'TrackController');
+Route::apiResource('/track', 'TrackController');
 
 Route::resource('/vibe', 'VibeController');
 
 
 
 
-Route::post('/join-request/{vibe}', 'JoinRequestController@join')->name('join-request.join');
+Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@join')->name('join-request.join');
 
-Route::delete('/join-request/{vibe}', 'JoinRequestController@cancel')->name('join-request.cancel');
+Route::delete('/join-request/vibe/{vibe}', 'JoinRequestController@cancel')->name('join-request.cancel');
 
-Route::delete('/join-request/{vibe}/user/{user}', 'JoinRequestController@leave')->name('join-request.leave');
+Route::delete('/join-request/vibe/{vibe}/user/{user}', 'JoinRequestController@leave')->name('join-request.leave');
 
-Route::patch('/join-request/{vibe}/user/{user}', 'JoinRequestController@respond')->name('join-request.respond');
-
-
-
-
-
-Route::post('/uservibe/{vibe}', 'UserVibeController@store')->name('uservibe.store');
-
-Route::delete('uservibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy')->name('uservibe.destroy');
+Route::patch('/join-request/vibe/{vibe}/user/{user}', 'JoinRequestController@respond')->name('join-request.respond');
 
 
 
 
-Route::post('/trackvibe', 'TrackVibeController@store')->name('trackvibe.store');
+Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@store')->name('user-vibe.store');
 
-Route::delete('trackvibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('trackvibe.destroy');
+Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy')->name('user-vibe.destroy');
+
+
+
+
+Route::post('/track-vibe/vibe/{vibe}', 'TrackVibeController@store')->name('track-vibe.store');
+
+Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
 

@@ -3,32 +3,32 @@
 namespace App\Spotify;
 
 use App\Vibe;
+use App\Track;
 use App\Spotify\WebAPI;
-use SpotifyWebAPI\SpotifyWebAPI;
-use Illuminate\Support\Facades\Session;
 
-class PlaylistTracks
+
+class Tracks extends WebAPI
 
 {
 
 
-    public static function load(Vibe $vibe) 
+    public function load($tracks) 
 
     {
 
         $apiTracks = [];
 
 
-        foreach ($vibe->tracks as $track) {
+        foreach ($tracks as $track) {
             
-            $apiTrack = Spotify::WebAPI()->getTrack($track->api_id);
+            $apiTrack = $this->api->getTrack($track->api_id);
 
             $apiTracks[] = $apiTrack;
 
         }
 
 
-        return static::check($apiTracks);
+        return $this->check($apiTracks);
 
     }
 
@@ -38,7 +38,7 @@ class PlaylistTracks
 
 
 
-    public static function check($apiTracks) 
+    public function check($apiTracks) 
 
     {
 
@@ -70,5 +70,6 @@ class PlaylistTracks
         return $apiTracks;
 
     }
+
 
 }

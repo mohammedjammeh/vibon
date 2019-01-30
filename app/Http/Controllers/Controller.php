@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Session;
 use SpotifyWebAPI\SpotifyWebAPI;
+use App\Spotify\WebAPI;
 
 class Controller extends BaseController
 
@@ -15,27 +16,15 @@ class Controller extends BaseController
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $spotifyAPI;
 
 
+    public function __construct()
 
-    public function spotifyAPI() {
+    {
 
-        $this->spotifyAPI = new SpotifyWebAPI();
+        $this->middleware('auth');
 
-
-        if (!Session::has('accessToken')) {
-
-            $this->spotifyAPI->setAccessToken(Session::get('credentialsToken'));
-
-        } else {
-
-            $this->spotifyAPI->setAccessToken(Session::get('accessToken'));
-
-        }
-
-
-        return $this->spotifyAPI;
+        new WebAPI();
 
     }
     
