@@ -4,29 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Vibe;
 use App\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreVibe;
+
 use App\Spotify\Playlist;
-use App\Spotify\PlaylistTracks;
+use App\Spotify\Tracks;
+use App\Spotify\WebAPI;
 
 class VibeController extends Controller
 
 {
-
-
-    public function __construct()
-
-    {
-        $this->middleware('spotifySession');
-
-        $this->middleware('auth', ['only' => ['create', 'store', 'edit', 'destroy']]);
-
-        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'destroy']]);
-    }
-
-
-
 
 
     /**
@@ -49,11 +38,18 @@ class VibeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(WebAPI $webAPI)
 
     {
 
-        return view('vibe.create');
+        if($webAPI->userIsAuthorised()) {
+
+            return view('vibe.create');
+
+        }
+
+
+        return $webAPI->authorise();
 
     }
 
@@ -67,18 +63,18 @@ class VibeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreVibe $request)
+    public function store(StoreVibe $request, Playlist $playlist)
 
     {
 
-        Playlist::create($request->input('title'));
+        $newPlaylist = $playlist->create($request->input('title'));
 
 
         $vibe = Vibe::create([
 
             'title' => request('title'),
 
-            'api_id' => Playlist::latest()->id,
+            'api_id' => $newPlaylist->id,
 
             'description' => request('description'),
 
@@ -107,7 +103,7 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function show(Vibe $vibe)
+    public function show(Vibe $vibe, Tracks $tracks)
 
     {
 
@@ -117,10 +113,11 @@ class VibeController extends Controller
 
             'user' => auth()->user()->load('vibes.tracks'),
 
-            'apiTracks' => PlaylistTracks::load($vibe)
+            'apiTracks' => $tracks->load($vibe->tracks)
         ]);
 
     }
+
 
 
 
@@ -132,13 +129,21 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function edit(Vibe $vibe)
+    public function edit(Vibe $vibe, WebAPI $webAPI)
 
     {
 
-        $this->authorize('update', $vibe);;
+        $this->authorize('update', $vibe);
 
-        return view('vibe.edit')->with('vibe', $vibe);
+
+        if($webAPI->userIsAuthorised()) {
+
+            return view('vibe.edit')->with('vibe', $vibe);
+
+        }
+
+
+        return $webAPI->authorise();
 
     }
 
@@ -154,7 +159,7 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreVibe $request, Vibe $vibe)
+    public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)
 
     {
 
@@ -163,7 +168,7 @@ class VibeController extends Controller
 
         $vibe->update(request(['title', 'type', 'auto_dj', 'description']));
 
-        Playlist::update($vibe->api_id, $request->input('title'));
+        $playlist->update($vibe->api_id, $request->input('title'));
 
 
         return redirect('/vibe/' . $vibe->id);
@@ -182,13 +187,21 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vibe $vibe)
+    public function destroy(Vibe $vibe, WebAPI $webAPI, Playlist $playlist)
+
     {
 
         $this->authorize('delete', $vibe);
 
 
-        Playlist::delete($vibe->api_id);
+        if(!$webAPI->userIsAuthorised()) {
+
+            return $webAPI->authorise();
+
+        }
+
+
+        $playlist->delete($vibe->api_id);
 
         $message = $vibe->title . ' has been deleted.';
 
@@ -198,5 +211,8 @@ class VibeController extends Controller
 
 
         return redirect('/home')->with('message', $message);
+
     }
+
+
 }

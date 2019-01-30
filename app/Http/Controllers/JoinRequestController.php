@@ -11,24 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JoinRequestController extends Controller
+
 {
-
-
-	public function __construct()
-
-    {
-
-        $this->middleware('spotifySession');
-
-        $this->middleware('auth');
-
-        $this->middleware('spotifyAuth');
-
-    }
-
-
-
-
 
 
     public function vibeOwner($vibe)
@@ -160,7 +144,6 @@ class JoinRequestController extends Controller
     	return redirect('/vibe/' . $vibe->id)->with('message', $user->name . ' is now part of this vibe.');
 
     }
-
 
 
 }

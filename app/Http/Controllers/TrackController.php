@@ -7,12 +7,6 @@ use Illuminate\Http\Request;
 
 class TrackController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('spotifySession');
-        $this->middleware('spotifyAuth', ['only' => ['create', 'store', 'edit', 'delete']]);
-    }
 
     /**
      * Display a listing of the resource.

@@ -5,47 +5,35 @@ namespace App\Http\Controllers;
 use App\Vibe;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use App\Spotify\PlaylistTracks;
+use App\Spotify\Search;
+use App\Spotify\Tracks;
 
 class HomeController extends Controller
+
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-
-    {
-
-        $this->middleware('spotifySession');
-
-        $this->middleware('auth');
-
-        $this->middleware('spotifyAuth');
-
-    }
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Search $search, Tracks $tracks)
     
     {
 
-        $trackSuggestions = $this->spotifyAPI()->search('Peter Tosh', 'track')->tracks->items;
+        $trackSuggestions = $search->tracks('Peter Tosh');
 
         return view('home', [
 
             'user' => auth()->user()->load('vibes.tracks'), 
 
-            'apiTracks' => PlaylistTracks::check($trackSuggestions), 
+            'apiTracks' => $tracks->check($trackSuggestions), 
 
             'vibes' => Vibe::all()
 
         ]);
 
     }
+
+
 }
