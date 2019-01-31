@@ -10,7 +10,7 @@ use App\User;
 use App\Vibe;
 use App\Notifications\ResponseToJoinAVibe;
 
-class HomepageTest extends TestCase
+class HomeTest extends TestCase
 
 {
 	use DatabaseMigrations, WithoutMiddleware;
