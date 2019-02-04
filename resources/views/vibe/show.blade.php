@@ -27,9 +27,13 @@
         <p>
 
             @if($vibe->type == 1)
+
                 <p>Private Account</p>
+
             @else
+
                 <p>Public Account</p>
+
             @endif
 
         </p>
@@ -39,10 +43,14 @@
 
         <p>
             
-            @if($vibe->auto_dj == 0)
-                <p>Manual DJ</p>
-            @else
+            @if($vibe->auto_dj)
+
                 <p>Auto DJ</p>
+
+            @else
+
+                <p>Manual DJ</p>
+
             @endif
 
         </p>
@@ -79,19 +87,19 @@
                 </div>
 
             </form>
-
+ 
             <br><br>
 
 
-            @if(count($vibe->joinRequesters()) > 0)
+            @if(count($vibe->joinRequests) > 0)
 
                 <h3>Requests</h3>
 
-                @foreach($vibe->joinRequesters() as $joinRequester)
+                @foreach($vibe->joinRequests as $joinRequest)
 
-                    <p>{{ $joinRequester->name }}</p>
+                    <p>{{ $joinRequest->user->name }}</p>
 
-                    <form method="POST" action="{{ route('join-request.respond', ['vibe' => $vibe->id, 'user' => $joinRequester->id]) }}">
+                    <form method="POST" action="{{ route('join-request.respond', ['joinRequest' => $joinRequest->id, 'vibe' => $vibe->id]) }}">
 
                         @csrf
 
@@ -116,10 +124,12 @@
 
 
 
+            @if($vibe->hasMember(auth()->user()->id)) 
+            @endif
 
         @cannot('delete', $vibe)
 
-            @if($vibe->userIsAMember()) 
+            @if($vibe->hasMember(auth()->user()->id)) 
 
                 <form method="POST" action="{{ route('user-vibe.destroy', ['vibe' => $vibe->id, 'user' => $user->id]) }}">
 
@@ -131,27 +141,27 @@
 
                 </form>
 
-            @elseif($vibe->userSentAJoinRequest())
+            @elseif($vibe->hasJoinRequestFrom(auth()->user()->id))
 
-                <form method="POST" action="{{ route('join-request.cancel', ['vibe' => $vibe->id]) }}">
+                <form method="POST" action="{{ route('join-request.destroy', ['joinRequest' => $vibe->hasJoinRequestFrom(auth()->user()->id), 'vibe' => $vibe->id]) }}">
 
                     @csrf
 
                     @method('DELETE')
 
-                    <input type="submit" name="vibe-join-cancel" value="Cancel Join Request">
+                    <input type="submit" name="vibe-join-destroy" value="Cancel Join Request">
 
                 </form>
 
             @else
 
-                @if($vibe->privateType())
+                @if($vibe->type = 1)
 
-                    <form method="POST" action="{{ route('join-request.join', ['vibe' => $vibe->id]) }}">
+                    <form method="POST" action="{{ route('join-request.store', ['vibe' => $vibe->id]) }}">
 
                         @csrf
 
-                        <input type="submit" name="vibe-join" value="Join Vibe">
+                        <input type="submit" name="vibe-store" value="Join Vibe">
 
                     </form>
 
@@ -161,7 +171,7 @@
 
                         @csrf
 
-                        <input type="submit" name="vibe-join" value="Join Vibe">
+                        <input type="submit" name="vibe-store" value="Join Vibe">
 
                     </form>
 
@@ -183,7 +193,7 @@
 
         <h3>Members</h3>
 
-        @foreach($vibe->members() as $member)
+        @foreach($vibe->users as $member)
 
             <p>{{ $member->name }}</p>
 

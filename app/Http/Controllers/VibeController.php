@@ -18,6 +18,19 @@ class VibeController extends Controller
 {
 
 
+
+    public function __construct() {
+
+        parent::__construct();
+
+        $this->middleware('apiAuth', ['only' => ['create', 'edit', 'delete']]);
+
+    }
+
+
+
+
+
     /**
      * Display a listing of the resource.
      *
@@ -38,18 +51,11 @@ class VibeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(WebAPI $webAPI)
+    public function create()
 
     {
 
-        if($webAPI->userIsAuthorised()) {
-
-            return view('vibe.create');
-
-        }
-
-
-        return $webAPI->authorise();
+        return view('vibe.create');
 
     }
 
@@ -129,21 +135,13 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function edit(Vibe $vibe, WebAPI $webAPI)
+    public function edit(Vibe $vibe)
 
     {
 
         $this->authorize('update', $vibe);
 
-
-        if($webAPI->userIsAuthorised()) {
-
-            return view('vibe.edit')->with('vibe', $vibe);
-
-        }
-
-
-        return $webAPI->authorise();
+        return view('vibe.edit')->with('vibe', $vibe);
 
     }
 
@@ -187,18 +185,11 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vibe $vibe, WebAPI $webAPI, Playlist $playlist)
+    public function destroy(Vibe $vibe, Playlist $playlist)
 
     {
 
         $this->authorize('delete', $vibe);
-
-
-        if(!$webAPI->userIsAuthorised()) {
-
-            return $webAPI->authorise();
-
-        }
 
 
         $playlist->delete($vibe->api_id);

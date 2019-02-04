@@ -7,23 +7,40 @@ use App\Track;
 use App\Spotify\WebAPI;
 
 
-class Search extends WebAPI
+class Search
 
 {
+
+	protected $webAPI;
+
+	
+
+    public function __construct(WebAPI $webAPI)
+
+    {
+
+        $this->webAPI = $webAPI->api;
+
+    }  
+
+
+
 
     public function tracks($track) 
 
     {
 
-        return  $this->api->search($track, 'track')->tracks->items;
+        return  $this->webAPI->search($track, 'track')->tracks->items;
 
     }
+
+
 
 
     public function artists($artist)
 
     {
-        return  $this->api->search($artist, 'artist')->artists->items;
+        return  $this->webAPI->search($artist, 'artist')->artists->items;
 
     }
 

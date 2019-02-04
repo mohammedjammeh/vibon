@@ -16,7 +16,13 @@ class Vibe extends Model
     
     {
 
-        return $this->belongsToMany(User::class)->withPivot('owner')->withTimestamps();
+        return $this->belongsToMany(User::class)
+            
+            ->withPivot('owner')
+
+            ->withTimestamps()
+
+            ->orderBy('user_vibe.created_at', 'asc'); 
 
     }
 
@@ -34,97 +40,63 @@ class Vibe extends Model
 
 
 
+
     public function joinRequests() 
 
     {
 
-    	return $this->hasMany(JoinRequest::class);
+    	return $this->hasMany(JoinRequest::class)->with('user');
 
     }
 
 
 
 
-    public function privateType()
+
+    public function hasMember($user) 
 
     {
 
-        if($this->type !== 1) {
-
-            return false;
-
-        } 
-
-        return true;
+        return $this->users->where('id', $user)->first();
 
     }
 
 
 
 
-    public function autoDJ()
+    public function hasJoinRequestFrom($user) 
 
     {
 
-        if($this->auto_dj !== 1) {
-
-            return false;
-
-        } 
-
-        return true;
+        return $this->joinRequests->where('user_id', $user)->first();
 
     }
 
 
 
-
-    public function joinRequesters() 
+    public function owner()
 
     {
 
-        $joinRequesters = [];
-
-        foreach($this->joinRequests as $joinRequest) {
-
-            $joinRequesters[] = $joinRequest->user;
-
-        }
-
-        return $joinRequesters;
+        return $this->users()->where('owner', 1)->first();
 
     }
 
 
 
-
-    public function members() 
-
-    {
-
-        return $this->users()->orderBy('user_vibe.created_at', 'asc')->get();
-
-    }
-
-
-
-
-    public function userIsAMember() 
+    public function notificationFrom($user)
 
     {
 
-        return $this->users()->where('id', auth()->user()->id)->first();
+        return $this->owner()
 
-    }
+            ->unreadNotifications
 
+            ->where('data.requester_id', $user)
 
+            ->where('data.vibe_id', $this->id)
 
-
-    public function userSentAJoinRequest() 
-
-    {
-
-        return $this->joinRequests()->where('user_id', auth()->user()->id)->first();
+            ->last();
 
     }
 

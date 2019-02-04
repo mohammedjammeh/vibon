@@ -30,13 +30,11 @@ Route::resource('/vibe', 'VibeController');
 
 
 
-Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@join')->name('join-request.join');
+Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
 
-Route::delete('/join-request/vibe/{vibe}', 'JoinRequestController@cancel')->name('join-request.cancel');
+Route::delete('/join-request/{joinRequest}/vibe/{vibe}', 'JoinRequestController@destroy')->name('join-request.destroy');
 
-Route::delete('/join-request/vibe/{vibe}/user/{user}', 'JoinRequestController@leave')->name('join-request.leave');
-
-Route::patch('/join-request/vibe/{vibe}/user/{user}', 'JoinRequestController@respond')->name('join-request.respond');
+Route::patch('/join-request/{joinRequest}/vibe/{vibe}', 'JoinRequestController@respond')->name('join-request.respond');
 
 
 

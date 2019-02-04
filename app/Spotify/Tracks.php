@@ -7,9 +7,23 @@ use App\Track;
 use App\Spotify\WebAPI;
 
 
-class Tracks extends WebAPI
+class Tracks
 
 {
+
+    protected $webAPI;
+
+
+
+    public function __construct(WebAPI $webAPI)
+
+    {
+
+        $this->webAPI = $webAPI->api;
+
+    }  
+
+
 
 
     public function load($tracks) 
@@ -21,7 +35,7 @@ class Tracks extends WebAPI
 
         foreach ($tracks as $track) {
             
-            $apiTrack = $this->api->getTrack($track->api_id);
+            $apiTrack = $this->webAPI->getTrack($track->api_id);
 
             $apiTracks[] = $apiTrack;
 
@@ -31,7 +45,6 @@ class Tracks extends WebAPI
         return $this->check($apiTracks);
 
     }
-
 
 
 

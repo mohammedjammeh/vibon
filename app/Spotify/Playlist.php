@@ -5,18 +5,33 @@ namespace App\Spotify;
 use App\Vibe;
 use App\Track;
 use App\Spotify\WebAPI;
-use Illuminate\Support\Facades\Session;
 
 
-class Playlist extends WebAPI
+class Playlist
 
 {
+
+    protected $webAPI;
+
+
+
+
+    public function __construct(WebAPI $webAPI)
+
+    {
+
+        $this->webAPI = $webAPI->api;
+
+    }   
+
+
+
 
     public function create($title) 
 
     {
 
-        return $this->api->createPlaylist(['name' => $title]);
+        return $this->webAPI->createPlaylist(['name' => $title]);
 
     }
 
@@ -27,7 +42,7 @@ class Playlist extends WebAPI
 
     {
 
-        return  $this->api->updatePlaylist($id, ['name' => $title]);
+        return  $this->webAPI->updatePlaylist($id, ['name' => $title]);
 
     }
 
@@ -38,7 +53,7 @@ class Playlist extends WebAPI
 
     {
 
-        return  $this->api->unfollowPlaylistForCurrentUser($id);
+        return  $this->webAPI->unfollowPlaylistForCurrentUser($id);
 
     }
 
@@ -49,7 +64,7 @@ class Playlist extends WebAPI
 
     {
 
-        return $this->api->addPlaylistTracks($playlistId, [$trackId]);
+        return $this->webAPI->addPlaylistTracks($playlistId, [$trackId]);
 
     }
 
@@ -60,7 +75,7 @@ class Playlist extends WebAPI
 
     {
 
-        $playlist = $this->api->getPlaylist($playlistId);
+        $playlist = $this->webAPI->getPlaylist($playlistId);
 
         $tracks = [
             'tracks' => [
@@ -68,7 +83,7 @@ class Playlist extends WebAPI
             ],
         ];
 
-        $this->api->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
+        $this->webAPI->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
 
     }
 
