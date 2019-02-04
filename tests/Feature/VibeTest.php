@@ -24,6 +24,8 @@ class VibeTest extends TestCase
 
 	{
 
+		$this->app->swap(WebAPI::class, FakeAPI::class);
+
 		$this->withoutExceptionHandling();
 
 		$this->user = factory(User::class)->create();
@@ -46,17 +48,12 @@ class VibeTest extends TestCase
 
 			'auto_dj' => $this->faker->boolean()
 
-		];	
+		];
 
 
-
-		$api = new WebAPI;
-
-		$api->authorise();
-
-
-
-		$playlist = new Playlist();
+		// this is to be called from the fake api 
+		
+		// or create an actual fake api
 
 		$newPlaylist = $playlist->create($attributes['title']);
 
