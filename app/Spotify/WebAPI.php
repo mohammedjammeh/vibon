@@ -15,7 +15,6 @@ class WebAPI
 
 
 
-
     public function __construct()
 
     {
@@ -42,8 +41,6 @@ class WebAPI
 
 
 
-
-
     public function userIsAuthorised() 
 
     {
@@ -58,9 +55,6 @@ class WebAPI
         return false;
 
     }
-
-
-
 
 
 
@@ -97,9 +91,6 @@ class WebAPI
 
 
 
-
-
-
     public function authorise() 
 
     {
@@ -107,5 +98,6 @@ class WebAPI
         return redirect(app('Spotify')->getAuthorizeUrl($this->options()))->send();
 
     }
+
 
 }

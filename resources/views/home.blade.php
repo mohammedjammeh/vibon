@@ -46,11 +46,12 @@
 
                             @endif
 
-                        @elseif($notification->type == 'App\notification\RemovedFromAVibe')
+                        @elseif($notification->type == 'App\Notifications\RemovedFromAVibe')
 
                             <p>You have been removed from the '{{ $vibe->title }}' vibe.</p>
 
                         @endif
+
 
                     @endif
 
@@ -78,19 +79,11 @@
 
                         {{ $vibe->title }}
 
-                        @for($notification = 0; $notification < count($user->requestNotifications()); $notification++)
+                        @if(count($vibe->joinRequests) > 0)
 
-                            @if($user->requestNotifications()[$notification]->data['vibe_id'] == $vibe->id)
-                               
-                                @if($notification == count($user->requestNotifications()) - 1)
+                            ({{ count($vibe->joinRequests) }})
 
-                                    ({{ count($user->requestNotifications()) }})
-                                    
-                                @endif
-                                    
-                            @endif
-
-                        @endfor
+                        @endif
 
                     </a>
 

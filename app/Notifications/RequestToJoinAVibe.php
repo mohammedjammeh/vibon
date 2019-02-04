@@ -45,8 +45,8 @@ class RequestToJoinAVibe extends Notification
     public function toArray($notifiable)
     {
         return [
-            'requester_id' => $this->requester_id,
-            'vibe_id' => $this->vibe_id
+            'vibe_id' => $this->vibe_id,
+            'requester_id' => $this->requester_id
         ];
     }
 }

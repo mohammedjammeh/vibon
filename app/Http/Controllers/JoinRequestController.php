@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Vibe;
 use App\User;
 use App\JoinRequest;
+
 use App\Notifications\RequestToJoinAVibe;
 use App\Notifications\ResponseToJoinAVibe;
 use Illuminate\Http\Request;
@@ -14,22 +15,7 @@ class JoinRequestController extends Controller
 
 {
 
-
-    public function vibeOwner($vibe)
-
-    {
-
-    	return $vibe->users()->where('owner', 1)->first();
-
-    }
-
-
-
-
-
-
-
-    public function join(Vibe $vibe) 
+    public function store(Vibe $vibe) 
 
     {   
 
@@ -37,12 +23,12 @@ class JoinRequestController extends Controller
 
             'vibe_id' => $vibe->id,
 
-            'user_id' => Auth::user()->id
+            'user_id' => auth()->user()->id
 
         ]);
 
 
-        $this->vibeOwner($vibe)->notify(new RequestToJoinAVibe(Auth::user()->id, $vibe->id));
+        $vibe->owner()->notify(new RequestToJoinAVibe(auth()->user()->id, $vibe->id));
 
         return redirect('vibe/' . $vibe->id)->with('message', 'Your request has been sent.');
 
@@ -53,35 +39,13 @@ class JoinRequestController extends Controller
 
 
 
-
-    public function cancel(Vibe $vibe) 
+    public function destroy(JoinRequest $joinRequest, Vibe $vibe) 
 
     {
 
-        $vibe->JoinRequests()
+        $joinRequest->delete();
 
-            ->where('vibe_id', $vibe->id)
-
-            ->where('user_id', Auth::user()->id)
-
-            ->orderBy('created_at', 'desc')
-
-            ->first()
-
-            ->delete();
-
-
-    	$this->vibeOwner($vibe)
-
-            ->notifications
-
-            ->where('data.vibe_id', $vibe->id)
-
-            ->where('data.requester_id', Auth::id())
-
-            ->last()
-
-            ->delete();
+        $vibe->notificationFrom(auth()->user()->id)->delete();
 
 
     	return redirect('vibe/' . $vibe->id)->with('message', 'Your request to join has been cancelled.');
@@ -92,44 +56,25 @@ class JoinRequestController extends Controller
 
 
 
-
-
-    public function respond(Request $request, Vibe $vibe, User $user) 
+    
+    public function respond(Request $request, JoinRequest $joinRequest, Vibe $vibe) 
 
     {
 
-    	$notification = $this->vibeOwner($vibe)
-
-            ->unreadNotifications
-
-            ->where('data.requester_id', $user->id)
-
-            ->where('data.vibe_id', $vibe->id)
-
-            ->first();
+        $joinRequester = $joinRequest->user;
 
 
-    	$notification->markAsRead();
 
+        $joinRequest->delete();
 
-        $vibe->JoinRequests()
-
-            ->where('vibe_id', $vibe->id)
-
-            ->where('user_id', $user->id)
-
-            ->orderBy('created_at', 'desc')
-
-            ->first()
-
-            ->delete();
+        $vibe->notificationFrom($joinRequester->id)->markAsRead();
 
 
 
 
     	if($request->input('reject')) {
 
-            $user->notify(new ResponseToJoinAVibe($vibe->id, 0));
+            $joinRequester->notify(new ResponseToJoinAVibe($vibe->id, 0));
 
     		return redirect('/vibe/' . $vibe->id);
 
@@ -137,11 +82,11 @@ class JoinRequestController extends Controller
 
 
 
-        $user->notify(new ResponseToJoinAVibe($vibe->id, 1));
+        $joinRequester->notify(new ResponseToJoinAVibe($vibe->id, 1));
 
-        $vibe->users()->attach($user->id, ['owner' => 0]);
+        $vibe->users()->attach($joinRequester->id, ['owner' => 0]);
 
-    	return redirect('/vibe/' . $vibe->id)->with('message', $user->name . ' is now part of this vibe.');
+    	return redirect('/vibe/' . $vibe->id)->with('message', $joinRequester->name . ' is now part of this vibe.');
 
     }
 
