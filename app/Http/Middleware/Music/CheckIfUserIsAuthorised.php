@@ -4,7 +4,7 @@ namespace App\Http\Middleware\Music;
 
 use Closure;
 use App\User;
-use App\Music\WebAPI;
+use App\Music\Spotify\WebAPI;
 
 
 class CheckIfUserIsAuthorised

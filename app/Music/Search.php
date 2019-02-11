@@ -2,44 +2,19 @@
 
 namespace App\Music;
 
-use App\Music\WebAPI;
-
+use App\Music\InterfaceAPI;
 
 class Search
-
 {
+	protected $api;
 
-	protected $webAPI;
-
-	
-
-    public function __construct(WebAPI $webAPI)
-
+    public function __construct(InterfaceAPI $interfaceAPI)
     {
-
-        $this->webAPI = $webAPI->api;
-
+        $this->api = $interfaceAPI;
     }  
 
-
-
-
     public function tracks($track) 
-
     {
-
-        return  $this->webAPI->search($track, 'track')->tracks->items;
-
+        return $this->api->search($track);
     }
-
-
-
-
-    public function artists($artist)
-
-    {
-        return  $this->webAPI->search($artist, 'artist')->artists->items;
-
-    }
-
 }
