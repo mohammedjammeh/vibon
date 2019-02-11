@@ -22,7 +22,7 @@ class Controller extends BaseController
 
         $this->middleware('auth');
 
-        $this->middleware('apiAccess');
+        $this->middleware('setAccessTokenForAPI');
 
     }
     

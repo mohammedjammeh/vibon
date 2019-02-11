@@ -61,4 +61,21 @@ class User extends Authenticatable
 
     }
 
+
+
+    public function isAuthorisedForAPI() 
+
+    {
+
+        if (is_null($this->api_access_token)) {
+            
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
 }

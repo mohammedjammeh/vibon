@@ -9,21 +9,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreVibe;
 
-use App\Spotify\Playlist;
-use App\Spotify\Tracks;
-use App\Spotify\WebAPI;
+use App\Music\Playlist;
+use App\Music\Tracks;
+use App\Music\WebAPI;
 
 class VibeController extends Controller
 
 {
 
 
-
     public function __construct() {
 
         parent::__construct();
 
-        $this->middleware('apiAuth', ['only' => ['create', 'edit', 'delete']]);
+        $this->middleware('checkAuthorisationForAPI', ['only' => ['create', 'edit', 'delete']]);
 
     }
 
@@ -51,7 +50,7 @@ class VibeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(WebAPI $webAPI)
 
     {
 
@@ -73,27 +72,27 @@ class VibeController extends Controller
 
     {
 
-        $newPlaylist = $playlist->create($request->input('title'));
+        $newPlaylist = $playlist->create($request->input('name'));
 
 
         $vibe = Vibe::create([
 
-            'title' => request('title'),
+            'name' => request('name'),
 
             'api_id' => $newPlaylist->id,
 
             'description' => request('description'),
 
-            'type' => request('type'),
+            'open' => request('open'),
 
             'auto_dj' => request('auto_dj')
 
         ]);
 
 
-        $vibe->users()->attach(Auth::id(), ['owner' => 1]);
+        // $vibe->users()->attach(Auth::id(), ['owner' => 1]);
 
-        return redirect('/vibe/' . $vibe->id);
+        // return redirect('/vibe/' . $vibe->id);
 
     }
 
@@ -164,9 +163,9 @@ class VibeController extends Controller
         $this->authorize('update', $vibe);
         
 
-        $vibe->update(request(['title', 'type', 'auto_dj', 'description']));
+        $vibe->update(request(['name', 'description', 'open', 'auto_dj']));
 
-        $playlist->update($vibe->api_id, $request->input('title'));
+        $playlist->update($vibe->api_id, $request->input('name'));
 
 
         return redirect('/vibe/' . $vibe->id);
@@ -194,7 +193,7 @@ class VibeController extends Controller
 
         $playlist->delete($vibe->api_id);
 
-        $message = $vibe->title . ' has been deleted.';
+        $message = $vibe->name . ' has been deleted.';
 
         $vibe->users()->detach(Auth::id());
 

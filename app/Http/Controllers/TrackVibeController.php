@@ -8,8 +8,8 @@ use App\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Spotify\Playlist;
-use App\Spotify\WebAPI;
+use App\Music\Playlist;
+use App\Music\WebAPI;
 
 
 class TrackVibeController extends Controller

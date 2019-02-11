@@ -30,39 +30,71 @@
 
 
             <div>
-                <input type="text" name="title" placeholder="Title" class="{{ $errors->has('title') ? 'error' : '' }}" value="{{ old('title') }}">
+
+                <input type="text" name="name" placeholder="Name" class="{{ $errors->has('title') ? 'error' : '' }}" value="{{ old('name') }}">
+                
             </div>
 
             <br>
+
+
 
              <div>
-                <label>Type</label>
-                <select name="type" class="{{ $errors->has('type') ? 'error' : '' }}">
-                    <option value="1">Private</option>
-                    <option value="2">Public</option>
-                </select>
-            </div>
 
-            <br>
+                <label>Open</label>
 
-            <div>
-                <label>Auto DJ</label>
-                <select name="auto_dj" class="{{ $errors->has('auto_dj') ? 'error' : '' }}">
+                <select name="open" class="{{ $errors->has('open') ? 'error' : '' }}">
+
                     <option value="0">No</option>
+
                     <option value="1">Yes</option>
+
                 </select>
+
             </div>
 
             <br>
 
+
+
+
+
             <div>
+
+                <label>Auto DJ</label>
+
+                <select name="auto_dj" class="{{ $errors->has('auto_dj') ? 'error' : '' }}">
+
+                    <option value="0">No</option>
+
+                    <option value="1">Yes</option>
+
+                </select>
+
+            </div>
+
+            <br>
+
+
+
+
+
+            <div>
+
                 <textarea name="description" cols="19" rows="5" placeholder="Description" class="{{ $errors->has('description') ? 'error' : '' }}">{{ old('description') }}</textarea>
+
             </div>
 
             <br>
 
+
+
+
+
             <div>
+
                 <input type="submit" name="vibe-create" value="Start">
+
             </div>
 
         </form>

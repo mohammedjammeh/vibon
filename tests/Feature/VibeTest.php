@@ -3,14 +3,14 @@
 namespace Tests\Feature;
 
 use App\User;
+use App\Music\WebAPI;
+use App\Music\Playlist;
+use App\Music\FakeAPI;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-
-use App\Spotify\Playlist;
-use App\Spotify\WebAPI;
 
 class VibeTest extends TestCase
 
@@ -24,47 +24,41 @@ class VibeTest extends TestCase
 
 	{
 
-		$this->app->swap(WebAPI::class, FakeAPI::class);
+		$vibe = [];
 
-		$this->withoutExceptionHandling();
-
-		$this->user = factory(User::class)->create();
-
-		$this->actingAs($this->user);
-
-
-
-
-
-		$attributes = [
-
-			'title' => $this->faker->word,
-
-			'api_id' => '43AkVNhyj923bn0FHw0RC',
-
-			'description' => $this->faker->paragraph,
-
-			'type' => $this->faker->boolean(),
-
-			'auto_dj' => $this->faker->boolean()
-
-		];
-
-
-		// this is to be called from the fake api 
+		$vibe['name'] = $this->faker->word;
 		
-		// or create an actual fake api
 
-		$newPlaylist = $playlist->create($attributes['title']);
-
-		$attributes[] = array('api_id' => $newPlaylist->id);
+		$fakeAPI = new FakeAPI();
 
 
 
 
-		$this->post('vibe', $attributes);
+		$mockAPI = $this->getMockBuilder(FakeAPI::class)->getMock();
 
-		$this->assertDatabaseHas('vibes', $attributes);
+		$mockAPI->expects($this->any())
+
+		    ->method('createPlaylist')
+
+		    ->will($this->returnValue($fakeAPI->createPlaylist($vibe)));
+
+
+
+
+
+		$vibe['api_id'] = $mockAPI->createPlaylist($vibe)->id;
+
+		$vibe['description'] = $this->faker->paragraph;
+
+		$vibe['open'] = $this->faker->boolean();
+
+		$vibe['auto_dj'] = $this->faker->boolean();
+
+
+
+		$this->post('/vibe', $vibe);
+
+		$this->assertDatabaseHas('vibes', $vibe);
 
 	}
 

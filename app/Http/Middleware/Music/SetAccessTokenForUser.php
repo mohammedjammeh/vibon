@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Middleware\Spotify;
+namespace App\Http\Middleware\Music;
 
 use Closure;
-use App\Spotify\WebAPI;
+use App\Music\WebAPI;
 
-class CheckAuthorisation
+class SetAccessTokenForUser
 
 {
-
+    
     /**
      * Handle an incoming request.
      *
@@ -19,16 +19,11 @@ class CheckAuthorisation
     public function handle($request, Closure $next)
 
     {
-        $webAPI = new WebAPI();
 
-        if(!$webAPI->userIsAuthorised()) {
-
-            return $webAPI->authorise();
-
-        }
-
+        new WebAPI();
 
         return $next($request);
+
     }
 
 }

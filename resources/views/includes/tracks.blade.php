@@ -16,7 +16,7 @@
 
                             @method('DELETE')
 
-                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->title }}" style="background:red;">
+                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->name }}" style="background:red;">
 
                         </form>
 
@@ -30,7 +30,7 @@
 
                             <input type="hidden" name="track-api-id" value="{{ $apiTrack->id }}">
 
-                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->title }}">
+                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->name }}">
 
                         </form>
 
@@ -39,6 +39,9 @@
                     @endif
 
                 @endforeach
+
+
+                <br>
                 
 
             @endforeach
