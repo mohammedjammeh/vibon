@@ -3,7 +3,7 @@
 namespace App\Http\Middleware\Music;
 
 use Closure;
-use App\Music\WebAPI;
+use App\Music\Spotify\WebAPI;
 
 class SetAccessTokenForUser
 

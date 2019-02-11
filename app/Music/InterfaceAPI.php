@@ -2,10 +2,7 @@
 
 namespace App\Music;
 
-interface Music
-
+interface InterfaceAPI
 {
-
     function createPlaylist($name);
-
 }

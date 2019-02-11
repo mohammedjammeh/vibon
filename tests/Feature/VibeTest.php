@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\User;
-use App\Music\WebAPI;
+use App\Music\InterfaceAPI;
 use App\Music\Playlist;
-use App\Music\FakeAPI;
+use App\Music\Fake\WebAPI as FakeAPI;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -13,53 +13,26 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class VibeTest extends TestCase
-
 {
-
 	use WithFaker, RefreshDatabase, WithoutMiddleware;
-
 
 	/** @test */
 	public function a_user_can_create_a_vibe()
-
 	{
-
-		$vibe = [];
-
-		$vibe['name'] = $this->faker->word;
+		app()->bind(InterfaceAPI::class, FakeAPI::class);
+		$playlist = app(Playlist::class);
+		$vibeName = $this->faker->word;
+		$newPlaylist = $playlist->create($vibeName);
 		
-
-		$fakeAPI = new FakeAPI();
-
-
-
-
-		$mockAPI = $this->getMockBuilder(FakeAPI::class)->getMock();
-
-		$mockAPI->expects($this->any())
-
-		    ->method('createPlaylist')
-
-		    ->will($this->returnValue($fakeAPI->createPlaylist($vibe)));
-
-
-
-
-
-		$vibe['api_id'] = $mockAPI->createPlaylist($vibe)->id;
-
-		$vibe['description'] = $this->faker->paragraph;
-
-		$vibe['open'] = $this->faker->boolean();
-
-		$vibe['auto_dj'] = $this->faker->boolean();
-
-
+		$vibe = [
+			'name' => $vibeName,
+			'api_id' => $newPlaylist->id,
+			'description' => $this->faker->paragraph,
+			'open' => $this->faker->boolean(),
+			'auto_dj' => $this->faker->boolean()
+		];
 
 		$this->post('/vibe', $vibe);
-
 		$this->assertDatabaseHas('vibes', $vibe);
-
 	}
-
 }

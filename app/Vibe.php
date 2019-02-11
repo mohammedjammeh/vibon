@@ -5,100 +5,48 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Vibe extends Model
-
 {
-
     protected $guarded = [];
 
-
-
     public function users() 
-    
     {
-
         return $this->belongsToMany(User::class)
-            
             ->withPivot('owner')
-
             ->withTimestamps()
-
             ->orderBy('user_vibe.created_at', 'asc'); 
-
     }
-
-
-
 
     public function tracks() 
-
     {
-
         return $this->belongsToMany(Track::class)->withTimestamps();
-
     }
-
-
-
-
 
     public function joinRequests() 
-
     {
-
     	return $this->hasMany(JoinRequest::class)->with('user');
-
     }
 
-
-
-
-
-    public function hasMember($user) 
-
+    public function hasMember($id) 
     {
-
-        return $this->users->where('id', $user)->first();
-
+        return $this->users->where('id', $id)->first();
     }
 
-
-
-
-    public function hasJoinRequestFrom($user) 
-
+    public function hasJoinRequestFrom($id) 
     {
-
-        return $this->joinRequests->where('user_id', $user)->first();
-
+        return $this->joinRequests->where('user_id', $id)->first();
     }
-
-
 
     public function owner()
-
     {
-
         return $this->users()->where('owner', 1)->first();
-
     }
 
-
-
-    public function notificationFrom($user)
-
+    public function ownerNotificationFrom($id)
     {
-
         return $this->owner()
-
             ->unreadNotifications
-
-            ->where('data.requester_id', $user)
-
+            ->where('data.requester_id', $id)
             ->where('data.vibe_id', $this->id)
-
             ->last();
-
     }
-
-
 }
