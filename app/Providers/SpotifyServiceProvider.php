@@ -15,7 +15,9 @@ class SpotifyServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // $this->app->bind(Food::class, function ($app) {
+        //     return new Dinner();
+        // });
     }
 
     /**
@@ -40,5 +42,37 @@ class SpotifyServiceProvider extends ServiceProvider
             return $spotifySession;
 
         });
+    }
+}
+
+
+
+
+interface Food
+{
+    function createRecipe();
+}
+
+class Breakfast implements Food
+{
+    function createRecipe()
+    {
+        return 'UberEats breakfast recipes';
+    }
+}
+
+class Dinner implements Food
+{
+    function createRecipe()
+    {
+        return 'UberEats recipes';
+    }
+}
+
+class FakeDinner extends Dinner
+{
+    function createRecipe()
+    {
+        return 'my fake stub for testing recipes creation ';
     }
 }

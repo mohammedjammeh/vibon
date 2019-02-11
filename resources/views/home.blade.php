@@ -38,17 +38,17 @@
 
                             @if($notification->data['response'] == 1)
 
-                                <p>Your request to join '{{ $vibe->title }}' has been accepted.</p>
+                                <p>Your request to join '{{ $vibe->name }}' has been accepted.</p>
 
                             @elseif($notification->data['response'] == 0)
 
-                                <p>Sorry, your request to join '{{ $vibe->title }}' has been rejected.</p>
+                                <p>Sorry, your request to join '{{ $vibe->name }}' has been rejected.</p>
 
                             @endif
 
                         @elseif($notification->type == 'App\Notifications\RemovedFromAVibe')
 
-                            <p>You have been removed from the '{{ $vibe->title }}' vibe.</p>
+                            <p>You have been removed from the '{{ $vibe->name }}' vibe.</p>
 
                         @endif
 
@@ -69,31 +69,35 @@
     
         @if(!empty($user))
 
-            <h3>My Vibes</h3>
+            @if(count($user['vibes']) > 0)
 
-            @foreach($user['vibes'] as $vibe)
+                <h3>My Vibes</h3>
 
-                @if($vibe->pivot->owner == 1)
+                @foreach($user['vibes'] as $vibe)
 
-                    <a href="{{ route('vibe.show', ['id' => $vibe->id]) }}">
+                    @if($vibe->pivot->owner == 1)
 
-                        {{ $vibe->title }}
+                        <a href="{{ route('vibe.show', ['id' => $vibe->id]) }}">
 
-                        @if(count($vibe->joinRequests) > 0)
+                            {{ $vibe->name }}
 
-                            ({{ count($vibe->joinRequests) }})
+                            @if(count($vibe->joinRequests) > 0)
 
-                        @endif
+                                ({{ count($vibe->joinRequests) }})
 
-                    </a>
+                            @endif
 
-                    <br>
+                        </a>
 
-                @endif
+                        <br>
 
-            @endforeach
+                    @endif
 
-            <br><br><br>
+                @endforeach
+
+                <br><br><br>
+
+            @endif
 
 
 

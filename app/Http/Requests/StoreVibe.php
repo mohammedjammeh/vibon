@@ -24,10 +24,15 @@ class StoreVibe extends FormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'min:3', 'max:25'],
+
+            'name' => ['required', 'min:3', 'max:25'],
+
             'description' => ['required', 'min:3', 'max:255'],
-            'type' => ['required'],
+
+            'open' => ['required'],
+
             'auto_dj' => ['required'] 
+
         ];
     }
 }

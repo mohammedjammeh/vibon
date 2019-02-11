@@ -17,7 +17,7 @@
 
 
 
-        <p>{{ $vibe->title }}</p>
+        <p>{{ $vibe->name }}</p>
 
         <p>{{ $vibe->description }}</p>
 
@@ -26,13 +26,13 @@
 
         <p>
 
-            @if($vibe->type == 1)
+            @if($vibe->open)
 
-                <p>Private Account</p>
+                <p>Opened</p>
 
             @else
 
-                <p>Public Account</p>
+                <p>Not Opened</p>
 
             @endif
 

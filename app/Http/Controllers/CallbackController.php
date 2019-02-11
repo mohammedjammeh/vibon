@@ -2,13 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+
+use App\User;
+use SpotifyWebAPI\SpotifyWebAPI;
 
 class CallbackController extends Controller
 
 {
+
+    public function updateUserDetailsForAPI($id, $accessToken, $refreshToken)
+
+    {
+        
+        $user = User::findOrFail(Auth()->user()->id);
+
+        $user->api_id = $id;
+
+        $user->api_access_token = $accessToken;
+
+        $user->api_refresh_token = $refreshToken;
+
+        $user->api_token_set_at = date("Y-m-d H:i:s");
+
+        $user->save();
+
+    }
+
+
+
 
     public function spotifyAuth()
 
@@ -18,36 +41,23 @@ class CallbackController extends Controller
 
         $accessToken = app('Spotify')->getAccessToken();
 
-        Session::put('accessToken', $accessToken);
+        $refreshToken = app('Spotify')->getRefreshToken();
 
 
-        $this->checkUserApiId();
 
+        $api = new SpotifyWebAPI();
+
+        $api->setAccessToken($accessToken);
+
+        $id = $api->me()->id;
+
+
+
+        $this->updateUserDetailsForAPI($id, $accessToken, $refreshToken);
 
         return redirect()->back();
         
     }
 
-
-
-
-
-    public function checkUserApiId() 
-
-    {
-
-        $user = User::findOrFail(Auth()->user()->id);
-
-        if ($user->api_id == null) 
-
-        {
-
-            $user->api_id = $this->spotifyAPI()->me()->id;
-
-            $user->save();
-
-        }
-
-    }
 
 }

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Vibe;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use App\Spotify\Search;
-use App\Spotify\Tracks;
+use App\Music\Search;
+use App\Music\Tracks;
 
 class HomeController extends Controller
 
@@ -21,7 +21,7 @@ class HomeController extends Controller
     
     {
 
-        $trackSuggestions = $search->tracks('Peter Tosh');
+        $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
 
         return view('home', [
 

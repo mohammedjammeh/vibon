@@ -12,6 +12,17 @@
 */
 
 
+use App\Providers\Food;
+
+app()->bind(Food::class, \App\Providers\FakeDinner::class);
+
+Route::get('test', function(Food $food) {
+    dd($food, $food->createRecipe());
+});
+
+
+
+
 Auth::routes();
 
 Route::get('/spotify', 'CallbackController@spotifyAuth');

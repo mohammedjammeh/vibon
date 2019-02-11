@@ -36,7 +36,7 @@
 
 
             <div>
-                <input type="text" name="title" placeholder="Title" class="{{ $errors->has('title') ? 'error' : '' }}" value="{{ $vibe->title }}">
+                <input type="text" name="name" placeholder="Name" class="{{ $errors->has('name') ? 'error' : '' }}" value="{{ $vibe->name }}">
             </div>
 
             <br>
@@ -45,21 +45,21 @@
 
 
             <div>
-                <label>Type</label>
+                <label>Open</label>
 
-                <select name="type" class="{{ $errors->has('type') ? 'error' : '' }}">
+                <select name="open" class="{{ $errors->has('open') ? 'error' : '' }}">
 
-                    @if($vibe->privateType())
+                    @if($vibe->public)
 
-                        <option value="1" selected>Private</option>
+                        <option value="0">No</option>
 
-                        <option value="2">Public</option>
+                        <option value="1" selected>Yes</option>
 
                     @else 
 
-                        <option value="1">Private</option>
+                        <option value="0" selected>No</option>
 
-                        <option value="2" selected>Public</option>
+                        <option value="1">Yes</option>
 
                     @endif
 
@@ -79,7 +79,7 @@
 
                 <select name="auto_dj" class="{{ $errors->has('auto_dj') ? 'error' : '' }}">
 
-                    @if($vibe->autoDJ())
+                    @if($vibe->autoDJ)
 
                         <option value="0">No</option>
 

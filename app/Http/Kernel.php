@@ -60,8 +60,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'apiAccess' => \App\Http\Middleware\Spotify\SetAccessToken::class,
-        'apiAuth' => \App\Http\Middleware\Spotify\CheckAuthorisation::class,
+        'setAccessTokenForAPI' => \App\Http\Middleware\Music\SetAccessTokenForUser::class,
+        'checkAuthorisationForAPI' => \App\Http\Middleware\Music\CheckIfUserIsAuthorised::class,
     ];
 
     /**

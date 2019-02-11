@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Spotify;
+namespace App\Music;
 
-use App\Vibe;
-use App\Track;
-use App\Spotify\WebAPI;
+use App\Music\WebAPI;
 
 
 class Tracks
