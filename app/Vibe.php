@@ -21,6 +21,11 @@ class Vibe extends Model
         return $this->belongsToMany(Track::class)->withTimestamps();
     }
 
+    public function path() 
+    {
+        return route('vibe.show', $this);
+    }
+
     public function joinRequests() 
     {
     	return $this->hasMany(JoinRequest::class)->with('user');

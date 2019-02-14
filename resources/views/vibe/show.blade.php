@@ -69,15 +69,15 @@
                     <input type="submit" name="vibe-join-destroy" value="Cancel Join Request">
                 </form>
             @else
-                @if($vibe->type = 1)
-                    <form method="POST" action="{{ route('join-request.store', ['vibe' => $vibe->id]) }}">
+                @if($vibe->open)
+                    <form method="POST" action="{{ route('user-vibe.store', ['vibe' => $vibe->id]) }}">
                         @csrf
                         <input type="submit" name="vibe-store" value="Join Vibe">
                     </form>
                 @else 
-                    <form method="POST" action="{{ route('user-vibe.store', ['vibe' => $vibe->id]) }}">
+                    <form method="POST" action="{{ route('join-request.store', ['vibe' => $vibe->id]) }}">
                         @csrf
-                        <input type="submit" name="vibe-store" value="Join Vibe">
+                        <input type="submit" name="vibe-store" value="Send Join Request">
                     </form>
                 @endif
             @endif

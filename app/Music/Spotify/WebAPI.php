@@ -34,7 +34,7 @@ class WebAPI implements InterfaceAPI
             $this->api->setAccessToken($this->user->api_access_token);
         }
     }
-
+    
     public function refreshAuthorisedUserToken()
     {
         app('Spotify')->refreshAccessToken($this->user->api_refresh_token);
@@ -79,6 +79,32 @@ class WebAPI implements InterfaceAPI
     public function createPlaylist($name)
     {
         return $this->api->createPlaylist(['name' => $name]);
+    }
+
+    public function updatePlaylist($id, $name) 
+    {
+        return  $this->api->updatePlaylist($id, ['name' => $name]);
+    }
+
+    public function deletePlaylist($id)
+    {
+        return  $this->api->unfollowPlaylistForCurrentUser($id);
+    }
+
+    public function addTrackToPlaylist($playlistId, $trackId)
+    {
+        return $this->api->addPlaylistTracks($playlistId, [$trackId]);
+    }
+
+    public function deleteTrackFromPlaylist($playlistId, $trackId)
+    {
+        $playlist = $this->api->getPlaylist($playlistId);
+        $tracks = [
+            'tracks' => [
+                ['id' => $trackId],
+            ],
+        ];
+        $this->api->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
     }
 
     public function getTrack($id)
