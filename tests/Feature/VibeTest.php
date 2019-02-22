@@ -43,7 +43,7 @@ class VibeTest extends TestCase
 	}
 
 	/** @test */
-	public function a_user_can_view_a_vibe()
+	public function a_vibe_can_be_viewed_by_the_user()
 	{
 		$this->withoutExceptionHandling();
 		$vibe = factory(Vibe::class)->create();
@@ -51,4 +51,32 @@ class VibeTest extends TestCase
 			->assertSee($vibe->name)
 			->assertSee($vibe->description);
 	}
+
+	
+	public function a_vibe_is_sent_to_the_right_location()
+	{
+		// Assert that the response has the given URI value in the Location header:
+		// $response->assertLocation($uri);
+	}
+
+	/** @test */
+	public function a_vibe_has_all_required_data()
+	{
+		// $response->assertViewHasAll(array $data);
+	}
+
+	/** @test */
+	public function a_vibe_is_that_is_meant_to_be_shown_is_getting_displayed() 
+	{
+		// $response->assertViewIs($value);
+	}
+
+	/** @test */
+	public function a_vibe_that_has_been_deleted_is_not_found()
+	{
+		// Assert that the response has a not found status code:
+		// $response->assertNotFound();
+	}
+
+
 }
