@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TrackVibeController extends Controller
 {
-    public function __construct() {
-        parent::__construct();
+    public function __construct()
+    {
         $this->middleware('checkAuthorisationForAPI');
     }
 

@@ -8,12 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\RequestToJoinAVibe;
 
 class User extends Authenticatable
-
 {
-
     use Notifiable;
-
-
+    public const SPOTIFY = 1;
+    public const APPLE = 2;
 
     /**
      * The attributes that are mass assignable.
@@ -21,13 +19,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-
         'name', 'email', 'password',
-
     ];
-
-
-
 
     /**
      * The attributes that should be hidden for arrays.
@@ -35,47 +28,29 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-
         'password', 'remember_token',
-
     ];
 
-
-
-
     public function vibes() 
-
     {
-
         return $this->belongsToMany(Vibe::class)->withPivot('owner')->withTimestamps();
-
     }
-
-
 
     public function requestNotifications() 
-
     {
-
         return $this->unreadNotifications->where('type', RequestToJoinAVibe::class);
-
     }
 
-
-
-    public function isAuthorisedForAPI() 
-
+    public function findBy($username) 
     {
-
-        if (is_null($this->api_access_token)) {
-            
-            return false;
-
-        }
-
-
-        return true;
-
+        return $this->where('username', $username)->first();
     }
 
+    public function isAuthorisedWith($api) 
+    {
+        if($this->where('api', $api)->get()) {
+            return true;
+        }
+        return false;
+    }
 }

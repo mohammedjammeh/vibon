@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Auth;
 
 class JoinRequestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('checkAuthorisationForAPI');
+    }
+
     public function store(Vibe $vibe) 
     {   
         $joinRequest = JoinRequest::create([

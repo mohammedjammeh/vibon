@@ -6,7 +6,7 @@ use App\User;
 use App\Vibe;
 use App\Music\InterfaceAPI;
 use SpotifyWebAPI\SpotifyWebAPI;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class WebAPI implements InterfaceAPI
 {
@@ -16,9 +16,8 @@ class WebAPI implements InterfaceAPI
     public function __construct()
     {
         $this->api = new SpotifyWebAPI();
-        $this->user = User::findOrFail(Auth()->user()->id);
-
-        if ($this->user->isAuthorisedForAPI()) {
+        if (Auth::check()) {
+            $this->user = User::findOrFail(Auth::id());
             $this->setAuthorisedUserToken();
         } else {
             $this->setUnuthorisedUserToken();
@@ -27,20 +26,20 @@ class WebAPI implements InterfaceAPI
 
     public function setAuthorisedUserToken() 
     {
-        if(time() - strtotime($this->user->api_token_set_at) > 3599) {
+        if(time() - strtotime($this->user->token_set_at) > 3599) {
             $this->refreshAuthorisedUserToken();
-            $this->api->setAccessToken($this->user->api_access_token);
+            $this->api->setAccessToken($this->user->access_token);
         } else {
-            $this->api->setAccessToken($this->user->api_access_token);
+            $this->api->setAccessToken($this->user->access_token);
         }
     }
     
     public function refreshAuthorisedUserToken()
     {
-        app('Spotify')->refreshAccessToken($this->user->api_refresh_token);
-        $this->user->api_access_token = app('Spotify')->getAccessToken();
-        $this->user->api_refresh_token = app('Spotify')->getRefreshToken();
-        $this->user->api_token_set_at = date("Y-m-d H:i:s");
+        app('Spotify')->refreshAccessToken($this->user->refresh_token);
+        $this->user->access_token = app('Spotify')->getAccessToken();
+        $this->user->refresh_token = app('Spotify')->getRefreshToken();
+        $this->user->token_set_at = date("Y-m-d H:i:s");
         $this->user->save();
     }
 

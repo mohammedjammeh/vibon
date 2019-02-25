@@ -10,6 +10,11 @@ use App\Music\Tracks;
 
 class HomeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('setAccessTokenForAPI');
+    }
+    
     /**
      * Show the application dashboard.
      *
@@ -18,10 +23,8 @@ class HomeController extends Controller
     public function index(Search $search, Tracks $tracks)
     {
         $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
-        
         return view('home', [
-            'user' => auth()->user()->load('vibes.tracks'), 
-            'apiTracks' => $tracks->check($trackSuggestions), 
+            'apiTracks' => $tracks->check($trackSuggestions),
             'vibes' => Vibe::all()
         ]);
     }

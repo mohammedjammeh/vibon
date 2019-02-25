@@ -13,7 +13,12 @@
 
 
 Auth::routes();
+
 Route::get('/spotify', 'CallbackController@spotifyAuth');
+Route::get('/apple', 'CallbackController@appleAuth');
+
+Route::get('/spotify-login', 'Auth\Music\AuthoriseController@spotify')->name('auth.spotify');
+Route::get('/apple-login', 'Auth\Music\AuthoriseController@apple')->name('auth.apple');
 
 Route::resource('/', 'HomeController');
 Route::resource('/home', 'HomeController');

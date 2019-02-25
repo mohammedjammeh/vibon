@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class UserVibeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('checkAuthorisationForAPI');
+    }
+
     public function store(Vibe $vibe)
     {
         $vibe->users()->attach(Auth::id(), ['owner' => 0]);
