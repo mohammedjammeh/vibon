@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class VibeController extends Controller
 {
     public function __construct() {
-        parent::__construct();
+        $this->middleware('setAccessTokenForAPI');
         $this->middleware('checkAuthorisationForAPI', ['only' => ['create', 'edit', 'delete']]);
     }
 

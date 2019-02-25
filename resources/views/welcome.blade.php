@@ -65,21 +65,11 @@
 
             <div class="content">
                 <div class="title m-b-md"> Vibon </div>
-
-                @if (Route::has('login'))
                     <div class="links">
-                        @auth
-                            <a href="{{ url('/home') }}">Home</a>
-                        @else
-                            <a href="{{ route('login') }}">Login</a>
-                            <br>
-
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}">Register</a>
-                            @endif
-                        @endauth
+                        <a href="{{ route('auth.spotify') }}">Spotify</a>
+                        <br>
+                        <a href="{{ route('auth.apple') }}">Apple</a>
                     </div>
-                @endif
             </div>
         </div>
     </body>

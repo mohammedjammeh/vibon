@@ -3,12 +3,14 @@
 namespace App\Http\Middleware\Music;
 
 use Closure;
-use App\Music\Spotify\WebAPI;
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use App\Music\Spotify\WebAPI as SpotifyWebAPI;
+use App\Music\Spotify\WebAPI as AppleWebAPI;
 
 class SetAccessTokenForUser
-
 {
-    
     /**
      * Handle an incoming request.
      *
@@ -17,13 +19,21 @@ class SetAccessTokenForUser
      * @return mixed
      */
     public function handle($request, Closure $next)
-
     {
+        if(Auth::check()) {
+            View::composer('*', function($view){
+                $user = Auth::user()->load('vibes.tracks');
+                View::share('user', $user);
+            });
+            
+            if(Auth::user()->isAuthorisedWith(User::APPLE)) {
+                new AppleWebAPI();
+                return $next($request);
+            }
+            new SpotifyWebAPI();
+            return $next($request);
+        }
 
-        new WebAPI();
-
-        return $next($request);
-
+        return response(view('welcome'));
     }
-
 }
