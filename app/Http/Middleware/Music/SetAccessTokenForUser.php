@@ -6,6 +6,7 @@ use Closure;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use App\Music\Playlist;
 use App\Music\Spotify\WebAPI as SpotifyWebAPI;
 use App\Music\Spotify\WebAPI as AppleWebAPI;
 
@@ -23,6 +24,7 @@ class SetAccessTokenForUser
         if(Auth::check()) {
             View::composer('*', function($view){
                 $user = Auth::user()->load('vibes.tracks');
+                app(Playlist::class)->load($user['vibes']);
                 View::share('user', $user);
             });
             

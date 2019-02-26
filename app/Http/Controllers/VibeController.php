@@ -49,7 +49,6 @@ class VibeController extends Controller
     {
         $newPlaylist = $playlist->create($request->input('name'));
         $vibe = Vibe::create([
-            'name' => request('name'),
             'api_id' => $newPlaylist->id,
             'description' => request('description'),
             'open' => request('open'),
@@ -65,11 +64,10 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function show(Vibe $vibe, Tracks $tracks)
+    public function show(Vibe $vibe, Playlist $playlist, Tracks $tracks)
     {
         return view('vibe.show', [
-            'vibe' => $vibe, 
-            'user' => auth()->user()->load('vibes.tracks'),
+            'vibe' => $playlist->loadOne($vibe),
             'apiTracks' => $tracks->load($vibe->tracks)
         ]);
     }
@@ -80,10 +78,10 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function edit(Vibe $vibe)
+    public function edit(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('update', $vibe);
-        return view('vibe.edit')->with('vibe', $vibe);
+        return view('vibe.edit')->with('vibe', $playlist->loadOne($vibe));
     }
 
     /**
@@ -96,7 +94,7 @@ class VibeController extends Controller
     public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('update', $vibe);
-        $vibe->update(request(['name', 'description', 'open', 'auto_dj']));
+        $vibe->update(request(['description', 'open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'));
         return redirect($vibe->path());
     }
@@ -110,8 +108,8 @@ class VibeController extends Controller
     public function destroy(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('delete', $vibe);
+        $message = $playlist->loadOne($vibe)->name . ' has been deleted.';
         $playlist->delete($vibe->api_id);
-        $message = $vibe->name . ' has been deleted.';
         $vibe->users()->detach(Auth::id());
         $vibe->delete();
         return redirect('/home')->with('message', $message);

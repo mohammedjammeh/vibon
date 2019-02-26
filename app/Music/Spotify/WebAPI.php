@@ -16,6 +16,7 @@ class WebAPI implements InterfaceAPI
     public function __construct()
     {
         $this->api = new SpotifyWebAPI();
+
         if (Auth::check()) {
             $this->user = User::findOrFail(Auth::id());
             $this->setAuthorisedUserToken();
@@ -82,12 +83,17 @@ class WebAPI implements InterfaceAPI
 
     public function updatePlaylist($id, $name) 
     {
-        return  $this->api->updatePlaylist($id, ['name' => $name]);
+        return $this->api->updatePlaylist($id, ['name' => $name]);
+    }
+
+    public function getPlaylist($id) 
+    {
+        return $this->api->getPlaylist($id);
     }
 
     public function deletePlaylist($id)
     {
-        return  $this->api->unfollowPlaylistForCurrentUser($id);
+        return $this->api->unfollowPlaylistForCurrentUser($id);
     }
 
     public function addTrackToPlaylist($playlistId, $trackId)

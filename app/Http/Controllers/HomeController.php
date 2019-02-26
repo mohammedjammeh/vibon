@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use App\Music\Search;
 use App\Music\Tracks;
+use App\Music\Playlist;
 
 class HomeController extends Controller
 {
@@ -20,12 +21,12 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Search $search, Tracks $tracks)
+    public function index(Search $search, Tracks $tracks, Playlist $playlist)
     {
         $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
         return view('home', [
             'apiTracks' => $tracks->check($trackSuggestions),
-            'vibes' => Vibe::all()
+            'vibes' => $playlist->load(Vibe::all())
         ]);
     }
 }
