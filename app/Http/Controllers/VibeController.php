@@ -66,10 +66,11 @@ class VibeController extends Controller
      */
     public function show(Vibe $vibe, Playlist $playlist, Tracks $tracks)
     {
-        return view('vibe.show', [
-            'vibe' => $playlist->loadOne($vibe),
-            'apiTracks' => $tracks->load($vibe->tracks)
-        ]);
+        dd('lol');
+        // return view('vibe.show', [
+        //     'vibe' => $playlist->loadOne($vibe),
+        //     'apiTracks' => $tracks->load($vibe->tracks)
+        // ]);
     }
 
     /**
