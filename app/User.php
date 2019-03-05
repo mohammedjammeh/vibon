@@ -10,6 +10,7 @@ use App\Notifications\RequestToJoinAVibe;
 class User extends Authenticatable
 {
     use Notifiable;
+
     public const SPOTIFY = 1;
     public const APPLE = 2;
 
@@ -36,14 +37,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Vibe::class)->withPivot('owner')->withTimestamps();
     }
 
+    public function tracks() 
+    {
+        return $this->belongsToMany(Track::class, 'user_track')->withPivot('type')->withTimestamps();
+    }
+
     public function requestNotifications() 
     {
         return $this->unreadNotifications->where('type', RequestToJoinAVibe::class);
-    }
-
-    public function findBy($username) 
-    {
-        return $this->where('username', $username)->first();
     }
 
     public function isAuthorisedWith($api) 

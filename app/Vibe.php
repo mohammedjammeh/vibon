@@ -3,10 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Events\VibeCreated;
 
 class Vibe extends Model
 {
     protected $guarded = [];
+
+    protected $dispatchesEvents = [
+        // 'created' => VibeCreated::class
+    ];
 
     public function users() 
     {
@@ -18,7 +23,7 @@ class Vibe extends Model
 
     public function tracks() 
     {
-        return $this->belongsToMany(Track::class)->withTimestamps();
+        return $this->belongsToMany(Track::class)->withPivot('auto_related')->withTimestamps();
     }
 
     public function path() 

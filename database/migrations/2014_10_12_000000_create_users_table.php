@@ -21,8 +21,8 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
 
             $table->unsignedInteger('api');
-            $table->string('access_token');
-            $table->string('refresh_token');
+            $table->text('access_token');
+            $table->text('refresh_token');
             $table->timestamp('token_set_at')->default(now());
 
             $table->timestamps();

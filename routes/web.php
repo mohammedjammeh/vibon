@@ -35,3 +35,5 @@ Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy'
 Route::post('/track-vibe/vibe/{vibe}', 'TrackVibeController@store')->name('track-vibe.store');
 Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
 
+Route::post('track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
+

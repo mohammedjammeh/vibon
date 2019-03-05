@@ -21,7 +21,7 @@ class Tracks
             $apiTrack = $this->api->getTrack($track->api_id);
             $apiTracks[] = $apiTrack;
         }
-        return $this->check($apiTracks);
+        return $apiTracks;
     }
 
     public function check($apiTracks) 
@@ -40,5 +40,10 @@ class Tracks
             }
         }
         return $apiTracks;
+    }
+
+    public function getRecommendations($options)
+    {
+        return $this->api->getTrackRecommendations($options);
     }
 }

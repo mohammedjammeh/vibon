@@ -38,24 +38,18 @@ class Playlist
         return $this->api->deleteTrackFromPlaylist($playlistId, $trackId);
     }
 
-    public function addNameAttribute($vibe) 
+    public function load($vibe) 
     {
         $playlist = $this->api->getPlaylist($vibe->api_id);
         $vibe->name = $playlist->name;
         return $vibe;
     }
 
-    public function load($vibes) 
+    public function loadMany($vibes) 
     {
         foreach ($vibes as $vibe) {
-            $this->addNameAttribute($vibe);
+            $this->load($vibe);
         }
         return $vibes;
-    }
-
-    public function loadOne($vibe) 
-    {
-        $this->addNameAttribute($vibe);
-        return $vibe;
     }
 }
