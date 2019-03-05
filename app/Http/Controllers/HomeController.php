@@ -26,7 +26,7 @@ class HomeController extends Controller
         $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
         return view('home', [
             'apiTracks' => $tracks->check($trackSuggestions),
-            'vibes' => $playlist->load(Vibe::all())
+            'vibes' => $playlist->loadMany(Vibe::all())
         ]);
     }
 }

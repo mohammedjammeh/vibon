@@ -20,12 +20,9 @@ class TrackVibeController extends Controller
 
     public function store(WebAPI $webAPI, Track $track, Playlist $playlist, Vibe $vibe) 
     {
-        $track = $track->find(request('track-api-id'));
-    	if (!$track) {
-            $track = Track::create(['api_id' => request('track-api-id')]);
-    	} 
+        $track = Track::firstOrCreate(['api_id' => request('track-api-id')]);
         $playlist->addTrack($vibe->api_id, $track->api_id);
-        $track->vibes()->attach($vibe->id);
+        $track->vibes()->attach($vibe->id, ['auto_related' => 0]);
         return redirect()->back();
     }
 

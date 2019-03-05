@@ -8,6 +8,10 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Events\UserCreated;
 use App\Listeners\SendUserCreatedNotification;
+use App\Events\VibeCreated;
+use App\Listeners\StoreAutoVibeTracks;
+use App\Events\VibeUpdated;
+use App\Listeners\UpdateAutoVibeTracks;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,9 +24,14 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-
         UserCreated::class => [
             SendUserCreatedNotification::class,
+        ],
+        VibeCreated::class => [
+            StoreAutoVibeTracks::class,
+        ],
+        VibeUpdated::class => [
+            UpdateAutoVibeTracks::class,
         ],
     ];
 

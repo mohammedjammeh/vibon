@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\AutoDJ\User as UserAuto;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,10 +11,7 @@ class CallbackController extends Controller
 {
     public function storeOrUpdateUserDetails($username, $email, $api, $accessToken, $refreshToken)
     {
-        $user = new User();
-        if($user->findBy($username)) {
-            $user = $user->findBy($username);
-        }
+        $user = User::firstOrNew(['username' => $username]);
         $user->username = $username;
         $user->email = $email; 
         $user->api = $api;
@@ -24,12 +22,21 @@ class CallbackController extends Controller
         return $user;
     }
 
+    public function completeAuth($user)
+    {
+        Auth::login($user, true);
+        if ($user->tracks->isEmpty()) {
+            $userAuto = app(UserAuto::class);
+            $userAuto->storeTracks();
+        }
+        return redirect(session('authRequestMadeAt'));
+    }
+
     public function spotifyAuth()
     {
         app('Spotify')->requestAccessToken($_GET['code']);
         $api = new SpotifyWebAPI();
         $api->setAccessToken(app('Spotify')->getAccessToken());
-
         $user = $this->storeOrUpdateUserDetails(
             $api->me()->id,
             $api->me()->email, 
@@ -37,9 +44,7 @@ class CallbackController extends Controller
             app('Spotify')->getAccessToken(), 
             app('Spotify')->getRefreshToken()
         );
-
-        Auth::login($user, true);
-        return redirect(session('authRequestMadeAt'));
+        return $this->completeAuth($user);
     }
 
     public function appleAuth()

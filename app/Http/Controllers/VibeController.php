@@ -6,8 +6,12 @@ use App\Vibe;
 use App\User;
 
 use App\Music\Playlist;
-use App\Music\Tracks;
+use App\Music\Tracks as TracksAPI;
+use App\Music\User as UserAPI;
+use App\Music\Artist as ArtistAPI;
 use App\Music\Spotify\WebAPI;
+use App\Events\VibeCreated;
+use App\Events\VibeUpdated;
 
 use App\Http\Requests\StoreVibe;
 use Illuminate\Http\Request;
@@ -55,6 +59,7 @@ class VibeController extends Controller
             'auto_dj' => request('auto_dj')
         ]);
         $vibe->users()->attach(Auth()->user()->id, ['owner' => 1]);
+        event(new VibeCreated($vibe));
         return redirect($vibe->path());
     }
 
@@ -64,13 +69,57 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function show(Vibe $vibe, Playlist $playlist, Tracks $tracks)
+    public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI, UserAPI $userAPI, ArtistAPI $artistAPI)
     {
-        dd('lol');
-        // return view('vibe.show', [
-        //     'vibe' => $playlist->loadOne($vibe),
-        //     'apiTracks' => $tracks->load($vibe->tracks)
-        // ]);
+        // $genres = [];
+        // $autoTracks = $vibe->tracks()->where('auto_related', 1)->get();
+        // $autoTracks = $tracksAPI->load($autoTracks);
+
+        // foreach ($autoTracks as $track) {
+        //     $artistGenres = $artistAPI->get($track->artists[0]->id)->genres;
+        //     foreach ($artistGenres as $artistGenre) {
+        //         if (in_array($artistGenre, $genres)) {
+        //             $genres[$artistGenre][] = $track;
+        //         } else {
+        //             $genres[] = $artistGenre;
+        //         }
+        //     }
+        // }
+
+        // dd($genres);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if ($vibe->auto_dj) {
+            $tracks = $vibe->tracks()->where('auto_related', 1)->get();
+        } else {
+            $tracks = $vibe->tracks()->where('auto_related', 0)->get();
+        }
+
+        $loadedTracks = $tracksAPI->load($tracks);
+        return view('vibe.show', [
+            'vibe' => $playlist->load($vibe),
+            'apiTracks' => $tracksAPI->check($loadedTracks)
+        ]);
+
+
+
+        // dd($tracks->getRecommendations([
+        //     'target_popularity' => 25,
+        //     'market' => array('US'),
+        //     'seed_genres' => array('rock'),
+        //     'limit' => 100
+        // ]));
     }
 
     /**
@@ -82,7 +131,7 @@ class VibeController extends Controller
     public function edit(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('update', $vibe);
-        return view('vibe.edit')->with('vibe', $playlist->loadOne($vibe));
+        return view('vibe.edit')->with('vibe', $playlist->load($vibe));
     }
 
     /**
@@ -97,6 +146,7 @@ class VibeController extends Controller
         $this->authorize('update', $vibe);
         $vibe->update(request(['description', 'open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'));
+        event(new VibeUpdated($vibe));
         return redirect($vibe->path());
     }
 
@@ -109,9 +159,10 @@ class VibeController extends Controller
     public function destroy(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('delete', $vibe);
-        $message = $playlist->loadOne($vibe)->name . ' has been deleted.';
+        $message = $playlist->load($vibe)->name . ' has been deleted.';
         $playlist->delete($vibe->api_id);
-        $vibe->users()->detach(Auth::id());
+        $vibe->users()->detach();
+        $vibe->tracks()->detach();
         $vibe->delete();
         return redirect('/home')->with('message', $message);
     }

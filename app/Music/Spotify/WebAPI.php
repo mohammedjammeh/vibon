@@ -18,7 +18,7 @@ class WebAPI implements InterfaceAPI
         $this->api = new SpotifyWebAPI();
 
         if (Auth::check()) {
-            $this->user = User::findOrFail(Auth::id());
+            $this->user = Auth::user();
             $this->setAuthorisedUserToken();
         } else {
             $this->setUnuthorisedUserToken();
@@ -61,6 +61,8 @@ class WebAPI implements InterfaceAPI
                 'user-library-modify',
                 'user-library-read',
                 'user-read-email',
+                'user-read-recently-played',
+                'user-top-read',
             ],
         ];
         return $options;
@@ -115,5 +117,25 @@ class WebAPI implements InterfaceAPI
     public function getTrack($id)
     {
         return $this->api->getTrack($id);
+    }
+
+    public function getTrackRecommendations($options)
+    {
+        return $this->api->getRecommendations($options);
+    }
+
+    public function getUserRecentTracks()
+    {
+        return $this->api->getMyRecentTracks(['limit' => 50])->items;
+    }
+
+    public function getUserTopTracks()
+    {
+        return $this->api->getMyTop('tracks', ['limit' => 20])->items;
+    }
+
+    public function getArtist($id)
+    {
+        return $this->api->getArtist($id);
     }
 }

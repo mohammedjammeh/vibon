@@ -24,7 +24,7 @@
             <div>
                 <label>Open</label>
                 <select name="open" class="{{ $errors->has('open') ? 'error' : '' }}">
-                    @if($vibe->public)
+                    @if($vibe->open)
                         <option value="0">No</option>
                         <option value="1" selected>Yes</option>
                     @else 
@@ -38,7 +38,7 @@
             <div>
                 <label>Auto DJ</label>
                 <select name="auto_dj" class="{{ $errors->has('auto_dj') ? 'error' : '' }}">
-                    @if($vibe->autoDJ)
+                    @if($vibe->auto_dj)
                         <option value="0">No</option>
                         <option value="1" selected>Yes</option>
                     @else 
