@@ -98,9 +98,9 @@ class WebAPI implements InterfaceAPI
         return $this->api->unfollowPlaylistForCurrentUser($id);
     }
 
-    public function addTrackToPlaylist($playlistId, $trackId)
+    public function addTracksToPlaylist($playlistId, $tracksId)
     {
-        return $this->api->addPlaylistTracks($playlistId, [$trackId]);
+        return $this->api->addPlaylistTracks($playlistId, $tracksId);
     }
 
     public function deleteTrackFromPlaylist($playlistId, $trackId)
@@ -112,6 +112,11 @@ class WebAPI implements InterfaceAPI
             ],
         ];
         $this->api->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
+    }
+
+    public function replaceTracksOnPlaylist($playlistId, $tracksId) 
+    {
+        $this->api->replacePlaylistTracks($playlistId, $tracksId);
     }
 
     public function getTrack($id)

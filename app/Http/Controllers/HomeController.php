@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Music\Search;
 use App\Music\Tracks;
 use App\Music\Playlist;
+use App\Music\User as UserAPI;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,8 @@ class HomeController extends Controller
      */
     public function index(Search $search, Tracks $tracks, Playlist $playlist)
     {
+        // $userAPI = app(UserAPI::class);
+        // $trackSuggestions = $userAPI->trackSuggestions();
         $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
         return view('home', [
             'apiTracks' => $tracks->check($trackSuggestions),

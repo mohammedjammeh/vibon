@@ -54,4 +54,11 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    public function scopeIsMemberOf($query, $vibe)
+    {
+        return $query->whereHas('vibes', function($vibeQuery) use($vibe) {
+            return $vibeQuery->where('user_vibe.vibe_id', $vibe->id);
+        });
+    }
 }

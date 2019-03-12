@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
+use App\Genre;
 use App\Track;
-
+use App\Music\Tracks as TracksAPI;
 use App\Music\Playlist;
-use App\Music\Spotify\WebAPI;
+use App\Music\Artist;
+use App\AutoDJ\Genre as AutoGenre;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,18 +20,36 @@ class TrackVibeController extends Controller
         $this->middleware('checkAuthorisationForAPI');
     }
 
-    public function store(WebAPI $webAPI, Track $track, Playlist $playlist, Vibe $vibe) 
+    public function storeOnPlaylist($vibe, $track) 
     {
-        $track = Track::firstOrCreate(['api_id' => request('track-api-id')]);
-        $playlist->addTrack($vibe->api_id, $track->api_id);
+        if (!$vibe->auto_dj) {
+            return app(Playlist::class)->addTracks($vibe->api_id, [$track->api_id]);
+        }
+    }
+
+    public function destroyOnPlaylist($vibe, $track)
+    {
+        if (!$vibe->auto_dj) {
+            return app(Playlist::class)->deleteTrack($vibe->api_id, $track->api_id);
+        }
+    }
+
+    public function store(Vibe $vibe, Track $track, TracksAPI $tracksAPI) 
+    {
+        $track = Track::where('api_id', request('track-api-id'))->get();
+        if ($track->isEmpty()) {
+            $track = Track::create(['api_id' => request('track-api-id')]);
+            AutoGenre::store($track);
+        }
         $track->vibes()->attach($vibe->id, ['auto_related' => 0]);
+        $this->storeOnPlaylist($vibe, $track);
         return redirect()->back();
     }
 
-    public function destroy(WebAPI $webAPI, Vibe $vibe, Track $track, Playlist $playlist) 
-    {
+    public function destroy(Vibe $vibe, Track $track) 
+    {   
         $vibe->tracks()->detach($track->id);
-        $playlist->deleteTrack($vibe->api_id, $track->api_id);
+        $this->destroyOnPlaylist($vibe, $track);
         return redirect()->back();
     }
 }

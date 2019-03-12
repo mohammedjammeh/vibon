@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Vibe;
 use App\User;
+use App\Track;
 
+use App\AutoDJ\Genre;
 use App\Music\Playlist;
 use App\Music\Tracks as TracksAPI;
 use App\Music\User as UserAPI;
@@ -71,55 +73,12 @@ class VibeController extends Controller
      */
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI, UserAPI $userAPI, ArtistAPI $artistAPI)
     {
-        // $genres = [];
-        // $autoTracks = $vibe->tracks()->where('auto_related', 1)->get();
-        // $autoTracks = $tracksAPI->load($autoTracks);
-
-        // foreach ($autoTracks as $track) {
-        //     $artistGenres = $artistAPI->get($track->artists[0]->id)->genres;
-        //     foreach ($artistGenres as $artistGenre) {
-        //         if (in_array($artistGenre, $genres)) {
-        //             $genres[$artistGenre][] = $track;
-        //         } else {
-        //             $genres[] = $artistGenre;
-        //         }
-        //     }
-        // }
-
-        // dd($genres);
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if ($vibe->auto_dj) {
-            $tracks = $vibe->tracks()->where('auto_related', 1)->get();
-        } else {
-            $tracks = $vibe->tracks()->where('auto_related', 0)->get();
-        }
-
+        $tracks = $vibe->showTracks();
         $loadedTracks = $tracksAPI->load($tracks);
         return view('vibe.show', [
             'vibe' => $playlist->load($vibe),
             'apiTracks' => $tracksAPI->check($loadedTracks)
         ]);
-
-
-
-        // dd($tracks->getRecommendations([
-        //     'target_popularity' => 25,
-        //     'market' => array('US'),
-        //     'seed_genres' => array('rock'),
-        //     'limit' => 100
-        // ]));
     }
 
     /**
