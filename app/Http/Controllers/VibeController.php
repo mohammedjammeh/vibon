@@ -71,7 +71,7 @@ class VibeController extends Controller
      * @param  \App\vibe  $vibe
      * @return \Illuminate\Http\Response
      */
-    public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI, UserAPI $userAPI, ArtistAPI $artistAPI)
+    public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
     {
         $tracks = $vibe->showTracks();
         $loadedTracks = $tracksAPI->load($tracks);
