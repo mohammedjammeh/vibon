@@ -29,7 +29,7 @@ class CallbackController extends Controller
             $userAuto = app(UserAuto::class);
             $userAuto->storeTracks();
         }
-        return redirect(session('authRequestMadeAt'));
+        return redirect('home');
     }
 
     public function spotifyAuth()

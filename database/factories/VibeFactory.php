@@ -7,14 +7,13 @@ use Faker\Generator as Faker;
 $factory->define(Vibe::class, function (Faker $faker) {
     return [
     	'api_id' => $faker->uuid,
-    	'name' => $faker->name,
     	'description' => $faker->sentence,
     	'open' => $faker->boolean,
     	'auto_dj' => $faker->boolean
     ];
 });
 
-$factory->afterCreating(Vibe::class, function ($vibe, $faker) {
-    $user = factory(User::class)->create();
-	$vibe->users()->attach($user->id, ['owner' => 1]);
-});
+// $factory->afterCreating(Vibe::class, function ($vibe, $faker) {
+//     $user = factory(User::class)->create();
+// 	$vibe->users()->attach($user->id, ['owner' => 1]);
+// });

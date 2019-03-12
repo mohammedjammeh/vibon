@@ -1,1 +1,3 @@
+Feature\VibeGenres
+ [x] I can get all genres of a vibe
 

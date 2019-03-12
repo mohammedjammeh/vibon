@@ -4,14 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Events\VibeCreated;
+use App\AutoDJ\Genre as AutoGenre;
 
 class Vibe extends Model
 {
     protected $guarded = [];
-
-    protected $dispatchesEvents = [
-        // 'created' => VibeCreated::class
-    ];
 
     public function users() 
     {
@@ -26,6 +23,14 @@ class Vibe extends Model
         return $this->belongsToMany(Track::class)->withPivot('auto_related')->withTimestamps();
     }
 
+    public function showTracks() 
+    {
+        if ($this->auto_dj) {
+            return AutoGenre::orderTracksByPopularity($this);
+        }
+        return $this->tracks()->where('auto_related', 0)->get();
+    }
+    
     public function path() 
     {
         return route('vibe.show', $this);

@@ -10,11 +10,6 @@ use App\Music\Apple\WebAPI as AppleWebAPI;
 
 class AuthoriseController extends Controller
 {
-	public function __construct()
-	{
-		session(['authRequestMadeAt' => url()->previous()]);
-	}
-
 	public function spotify() 
 	{
 		$webAPI = new SpotifyWebAPI();

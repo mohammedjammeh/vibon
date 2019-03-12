@@ -3,7 +3,7 @@
                 <p>{{ $apiTrack->name }}</p>
 
                 @foreach($user['vibes'] as $userVibe)
-                    @if(!$userVibe->auto_dj)
+                    
                         @if(in_array($userVibe->id, $apiTrack->vibes))
                             <form method="POST" action="{{ route('track-vibe.destroy', ['vibe' => $userVibe->id, 'track' => $apiTrack->vibon_id]) }}">
                                 @csrf
@@ -19,7 +19,7 @@
                             </form>
                             <br>
                         @endif
-                    @endif
+                    
                 @endforeach
                 <br>
             @endforeach

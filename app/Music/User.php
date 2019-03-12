@@ -3,6 +3,7 @@
 namespace App\Music;
 
 use App\Music\InterfaceAPI;
+use App\Music\Tracks;
 
 class User
 {
@@ -41,11 +42,13 @@ class User
         }
 
         $tracks = [];
+        $addedTracks = [];
         foreach ($tracksList as $item) {
             foreach (array_count_values($tracksIDs) as $replayedTrackID => $replayCount) {
-                if ($item->track->id == $replayedTrackID && $replayCount > 1) {
+                if ($item->track->id == $replayedTrackID && $replayCount > 1 && !in_array($item->track->id, $addedTracks)) {
                     $item->track->type = self::RECENT_TRACK;
                     $tracks[] = $item->track;
+                    $addedTracks[] = $item->track->id;
                 }
             }
         }
@@ -64,5 +67,19 @@ class User
             $tracksIDs[] = $item->id;
         }
         return $tracks;
+    }
+
+    public function trackSuggestions()
+    {
+        $userTopTracks = collect($this->topTracks())->pluck('id');
+        $userRecentTracks = collect($this->recentTopTracks())->pluck('id');
+        
+        $tracksAPI = app(Tracks::class);
+        $suggestions = $tracksAPI->getRecommendations([
+            'target_popularity' => 40,
+            'seed_tracks' => array($userRecentTracks[1], $userRecentTracks[2], $userRecentTracks[3]),
+            'limit' => 10
+        ]);
+        return $suggestions->tracks;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\AutoDJ\Vibe;
+use App\AutoDJ\Tracks;
 use App\Events\VibeCreated; 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,8 +28,9 @@ class StoreAutoVibeTracks
     public function handle(VibeCreated $event)
     {
         if ($event->vibe->auto_dj) {
-            $vibeAuto = new Vibe();
-            $vibeAuto->storeTracks($event->vibe);
+            $autoTracks = app(Tracks::class);
+            $autoTracks->store($event->vibe);
+            $autoTracks->storeAPI($event->vibe);
         }
     }
 }

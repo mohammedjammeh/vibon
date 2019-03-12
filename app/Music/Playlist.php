@@ -28,14 +28,19 @@ class Playlist
         return $this->api->deletePlaylist($id);
     }
 
-    public function addTrack($playlistId, $trackId) 
+    public function addTracks($playlistId, $tracksId) 
     {
-        return $this->api->addTrackToPlaylist($playlistId, $trackId);
+        return $this->api->addTracksToPlaylist($playlistId, $tracksId);
     }
 
     public function deleteTrack($playlistId, $trackId) 
     {
         return $this->api->deleteTrackFromPlaylist($playlistId, $trackId);
+    }
+
+    public function replaceTracks($playlistId, $tracksId)
+    {
+        return $this->api->replaceTracksOnPlaylist($playlistId, $tracksId);
     }
 
     public function load($vibe) 

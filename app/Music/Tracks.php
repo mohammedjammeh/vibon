@@ -3,6 +3,7 @@
 namespace App\Music;
 
 use App\Music\InterfaceAPI;
+use App\Music\Artist;
 use Illuminate\Support\Facades\Auth;
 
 class Tracks
@@ -26,8 +27,8 @@ class Tracks
 
     public function check($apiTracks) 
     {
+        $user = Auth::user()->load('vibes.tracks');
         foreach ($apiTracks as $apiTrack) {
-            $user = Auth::user()->load('vibes.tracks');
             $apiTrack->vibes = array();
 
             foreach ($user['vibes'] as $userVibe) {
