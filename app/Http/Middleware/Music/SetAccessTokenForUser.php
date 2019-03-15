@@ -37,9 +37,11 @@ class SetAccessTokenForUser
 
     public function checkAndUpateUserTracksForAutoVibes()
     {
-        if (time() - strtotime(Auth::user()->tracks()->first()->created_at) > 86400) {
-            $userAuto = app(UserAuto::class);
-            $userAuto->updateTracks();
+        if(Auth::check()) {
+            if (time() - strtotime(Auth::user()->tracks()->first()->created_at) > 86400) {
+                $userAuto = app(UserAuto::class);
+                $userAuto->updateTracks();
+            }
         }
     }
 
@@ -51,5 +53,4 @@ class SetAccessTokenForUser
             View::share('user', $user);
         });
     }
-
 }

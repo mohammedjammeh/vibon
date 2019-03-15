@@ -13,7 +13,7 @@ $factory->define(Vibe::class, function (Faker $faker) {
     ];
 });
 
-// $factory->afterCreating(Vibe::class, function ($vibe, $faker) {
-//     $user = factory(User::class)->create();
-// 	$vibe->users()->attach($user->id, ['owner' => 1]);
-// });
+$factory->afterCreating(Vibe::class, function ($vibe, $faker) {
+    $user = factory(User::class)->create();
+	$vibe->users()->attach($user->id, ['owner' => 1]);
+});

@@ -36,8 +36,8 @@ class TrackVibeController extends Controller
 
     public function store(Vibe $vibe, Track $track, TracksAPI $tracksAPI) 
     {
-        $track = Track::where('api_id', request('track-api-id'))->get();
-        if ($track->isEmpty()) {
+        $track = Track::where('api_id', request('track-api-id'))->first();
+        if (is_null($track)) {
             $track = Track::create(['api_id' => request('track-api-id')]);
             AutoGenre::store($track);
         }
