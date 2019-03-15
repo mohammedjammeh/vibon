@@ -27,9 +27,10 @@ class StoreAutoVibeTracks
      */
     public function handle(VibeCreated $event)
     {
+        $autoTracks = app(Tracks::class);
+        $autoTracks->store($event->vibe);
+        
         if ($event->vibe->auto_dj) {
-            $autoTracks = app(Tracks::class);
-            $autoTracks->store($event->vibe);
             $autoTracks->storeAPI($event->vibe);
         }
     }

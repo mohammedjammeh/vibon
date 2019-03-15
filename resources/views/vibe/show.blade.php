@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Start a vibe')
+@section('title', $vibe->name)
 @section('content')
     <div class="container">
         @if (session('message'))
@@ -108,7 +108,15 @@
 
         @if(count($apiTracks) > 0) 
             <h3>Tracks</h3>
-            @include('includes.tracks')
+            @if($vibe->auto_dj)
+                @foreach($apiTracks as $apiTrack)
+                    <img src="{{ $apiTrack->album->images[0]->url }}">
+                    <p>{{ $apiTrack->name }}</p>
+                    <br><br>
+                @endforeach
+            @else
+                @include('includes.tracks')
+            @endif
         @endif
     </div>
 @endsection

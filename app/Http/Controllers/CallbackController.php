@@ -17,12 +17,12 @@ class CallbackController extends Controller
         $user->api = $api;
         $user->access_token = $accessToken;
         $user->refresh_token = $refreshToken;
-        $user->token_set_at = date("Y-m-d H:i:s");
+        $user->token_set_at = now();
         $user->save();
         return $user;
     }
 
-    public function completeAuth($user)
+    public function authenticateAndStoreTracks($user)
     {
         Auth::login($user, true);
         if ($user->tracks->isEmpty()) {
@@ -44,7 +44,7 @@ class CallbackController extends Controller
             app('Spotify')->getAccessToken(), 
             app('Spotify')->getRefreshToken()
         );
-        return $this->completeAuth($user);
+        return $this->authenticateAndStoreTracks($user);
     }
 
     public function appleAuth()
