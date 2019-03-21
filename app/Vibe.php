@@ -28,7 +28,7 @@ class Vibe extends Model
         if ($this->auto_dj) {
             return AutoGenre::orderTracksByPopularity($this);
         }
-        return $this->tracks()->where('auto_related', 0)->get();
+        return $this->tracks()->where('auto_related', false)->get();
     }
     
     public function path() 

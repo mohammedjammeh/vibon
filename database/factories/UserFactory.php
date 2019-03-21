@@ -1,5 +1,7 @@
 <?php
 
+use App\User;
+use App\Track;
 use Faker\Generator as Faker;
 
 /*
@@ -13,11 +15,20 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
+$factory->define(User::class, function (Faker $faker) {
     return [
         'username' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
         'remember_token' => str_random(10),
+        'api' => $faker->randomDigit,
+        'access_token' => str_random(10),
+        'refresh_token' => str_random(10),
+        'token_set_at' => now()
     ];
+});
+
+$factory->afterCreating(User::class, function ($user, $faker) {
+    $tracks = factory(Track::class, 2)->create();
+    $tracksIDs = $tracks->pluck('id')->toArray();
+	$user->tracks()->attach($tracksIDs, ['type' => 1]);
 });
