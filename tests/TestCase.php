@@ -3,6 +3,8 @@
 namespace Tests;
 
 use App\User;
+use App\Music\InterfaceAPI;
+use App\Music\Fake\WebAPI as FakeAPI;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -14,7 +16,8 @@ abstract class TestCase extends BaseTestCase
     function setUp() 
     {
     	parent::setUp();
-    	// $this->user = factory(User::class)->create();
-		// $this->actingAs($this->user);
+    	$this->user = factory(User::class)->create();
+		$this->actingAs($this->user);
+		app()->bind(InterfaceAPI::class, FakeAPI::class);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Vibe;
 use App\User;
+use App\Track;
 use Faker\Generator as Faker;
 
 $factory->define(Vibe::class, function (Faker $faker) {
@@ -15,5 +16,9 @@ $factory->define(Vibe::class, function (Faker $faker) {
 
 $factory->afterCreating(Vibe::class, function ($vibe, $faker) {
     $user = factory(User::class)->create();
-	$vibe->users()->attach($user->id, ['owner' => 1]);
+	$vibe->users()->attach($user->id, ['owner' => true]);
+
+	$tracks = factory(Track::class, 2)->create();
+    $tracksIDs = $tracks->pluck('id')->toArray();
+	$vibe->tracks()->attach($tracksIDs, ['auto_related' => false]);
 });
