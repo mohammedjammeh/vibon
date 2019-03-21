@@ -79,8 +79,8 @@ class VibeTest extends TestCase
 		$this->withoutExceptionHandling();
 		$vibe = factory(Vibe::class)->create();
 		$this->get($vibe->path())
-			->assertSuccessful();
-			// ->assertSee($vibe->description);
+			->assertSuccessful()
+			->assertSee($vibe->description);
 	}
 
 	/** @test */
