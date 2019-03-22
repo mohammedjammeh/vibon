@@ -6,14 +6,17 @@ use App\User;
 use App\Vibe;
 use App\Music\InterfaceAPI;
 use App\Music\Playlist;
+use App\Music\Tracks;
 use App\Music\Fake\WebAPI as FakeAPI;
 use App\Events\VibeCreated;
+use App\Events\VibeUpdated;
 
 use Tests\TestCase;
 use Tests\Feature\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class VibeTest extends TestCase
 {
@@ -23,14 +26,14 @@ class VibeTest extends TestCase
 	public function vibe_requires_a_name()
 	{
 		$vibe = factory(Vibe::class)->raw(['name' => '']);
-		$this->post('/vibe', $vibe)->assertSessionHasErrors('name');
+		$this->post(route('vibe.store'))->assertSessionHasErrors('name');
 	}
 
 	/** @test */
 	public function vibe_requires_a_description() 
 	{
 		$vibe = factory(Vibe::class)->raw(['description' => '']);
-		$this->post('/vibe', $vibe)->assertSessionHasErrors('description');
+		$this->post(route('vibe.store'))->assertSessionHasErrors('description');
 	}
 
 	/** @test */
@@ -54,7 +57,7 @@ class VibeTest extends TestCase
 	public function vibe_created_event_is_triggered_when_a_vibe_is_created()
 	{
 		Event::fake();
-		$playlist = app(Playlist::class)->create($this->faker->word);
+		$playlist = app(Playlist::class)->create('Party');
 		$attributes = factory(Vibe::class)->raw([
 			'name' => $playlist->name, 
 			'api_id' => $playlist->id
@@ -74,9 +77,20 @@ class VibeTest extends TestCase
 	}
 
 	/** @test */
+	public function vibe_view_gets_required_data()
+	{
+		$vibe = factory(Vibe::class)->create();
+		$tracks = $vibe->showTracks();
+		$loadedTracks = app(Tracks::class)->load($tracks);
+		$this->get($vibe->path())->assertViewHasAll([
+			'vibe' => app(Playlist::class)->load($vibe),
+			'apiTracks' => app(Tracks::class)->check($loadedTracks)
+		]);
+	}
+
+	/** @test */
 	public function vibe_can_be_viewed_by_the_user()
 	{
-		$this->withoutExceptionHandling();
 		$vibe = factory(Vibe::class)->create();
 		$this->get($vibe->path())
 			->assertSuccessful()
@@ -84,31 +98,93 @@ class VibeTest extends TestCase
 	}
 
 	/** @test */
-	public function vibe_view_gets_required_data()
+	public function vibe_is_shown_with_the_right_view() 
 	{
 		$vibe = factory(Vibe::class)->create();
-		event(new VibeCreated($vibe));
-		$tracks = $vibe->showTracks();
-		dd($vibe->auto_dj, $tracks);
-
-
-		// $this->get($vibe->path())->assertViewHasAll([
-		// 	'vibe' => app(Playlist::class)->load($vibe)
-		// ]);
+		$this->get($vibe->path())->assertViewIs('vibe.show');
 	}
 
-	// /** @test */
-	// public function a_vibe_is_that_is_meant_to_be_shown_is_getting_displayed() 
-	// {
-	// 	// $response->assertViewIs($value);
-	// }
+	/** @test */
+	public function vibe_edit_page_cannot_be_accessed_by_a_non_member()
+	{
+		$this->withoutExceptionHandling();
+		$this->expectException(AuthorizationException::class);
+		$vibe = factory(Vibe::class)->create();
+		$this->get(route('vibe.edit', [$vibe]));
+	}
 
-	// /** @test */
-	// public function a_vibe_that_has_been_deleted_is_not_found()
-	// {
-	// 	// Assert that the response has a not found status code:
-	// 	// $response->assertNotFound();
-	// }
+	/** @test */
+	public function vibe_cannot_be_updated_by_a_non_member()
+	{
+		$vibe = factory(Vibe::class)->create();
+		$this->patch(route('vibe.update', $vibe), [
+			'name' => 'Shaka Dance',
+            'description' => 'Shakala Boom Boom',
+         	'open' => $vibe->open,
+            'auto_dj' =>  $vibe->auto_dj
+        ]);
+		$this->assertDatabaseMissing('vibes', [
+			'id' => $vibe->id,
+			'description' => 'Shakala Boom Boom'
+		]);
+	}
 
+	/** @test */
+	public function vibe_can_be_updated_by_a_member()
+	{
+		Event::fake();
+		$vibe = factory(Vibe::class)->create();
+		$this->actingAs($vibe->users->first());
+		$this->patch(route('vibe.update', $vibe), [
+			'name' => 'Shaka Dance',
+            'description' => 'Shakala Boom Boom',
+         	'open' => $vibe->open,
+            'auto_dj' =>  $vibe->auto_dj
+        ])->assertRedirect(Vibe::first()->path());
+		$this->assertDatabaseHas('vibes', [
+			'id' => $vibe->id,
+			'description' => 'Shakala Boom Boom'
+		]);
+	}
 
+	/** @test */
+	public function vibe_updated_event_is_triggered_when_a_vibe_is_updated()
+	{
+		Event::fake();
+		$vibe = factory(Vibe::class)->create();
+		$this->actingAs($vibe->users->first());
+		$this->patch(route('vibe.update', $vibe), [
+			'name' => 'Shaka Dance',
+            'description' => 'Shakala Boom Boom',
+         	'open' => $vibe->open,
+            'auto_dj' =>  $vibe->auto_dj
+        ]);
+		Event::assertDispatched(VibeUpdated::class);
+	}
+
+	/** @test */
+	public function vibe_can_be_deleted_by_owner()
+	{
+		$vibe = factory(Vibe::class)->create();
+		$owner = $vibe->users()->where('owner', true)->first();
+		$this->actingAs($owner);
+		$this->delete(route('vibe.destroy', $vibe))
+			->assertRedirect(route('index'));
+		$this->assertDatabaseMissing('vibes', [
+			'id' => $vibe->id,
+			'description' => $vibe->description
+		]);
+	}
+
+	/** @test */
+	public function vibe_cannot_be_deleted_by_user_who_is_not_an_owner()
+	{
+		$vibe = factory(Vibe::class)->create();
+		$this->delete(route('vibe.destroy', $vibe))
+			->assertStatus(403);
+		$this->assertDatabaseHas('vibes', [
+			'id' => $vibe->id,
+			'description' => $vibe->description
+		]);
+	}
 }

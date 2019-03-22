@@ -16,12 +16,25 @@ class WebAPI extends spotifyWebAPI
         ];         
     }
 
+    public function updatePlaylist($id, $name) 
+    {
+        return (object) [
+            'id' => $id,
+            'name' => $name
+        ];     
+    }
+
     public function getPlaylist($id) 
     {
         return (object) [
             'id' => $id,
             'name' => 'Reggae Reggae Sound',
         ];  
+    }
+
+    public function deletePlaylist($id)
+    {
+        return (object) [];  
     }
 
     public function addTracksToPlaylist($playlistId, $tracksId)

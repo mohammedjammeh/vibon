@@ -12,8 +12,8 @@ class VibePolicy
 
     private function policyCheck($user, $vibe, $userVibe) 
     {
-        if (!$userVibe->isEmpty()) {
-            return $userVibe[0]->pivot->user_id === $user->id && $userVibe[0]->pivot->vibe_id === $vibe->id;
+        if ($userVibe) {
+            return (int)$userVibe->pivot->user_id === $user->id && (int)$userVibe->pivot->vibe_id === $vibe->id;
         }
     }
 
@@ -26,7 +26,7 @@ class VibePolicy
      */
     public function update(User $user, Vibe $vibe)
     {
-        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->get();
+        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->first();
         return $this->policyCheck($user, $vibe, $userVibe);
     }
 
@@ -39,7 +39,7 @@ class VibePolicy
      */
     public function delete(User $user, Vibe $vibe)
     {
-        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->where('owner', 1)->get();
+        $userVibe = $user->vibes()->where('user_id', $user->id)->where('vibe_id', $vibe->id)->where('owner', true)->first();
         return $this->policyCheck($user, $vibe, $userVibe);
     }
 
