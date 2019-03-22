@@ -123,6 +123,6 @@ class VibeController extends Controller
         $vibe->users()->detach();
         $vibe->tracks()->detach();
         $vibe->delete();
-        return redirect('/home')->with('message', $message);
+        return redirect(route('index'))->with('message', $message);
     }
 }
