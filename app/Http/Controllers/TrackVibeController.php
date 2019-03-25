@@ -41,7 +41,7 @@ class TrackVibeController extends Controller
             $track = Track::create(['api_id' => request('track-api-id')]);
             AutoGenre::store($track);
         }
-        $track->vibes()->attach($vibe->id, ['auto_related' => 0]);
+        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
         $this->storeOnPlaylist($vibe, $track);
         return redirect()->back();
     }

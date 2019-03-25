@@ -2,7 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\User;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Event;
+
 use App\Vibe;
 use App\Music\InterfaceAPI;
 use App\Music\Playlist;
@@ -11,33 +16,23 @@ use App\Music\Fake\WebAPI as FakeAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 
-use Tests\TestCase;
-use Tests\Feature\DB;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Auth\Access\AuthorizationException;
-
 class VibeTest extends TestCase
 {
 	use WithFaker, RefreshDatabase;
 
-	/** @test */
-	public function vibe_requires_a_name()
+	public function test_vibe_requires_a_name()
 	{
 		$vibe = factory(Vibe::class)->raw(['name' => '']);
 		$this->post(route('vibe.store'))->assertSessionHasErrors('name');
 	}
 
-	/** @test */
-	public function vibe_requires_a_description() 
+	public function test_vibe_requires_a_description() 
 	{
 		$vibe = factory(Vibe::class)->raw(['description' => '']);
 		$this->post(route('vibe.store'))->assertSessionHasErrors('description');
 	}
 
-	/** @test */
-	public function vibe_can_be_created()
+	public function test_vibe_can_be_created()
 	{
 		Event::fake();
 		$playlist = app(Playlist::class)->create('Party');
@@ -53,8 +48,7 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	/** @test */
-	public function vibe_created_event_is_triggered_when_a_vibe_is_created()
+	public function test_vibe_created_event_is_triggered_when_a_vibe_is_created()
 	{
 		Event::fake();
 		$playlist = app(Playlist::class)->create('Party');
@@ -66,8 +60,7 @@ class VibeTest extends TestCase
 		Event::assertDispatched(VibeCreated::class);
 	}
 
-	/** @test */
-	public function vibe_created_listener_ensures_that_new_vibe_has_auto_related_tracks_based_on_its_users_tracks()
+	public function test_vibe_created_listener_ensures_that_new_vibe_has_auto_related_tracks_based_on_its_users_tracks()
 	{
 		$vibe = factory(Vibe::class)->create(['auto_dj' => false]);
 		event(new VibeCreated($vibe));
@@ -76,8 +69,7 @@ class VibeTest extends TestCase
 		$this->assertContains($vibeUserTrack, $vibeTracks);
 	}
 
-	/** @test */
-	public function vibe_view_gets_required_data()
+	public function test_vibe_show_view_gets_required_data()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$tracks = $vibe->showTracks();
@@ -88,8 +80,7 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	/** @test */
-	public function vibe_can_be_viewed_by_the_user()
+	public function test_vibe_can_be_viewed_by_a_user()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$this->get($vibe->path())
@@ -97,15 +88,13 @@ class VibeTest extends TestCase
 			->assertSee($vibe->description);
 	}
 
-	/** @test */
-	public function vibe_is_shown_with_the_right_view() 
+	public function test_vibe_is_shown_with_the_right_view() 
 	{
 		$vibe = factory(Vibe::class)->create();
 		$this->get($vibe->path())->assertViewIs('vibe.show');
 	}
 
-	/** @test */
-	public function vibe_edit_page_cannot_be_accessed_by_a_non_member()
+	public function test_vibe_edit_page_cannot_be_accessed_by_a_non_member()
 	{
 		$this->withoutExceptionHandling();
 		$this->expectException(AuthorizationException::class);
@@ -113,8 +102,7 @@ class VibeTest extends TestCase
 		$this->get(route('vibe.edit', [$vibe]));
 	}
 
-	/** @test */
-	public function vibe_cannot_be_updated_by_a_non_member()
+	public function test_vibe_cannot_be_updated_by_a_non_member()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$this->patch(route('vibe.update', $vibe), [
@@ -129,8 +117,7 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	/** @test */
-	public function vibe_can_be_updated_by_a_member()
+	public function test_vibe_can_be_updated_by_a_member()
 	{
 		Event::fake();
 		$vibe = factory(Vibe::class)->create();
@@ -147,8 +134,7 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	/** @test */
-	public function vibe_updated_event_is_triggered_when_a_vibe_is_updated()
+	public function test_vibe_updated_event_is_triggered_when_a_vibe_is_updated()
 	{
 		Event::fake();
 		$vibe = factory(Vibe::class)->create();
@@ -162,8 +148,7 @@ class VibeTest extends TestCase
 		Event::assertDispatched(VibeUpdated::class);
 	}
 
-	/** @test */
-	public function vibe_can_be_deleted_by_owner()
+	public function test_vibe_can_be_deleted_by_owner()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$owner = $vibe->users()->where('owner', true)->first();
@@ -176,8 +161,7 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	/** @test */
-	public function vibe_cannot_be_deleted_by_user_who_is_not_an_owner()
+	public function test_vibe_cannot_be_deleted_by_user_who_is_not_an_owner()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$this->delete(route('vibe.destroy', $vibe))
