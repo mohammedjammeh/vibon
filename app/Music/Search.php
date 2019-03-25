@@ -13,8 +13,8 @@ class Search
         $this->api = $interfaceAPI;
     }  
 
-    public function tracks($track) 
+    public function tracks($name) 
     {
-        return $this->api->search($track);
+        return $this->api->search($name);
     }
 }

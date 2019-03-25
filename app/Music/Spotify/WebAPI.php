@@ -73,9 +73,9 @@ class WebAPI implements InterfaceAPI
         return redirect(app('Spotify')->getAuthorizeUrl($this->options()))->send();
     }
 
-    public function search($track)
+    public function search($name)
     {
-        return $this->api->search($track, 'track')->tracks->items;
+        return $this->api->search($name, 'track')->tracks->items;
     }
     
     public function createPlaylist($name)

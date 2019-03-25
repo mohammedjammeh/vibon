@@ -15,8 +15,9 @@ $factory->define(Vibe::class, function (Faker $faker) {
 });
 
 $factory->afterCreating(Vibe::class, function ($vibe, $faker) {
-    $user = factory(User::class)->create();
-	$vibe->users()->attach($user->id, ['owner' => true]);
+    $users = factory(User::class, 2)->create();
+	$vibe->users()->attach($users->first()->id, ['owner' => true]);
+    $vibe->users()->attach($users->last()->id, ['owner' => false]);
 
 	$tracks = factory(Track::class, 2)->create();
     $tracksIDs = $tracks->pluck('id')->toArray();

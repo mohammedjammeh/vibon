@@ -2,31 +2,37 @@
 
 namespace Tests\Feature;
 
-use App\User;
-use App\Vibe;
-use App\Notifications\ResponseToJoinAVibe;
-
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use App\Vibe;
+use App\Music\Search;
+use App\Music\Tracks;
+use App\Music\Playlist;
 
 class HomeTest extends TestCase
 {
-	use DatabaseMigrations, WithoutMiddleware;
+	use WithFaker, RefreshDatabase;
 
-	/** @test **/
-    public function a_user_can_see_his_accepted_notifications()
+    public function test_home_can_be_viewed_by_a_user()
     {
-    	$this->withoutExceptionHandling();
-    	$user = factory(User::class)->create();
-    	$vibe = factory(Vibe::class)->create();
-    	
-        $user->notify(new ResponseToJoinAVibe($vibe->id, 1));
+        $this->get(route('index'))
+            ->assertSuccessful();
+    }
 
-    	$this->actingAs($user)
-    		->get(route('home.index'))
-    		->assertSuccessful()
-    		->assertSee("Your request to join '{$vibe->title}' has been accepted.");
+    public function test_home_is_shown_with_the_right_view() 
+    {
+        $this->get(route('index'))->assertViewIs('home');
+    }
+
+    public function test_home_view_gets_required_data()
+    {
+        $trackSuggestions = app(Search::class)->tracks('Reggae Banton');
+        factory(Vibe::class, 2)->create();
+        $this->get(route('index'))->assertViewHasAll([
+            'apiTracks' => app(Tracks::class)->check($trackSuggestions),
+            'vibes' => app(Playlist::class)->loadMany(Vibe::all())
+        ]);
     }
 }
