@@ -24,7 +24,7 @@ class Tracks
 
 	public function update($vibe) 
 	{
-		$vibe->tracks()->where('auto_related', 1)->detach();
+		$vibe->tracks()->where('auto_related', true)->detach();
 		$this->store($vibe);
 	}
 

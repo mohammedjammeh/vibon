@@ -55,6 +55,14 @@ class WebAPI extends spotifyWebAPI
         ];     
     }
 
+    public function replaceTracksOnPlaylist($playlistId, $tracksId) 
+    {
+        return (object) [
+            'id' => $playlistId,
+            'tracks' => $tracksId
+        ];   
+    }
+
     public function getTrack($id)
     {
         return (object) [
