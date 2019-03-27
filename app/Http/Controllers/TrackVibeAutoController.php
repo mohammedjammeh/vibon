@@ -9,9 +9,8 @@ class TrackVibeAutoController extends Controller
 {
     public function update(Vibe $vibe)
     {
-    	$autoTracks = app(Tracks::class);
-		$autoTracks->update($vibe);
-		$autoTracks->updateAPI($vibe);
+		app(Tracks::class)->update($vibe);
+		app(Tracks::class)->updateAPI($vibe);
 		return redirect()->back();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Controller;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -65,8 +65,10 @@ class VibeTest extends TestCase
 		$vibe = factory(Vibe::class)->create(['auto_dj' => false]);
 		event(new VibeCreated($vibe));
 		$vibeTracks = $vibe->tracks->pluck('api_id')->toArray();
-		$vibeUserTrack = $vibe->users->first()->tracks->first()->api_id;
-		$this->assertContains($vibeUserTrack, $vibeTracks);
+		$vibeFirstUserTrack = $vibe->users->first()->tracks->first()->api_id;
+		$vibeLastUserTrack = $vibe->users->last()->tracks->first()->api_id;
+		$this->assertContains($vibeFirstUserTrack, $vibeTracks);
+		$this->assertContains($vibeLastUserTrack, $vibeTracks);
 	}
 
 	public function test_vibe_show_view_gets_required_data()
