@@ -5,6 +5,7 @@ namespace Tests\Feature\Controller;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 
 use App\Vibe;
 use App\JoinRequest;
@@ -49,7 +50,7 @@ class JoinRequestTest extends TestCase
 	{
 		$joinRequest = factory(JoinRequest::class)->create();
 		$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-		$response = rand(true, false);
+		$response = Arr::random([true, false]);
 		$this->patch(route('join-request.respond', [
 			'joinRequest' => $joinRequest, 
 			'vibe' => $vibe
