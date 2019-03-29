@@ -2,6 +2,7 @@
 
 namespace App\Music;
 
+use Illuminate\Support\Arr;
 use App\Music\InterfaceAPI;
 use App\Music\Tracks;
 
@@ -17,55 +18,33 @@ class User
         $this->api = $interfaceAPI;
     }
 
-    public function haha()
-    {
-        return 'bow';
-    }
-
     public function topTracks()
     {
         $tracksList = $this->api->getUserTopTracks();
-        foreach ($tracksList as $item) {
-            $item->type = self::TOP_TRACK;
-        }
-
+        collect($tracksList)->map(function ($track) {
+            $track->type = self::TOP_TRACK;
+        });
         return $tracksList;
     }   
 
     public function recentTopTracks()
     {
         $tracksList = $this->api->getUserRecentTracks();
-
-        $tracksIDs = [];
-        foreach ($tracksList as $item) {
-            $tracksIDs[] = $item->track->id;
-        }
-
-        $tracks = [];
-        $addedTracks = [];
-        foreach ($tracksList as $item) {
-            foreach (array_count_values($tracksIDs) as $replayedTrackID => $replayCount) {
-                if ($item->track->id == $replayedTrackID && $replayCount > 1 && !in_array($item->track->id, $addedTracks)) {
-                    $item->track->type = self::RECENT_TRACK;
-                    $tracks[] = $item->track;
-                    $addedTracks[] = $item->track->id;
-                }
-            }
-        }
-        return $tracks;   
+        $tracks = collect($tracksList)->pluck('track');
+        $trackGroups = $tracks->groupBy('id')->toArray();
+        $trackGroupsPlayedMoreThanOnce = Arr::where($trackGroups, function ($value, $key) {
+            return count($value) > 1;
+        });
+        $tracksPlayedMoreThanOnce = Arr::flatten($trackGroupsPlayedMoreThanOnce);
+        $uniqueTracks = collect($tracksPlayedMoreThanOnce)->unique('id');
+        return $uniqueTracks->toArray();   
     }
 
     public function recentTopAndOverallTopTracks()
     {
         $tracksList = array_merge($this->topTracks(), $this->recentTopTracks());
-        $tracksIDs = [];
-        $tracks = [];
-        foreach ($tracksList as $item) {
-            if (!in_array($item->id, $tracksIDs)) {
-                $tracks[] = $item;
-            }
-            $tracksIDs[] = $item->id;
-        }
+        $tracks = collect($tracksList)->unique('id');
+        $tracks->values()->all();
         return $tracks;
     }
 
