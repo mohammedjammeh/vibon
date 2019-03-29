@@ -89,6 +89,40 @@ class WebAPI extends spotifyWebAPI
         ];  
     }
 
+    public function getUserRecentTracks()
+    {
+        return [
+            (object) [
+                'track' => $this->getTrack('recent01')
+            ],
+            (object) [
+                'track' => $this->getTrack('recent01')
+            ],
+            (object) [
+                'track' => $this->getTrack('recent02')
+            ],
+            (object) [
+                'track' => $this->getTrack('recent03')
+            ],
+            (object) [
+                'track' => $this->getTrack('recent03')
+            ],
+            (object) [
+                'track' => $this->getTrack('recent04')
+            ]
+        ];
+    }
+
+    public function getUserTopTracks()
+    {
+        return [
+            $this->getTrack('top01'),
+            $this->getTrack('top02'),
+            $this->getTrack('top03'),
+            $this->getTrack('top04')
+        ];
+    }
+
     public function getArtist($id) 
     {
         return (object) [
