@@ -7,6 +7,7 @@ use App\Vibe;
 use App\Music\InterfaceAPI;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class WebAPI implements InterfaceAPI
 {
@@ -18,7 +19,7 @@ class WebAPI implements InterfaceAPI
         $this->api = new SpotifyWebAPI();
 
         if (Auth::check()) {
-            $this->user = Auth::user();
+            $this->user = auth()->user();
             $this->setAuthorisedUserToken();
         } else {
             $this->setUnuthorisedUserToken();
@@ -27,7 +28,9 @@ class WebAPI implements InterfaceAPI
 
     public function setAuthorisedUserToken() 
     {
-        if(time() - strtotime($this->user->token_set_at) > 3599) {
+        $timeUsertokenSet = $this->user->token_set_at;
+        $oneHourAgo = Carbon::now()->subHour();
+        if($oneHourAgo->greaterThanOrEqualTo($timeUsertokenSet)) {
             $this->refreshAuthorisedUserToken();
             $this->api->setAccessToken($this->user->access_token);
         } else {
