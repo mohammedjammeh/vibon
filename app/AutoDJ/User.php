@@ -6,7 +6,6 @@ use App\Track;
 use App\AutoDJ\Genre as AutoGenre;
 use App\User as UserModel;
 use App\Music\User as UserAPI;
-use Illuminate\Support\Facades\Auth;
 
 class User
 {
@@ -19,13 +18,13 @@ class User
 	            $track = Track::create(['api_id' => $trackItem->id]);
 	            AutoGenre::store($track);
 	        }
-        	$track->users()->attach(Auth::id(), ['type' => $trackItem->type]);
+        	$track->users()->attach(auth()->user()->id, ['type' => $trackItem->type]);
 		}
 	}
 
 	public function updateTracks() 
 	{
-		Auth::user()->tracks()->detach();
+		auth()->user()->tracks()->detach();
 		$this->storeTracks();
 	}
 }
