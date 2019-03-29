@@ -10,6 +10,7 @@ use App\Music\Playlist;
 use App\AutoDJ\User as UserAuto;
 use App\Music\Spotify\WebAPI as SpotifyWebAPI;
 use App\Music\Spotify\WebAPI as AppleWebAPI;
+use Carbon\Carbon;
 
 class SetAccessTokenForUser
 {
@@ -38,10 +39,12 @@ class SetAccessTokenForUser
     public function checkAndUpateUserTracksForAutoVibes()
     {
         if(Auth::check()) {
-            if (time() - strtotime(Auth::user()->tracks()->first()->created_at) > 86400) {
+            $timeUserTrackCreated = auth()->user()->tracks()->first()->pivot->created_at;
+            $twentyFourHoursAgo = Carbon::now()->subDay();
+            if ($twentyFourHoursAgo->greaterThanOrEqualTo($timeUserTrackCreated)) {
                 $userAuto = app(UserAuto::class);
                 $userAuto->updateTracks();
-            }
+            } 
         }
     }
 
