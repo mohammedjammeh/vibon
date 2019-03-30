@@ -1,4 +1,4 @@
-<?php 
+<?php // used in callbackController and SetAccessTokenForUser middleware
 
 namespace App\AutoDJ;
 
@@ -12,14 +12,14 @@ class User
 	public function storeTracks()
 	{
 		$userAPI = app(UserAPI::class);
-		foreach ($userAPI->recentTopAndOverallTopTracks() as $trackItem) {
-	        $track = Track::where('api_id', $trackItem->id)->first();
+		$userAPI->recentTopAndOverallTopTracks()->each(function ($trackItem) {
+		   	$track = Track::where('api_id', $trackItem->id)->first();
 	        if (is_null($track)) {
 	            $track = Track::create(['api_id' => $trackItem->id]);
 	            AutoGenre::store($track);
 	        }
         	$track->users()->attach(auth()->user()->id, ['type' => $trackItem->type]);
-		}
+		});
 	}
 
 	public function updateTracks() 
