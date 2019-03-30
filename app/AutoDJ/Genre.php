@@ -1,53 +1,47 @@
-<?php 
+<?php // used in trackVibeController, AutoTracks and Vibe Model
 
 namespace App\AutoDJ;
 
 use App\Music\Artist;
 use App\Genre as GenreModel;
 use App\Music\Tracks;
+use Illuminate\Support\Arr;
 
 class Genre
 {
     public static function store($track) 
     {
+        $genresIDs = collect([]);
+        $artistsGenres = collect([]);
         $loadedTrack = app(Tracks::class)->load([$track])[0];
-        $genreIDs = [];
-        foreach ($loadedTrack->artists as $artist) {
-            $genres = app(Artist::class)->get($artist->id)->genres;
-            foreach ($genres as $genre) {
-                $trackGenre = GenreModel::firstOrCreate(['name' => $genre]);
-                $genreIDs[] = $trackGenre->id;
-            }
-        }
-        $track->genres()->sync(array_unique($genreIDs));
+
+        $artistsIDs = collect($loadedTrack->artists)->pluck('id');
+        $artistsIDs->each(function ($artistID) use($artistsGenres) {
+            $artistsGenres[] = app(Artist::class)->get($artistID)->genres;
+        });
+
+        $genres = collect(Arr::flatten($artistsGenres))->unique()->values()->all();
+        collect($genres)->each(function ($genre) use($genresIDs) {
+            $trackGenre = GenreModel::firstOrCreate(['name' => $genre]); 
+            $genresIDs[] = $trackGenre->id;             
+        });
+
+        $track->genres()->sync($genresIDs);
     }
 
     public static function orderTracksByPopularityForAPI($vibe)
     {
         $genres = GenreModel::orderByPopularity($vibe)->get()->pluck('tracks');
-        $tracks = [];
-        foreach ($genres as $genre) {
-            foreach ($genre as $track) {
-                $tracks[] = $track->api_id;
-            }
-        }
-        $tracks = array_values(array_unique($tracks));
-        return $tracks;
+        $allTracks = collect($genres)->collapse()->all();
+        $tracksIDs = collect($allTracks)->unique('id')->pluck('api_id')->toArray();
+        return $tracksIDs;
     }
 
     public static function orderTracksByPopularity($vibe)
     {
         $genres = GenreModel::orderByPopularity($vibe)->get()->pluck('tracks');
-        $tracks = [];
-        $trackIDs = [];
-        foreach ($genres as $genre) {
-            foreach ($genre as $track) {
-                if (!in_array($track->id, $trackIDs)) {
-                   $tracks[] = $track; 
-                   $trackIDs[] = $track->id;
-                }
-            }
-        }
+        $allTracks = collect($genres)->collapse()->all();
+        $tracks = collect($allTracks)->unique('id')->values();
         return $tracks;
     }
 }
