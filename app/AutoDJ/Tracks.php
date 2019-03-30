@@ -1,4 +1,4 @@
-<?php 
+<?php // used in Vibe Listeners (created, updated) and trackAutoController
 
 namespace App\AutoDJ;
 

@@ -4,7 +4,6 @@ namespace App\Music;
 
 use App\Music\InterfaceAPI;
 use App\Music\Artist;
-use Illuminate\Support\Facades\Auth;
 
 class Tracks
 {
@@ -17,17 +16,16 @@ class Tracks
 
     public function load($tracks) 
     {
-        $apiTracks = [];
-        foreach ($tracks as $track) {
-            $apiTrack = $this->api->getTrack($track->api_id);
-            $apiTracks[] = $apiTrack;
-        }
-        return $apiTracks;
+        $trackCollection = collect([]);
+        collect($tracks)->each(function ($track) use($trackCollection) {
+            $trackCollection[] = $this->api->getTrack($track->api_id);
+        });
+        return $trackCollection;
     }
 
     public function check($apiTracks) 
     {
-        $user = Auth::user()->load('vibes.tracks');
+        $user = auth()->user()->load('vibes.tracks');
         foreach ($apiTracks as $apiTrack) {
             $apiTrack->vibes = array();
 
