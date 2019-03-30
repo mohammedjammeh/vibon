@@ -30,14 +30,17 @@ class User
     public function recentTopTracks()
     {
         $tracksList = $this->api->getUserRecentTracks();
-        $tracks = collect($tracksList)->pluck('track');
-        $trackGroups = $tracks->groupBy('id')->toArray();
+        $allTracks = collect($tracksList)->pluck('track');
+        $trackGroups = $allTracks->groupBy('id')->toArray();
         $trackGroupsPlayedMoreThanOnce = Arr::where($trackGroups, function ($value, $key) {
             return count($value) > 1;
         });
         $tracksPlayedMoreThanOnce = Arr::flatten($trackGroupsPlayedMoreThanOnce);
-        $uniqueTracks = collect($tracksPlayedMoreThanOnce)->unique('id');
-        return $uniqueTracks->toArray();   
+        $tracks = collect($tracksPlayedMoreThanOnce)->unique('id');
+        $tracks->map(function ($track) {
+            $track->type = self::RECENT_TRACK;
+        });
+        return $tracks->toArray();   
     }
 
     public function recentTopAndOverallTopTracks()
