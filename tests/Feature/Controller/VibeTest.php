@@ -62,13 +62,16 @@ class VibeTest extends TestCase
 
 	public function test_vibe_created_listener_ensures_that_new_vibe_has_auto_related_tracks_based_on_its_users_tracks()
 	{
-		$vibe = factory(Vibe::class)->create(['auto_dj' => false]);
+		$vibe = factory(Vibe::class)->create();
 		event(new VibeCreated($vibe));
-		$vibeTracks = $vibe->tracks->pluck('api_id')->toArray();
-		$vibeFirstUserTrack = $vibe->users->first()->tracks->first()->api_id;
-		$vibeLastUserTrack = $vibe->users->last()->tracks->first()->api_id;
-		$this->assertContains($vibeFirstUserTrack, $vibeTracks);
-		$this->assertContains($vibeLastUserTrack, $vibeTracks);
+		$vibeAutoTracks = $vibe->tracks()->where('auto_related', true)->get()->pluck('api_id');
+
+		$vibeLoad = $vibe->load('users.tracks');
+		$vibeUsersTracks = $vibeLoad['tracks']->pluck('api_id');
+		
+		foreach ($vibeAutoTracks as $autoTrack) {
+			$this->assertContains($autoTrack, $vibeUsersTracks);
+		}
 	}
 
 	public function test_vibe_show_view_gets_required_data()
