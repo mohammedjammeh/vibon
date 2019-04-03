@@ -10,6 +10,7 @@ use App\Vibe;
 use App\Track;
 use App\AutoDJ\Tracks;
 use App\Events\VibeCreated;
+use App\Music\User as UserAPI;
 
 class TracksTest extends TestCase
 {
@@ -37,7 +38,7 @@ class TracksTest extends TestCase
 
     	$vibeUser = $vibe->users->first();
     	$newUserTrack = factory(Track::class)->create();
-    	$vibeUser->tracks()->attach($newUserTrack->id, ['type' => 1]);
+    	$vibeUser->tracks()->attach($newUserTrack->id, ['type' => UserAPI::TOP_TRACK]);
 
     	app(Tracks::class)->update($vibe);
 
