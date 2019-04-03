@@ -2,6 +2,7 @@
 
 use App\User;
 use App\Track;
+use App\Music\User as UserAPI;
 use Faker\Generator as Faker;
 
 /*
@@ -30,5 +31,5 @@ $factory->define(User::class, function (Faker $faker) {
 $factory->afterCreating(User::class, function ($user, $faker) {
     $tracks = factory(Track::class, 2)->create();
     $tracksIDs = $tracks->pluck('id')->toArray();
-	$user->tracks()->attach($tracksIDs, ['type' => 1]);
+	$user->tracks()->attach($tracksIDs, ['type' => UserAPI::TOP_TRACK]);
 });
