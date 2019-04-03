@@ -9,26 +9,26 @@ use App\AutoDJ\Genre;
 
 class Tracks
 {
-	public function store($vibe)
+	public static function store($vibe)
 	{
 		$tracks = Track::belongsToMemberOf($vibe)->get();
 		$tracksIDs = array_unique($tracks->pluck('id')->toArray());
 		$vibe->tracks()->attach($tracksIDs, ['auto_related' => true]);
 	}
 
-	public function storeAPI($vibe) 
+	public static function storeAPI($vibe) 
 	{
 		$tracks = Genre::orderTracksByPopularityForAPI($vibe);
         app(Playlist::class)->addTracks($vibe->api_id, $tracks);	
 	}
 
-	public function update($vibe) 
+	public static function update($vibe) 
 	{
 		$vibe->tracks()->where('auto_related', true)->detach();
-		$this->store($vibe);
+		self::store($vibe);
 	}
 
-	public function updateAPI($vibe)
+	public static function updateAPI($vibe)
 	{
 		if ($vibe->auto_dj) {
 			$tracks = Genre::orderTracksByPopularityForAPI($vibe);

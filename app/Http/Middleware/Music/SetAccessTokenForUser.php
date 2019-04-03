@@ -7,7 +7,7 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Music\Playlist;
-use App\AutoDJ\User as UserAuto;
+use App\AutoDJ\User as AutoUser;
 use App\Music\Spotify\WebAPI as SpotifyWebAPI;
 use App\Music\Spotify\WebAPI as AppleWebAPI;
 use Carbon\Carbon;
@@ -42,8 +42,7 @@ class SetAccessTokenForUser
             $timeUserTrackCreated = auth()->user()->tracks()->first()->pivot->created_at;
             $twentyFourHoursAgo = Carbon::now()->subDay();
             if ($twentyFourHoursAgo->greaterThanOrEqualTo($timeUserTrackCreated)) {
-                $userAuto = app(UserAuto::class);
-                $userAuto->updateTracks();
+                AutoUser::updateTracks();
             } 
         }
     }

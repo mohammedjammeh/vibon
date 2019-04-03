@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\AutoDJ\User as UserAuto;
+use App\AutoDJ\User as AutoUser;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,8 +26,7 @@ class CallbackController extends Controller
     {
         Auth::login($user, true);
         if ($user->tracks->isEmpty()) {
-            $userAuto = app(UserAuto::class);
-            $userAuto->storeTracks();
+            AutoUser::storeTracks();
         }
         return redirect('home');
     }
