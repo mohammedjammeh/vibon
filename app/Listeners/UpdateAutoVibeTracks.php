@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\AutoDJ\Tracks;
+use App\AutoDJ\Tracks as AutoTracks;
 use App\Events\VibeUpdated;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +27,6 @@ class UpdateAutoVibeTracks
      */
     public function handle(VibeUpdated $event)
     {
-        $autoTracks = app(Tracks::class);
-        $autoTracks->updateAPI($event->vibe);
+        AutoTracks::updateAPI($event->vibe);
     }
 }

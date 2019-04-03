@@ -19,7 +19,7 @@ class GenreTest extends TestCase
 	{
 		$track = factory(Track::class)->create();
 		$track->genres()->detach();		
-		app(AutoGenre::class)->store($track);
+		AutoGenre::store($track);
 		$this->assertNotEmpty($track->genres);
 	}
 
@@ -43,7 +43,7 @@ class GenreTest extends TestCase
 		$reggaeGenre->tracks()->sync([$loveTrack->id, $danceTrack->id]);
 		$rapGenre->tracks()->sync([$trapTrack->id]);
 
-		$tracks = app(AutoGenre::class)->orderTracksByPopularity($vibe);
+		$tracks = AutoGenre::orderTracksByPopularity($vibe);
 		$lastTrackOnGenreOrder = collect($tracks)->last()->api_id;
 		$trackThatBelongsToAnUnpopularGenre = $trapTrack->api_id;
 		$this->assertEquals($lastTrackOnGenreOrder, $trackThatBelongsToAnUnpopularGenre);

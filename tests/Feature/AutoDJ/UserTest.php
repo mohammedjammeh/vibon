@@ -20,7 +20,7 @@ class UserTest extends TestCase
     public function test_authenticated_user_top_tracks_from_the_api_are_stored()
     {
         $this->user->tracks()->detach();
-        app(AutoUser::class)->storeTracks();
+        AutoUser::storeTracks();
 
         $userTopTracksAPI = app(FakeAPI::class)->getUserTopTracks();
         foreach ($userTopTracksAPI as $userTopTrackAPI) {
@@ -36,7 +36,7 @@ class UserTest extends TestCase
     public function test_authenticated_user_recent_tracks_from_the_api_that_have_been_played_more_than_once_are_stored()
     {
         $this->user->tracks()->detach();
-        app(AutoUser::class)->storeTracks();
+        AutoUser::storeTracks();
 
         $userRecentTracksAPI = app(FakeAPI::class)->getUserRecentTracks();
         $userRecentTracksIDs = Arr::pluck($userRecentTracksAPI, 'track.id');
@@ -58,7 +58,7 @@ class UserTest extends TestCase
     public function test_authenticated_user_tracks_from_api_can_be_updated()
     {
         $userOldTracks = $this->user->tracks;
-        app(AutoUser::class)->updateTracks();
+        AutoUser::updateTracks();
 
         foreach ($userOldTracks as $userOldTrack) {
             $this->assertDatabaseMissing('user_track', [

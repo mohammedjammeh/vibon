@@ -9,7 +9,7 @@ use App\Music\User as UserAPI;
 
 class User
 {
-	public function storeTracks()
+	public static function storeTracks()
 	{
 		$userAPI = app(UserAPI::class);
 		$userAPI->recentTopAndOverallTopTracks()->each(function ($trackItem) {
@@ -22,9 +22,9 @@ class User
 		});
 	}
 
-	public function updateTracks() 
+	public static function updateTracks() 
 	{
 		auth()->user()->tracks()->detach();
-		$this->storeTracks();
+		self::storeTracks();
 	}
 }
