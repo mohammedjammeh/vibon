@@ -28,7 +28,8 @@ class UserVibeTest extends TestCase
 	public function test_user_can_be_removed_from_a_vibe()
 	{
 		$vibe = factory(Vibe::class)->create();
-		$user = $vibe->users()->where('owner', false)->first();
+		$user = factory(User::class)->create();
+    	$vibe->users()->attach($user->id, ['owner' => false]);
 		$this->delete(route('user-vibe.destroy', [
 			'vibe' => $vibe->id, 
 			'user' => $user->id
@@ -43,7 +44,8 @@ class UserVibeTest extends TestCase
 	public function test_user_who_has_been_removed_by_vibe_owner_gets_a_notification()
 	{
 		$vibe = factory(Vibe::class)->create();
-		$user = $vibe->users()->where('owner', false)->first();
+		$user = factory(User::class)->create();
+    	$vibe->users()->attach($user->id, ['owner' => false]);
 		$attributes = ['vibe-member-remove' => true];
 		$this->delete(route('user-vibe.destroy', [
 			'vibe' => $vibe->id, 

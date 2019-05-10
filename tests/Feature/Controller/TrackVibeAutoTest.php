@@ -6,9 +6,11 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use App\User;
 use App\Vibe;
 use App\Track;
 use App\AutoDJ\Tracks;
+use App\Music\User as UserAPI;
 
 class TrackVibeAutoTest extends TestCase
 {
@@ -16,18 +18,19 @@ class TrackVibeAutoTest extends TestCase
 
 	public function test_auto_tracks_of_a_vibe_can_be_updated() 
 	{
-		$this->withoutExceptionHandling();
+		$user = factory(User::class)->create();
+		$userTrack = factory(Track::class)->create();
+		$user->tracks()->attach($userTrack->id, ['type' => UserAPI::TOP_TRACK]);
+
 		$vibe = factory(Vibe::class)->create(['auto_dj' => true]);
-		$track = factory(Track::class)->create(['api_id' => 'Z10Z']);
-		$vibe->tracks()->attach($track->id, ['auto_related' => true]);
+		$vibe->users()->attach($user->id, ['owner' => true]);
+
+		$vibeTrack = factory(Track::class)->create();
+		$vibe->tracks()->attach($vibeTrack->id, ['auto_related' => true]);
 
 		$this->post(route('track-vibe-auto.update', $vibe));
 		$vibeTracks = $vibe->tracks->pluck('api_id')->toArray();
-		$this->assertNotContains($track->api_id, $vibeTracks);
-
-		$vibeFirstUserTrack = $vibe->users->first()->tracks->first()->api_id;
-		$vibeLastUserTrack = $vibe->users->last()->tracks->first()->api_id;
-		$this->assertContains($vibeFirstUserTrack, $vibeTracks);
-		$this->assertContains($vibeLastUserTrack, $vibeTracks);
+		$this->assertNotContains($vibeTrack->api_id, $vibeTracks);
+		$this->assertContains($userTrack->api_id, $vibeTracks);
 	}
 }

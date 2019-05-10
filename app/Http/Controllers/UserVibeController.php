@@ -18,7 +18,7 @@ class UserVibeController extends Controller
     public function store(Vibe $vibe)
     {
         $vibe->users()->attach(auth()->user()->id, ['owner' => false]);
-		return redirect($vibe->path())->with('message', 'Welcome to our vibe.');
+		return redirect($vibe->path)->with('message', 'Welcome to our vibe.');
     }
 
     public function destroy(Request $request, Vibe $vibe, User $user) 

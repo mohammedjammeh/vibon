@@ -4,7 +4,6 @@ namespace App\Http\Middleware\Music;
 
 use Closure;
 use App\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use App\Music\Playlist;
 use App\AutoDJ\User as AutoUser;
@@ -23,12 +22,12 @@ class SetAccessTokenForUser
      */
     public function handle($request, Closure $next)
     {
-        if(!Auth::check()) {
+        if(!auth()->user()) {
             return response(view('welcome'));
         }
-        $this->shareUserDataWithAllViews();
         $this->checkAndUpateUserTracksForAutoVibes();
-        if(Auth::user()->isAuthorisedWith(User::APPLE)) {
+        $this->shareUserDataWithAllViews();
+        if(auth()->user()->isAuthorisedWith(User::APPLE)) {
             new AppleWebAPI();
             return $next($request);
         }
@@ -37,8 +36,8 @@ class SetAccessTokenForUser
     }
 
     public function checkAndUpateUserTracksForAutoVibes()
-    {
-        if(Auth::check()) {
+    {   
+        if(auth()->user()->tracks()->first()) {
             $timeUserTrackCreated = auth()->user()->tracks()->first()->pivot->created_at;
             $twentyFourHoursAgo = Carbon::now()->subDay();
             if ($twentyFourHoursAgo->greaterThanOrEqualTo($timeUserTrackCreated)) {
@@ -50,7 +49,7 @@ class SetAccessTokenForUser
     public function shareUserDataWithAllViews()
     {
         View::composer('*', function($view){
-            $user = Auth::user()->load('vibes.tracks');
+            $user = auth()->user()->load('vibes.tracks');
             app(Playlist::class)->loadMany($user['vibes']);
             View::share('user', $user);
         });

@@ -62,7 +62,7 @@ class VibeController extends Controller
         ]);
         $vibe->users()->attach(Auth()->user()->id, ['owner' => 1]);
         event(new VibeCreated($vibe));
-        return redirect($vibe->path());
+        return redirect($vibe->path);
     }
 
     /**
@@ -106,7 +106,7 @@ class VibeController extends Controller
         $vibe->update(request(['description', 'open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'));
         event(new VibeUpdated($vibe));
-        return redirect($vibe->path());
+        return redirect($vibe->path);
     }
 
     /**

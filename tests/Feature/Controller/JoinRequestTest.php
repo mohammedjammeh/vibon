@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Controller;
 
+use App\Vibe;
+use App\User;
+use App\JoinRequest;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Arr;
-
-use App\Vibe;
-use App\JoinRequest;
 
 class JoinRequestTest extends TestCase
 {
@@ -17,12 +16,15 @@ class JoinRequestTest extends TestCase
 	public function test_user_can_send_a_request_to_join_a_vibe_and_vibe_owner_will_have_the_notification()
 	{
 		$vibe = factory(Vibe::class)->create();
+		$vibeOwner = factory(User::class)->create();
+		$vibe->users()->attach($vibeOwner->id, ['owner' => true]);
+
 		$this->post(route('join-request.store', $vibe));
 		$this->assertDatabaseHas('join_requests', [
 			'vibe_id' => $vibe->id,
 			'user_id' => $this->user->id
 		]);
-		$vibeOwnerNotification = $vibe->owner()->notifications->first();
+		$vibeOwnerNotification = $vibe->owner->notifications->first();
 		$this->assertDatabaseHas('notifications', [
 			'type' => $vibeOwnerNotification->type,
 			'notifiable_id' => $vibeOwnerNotification->notifiable_id
@@ -34,34 +36,36 @@ class JoinRequestTest extends TestCase
 	public function test_user_can_cancel_the_request_to_join_a_vibe_and_vibe_owner_will_no_longer_have_the_notification()
 	{
 		$vibe = factory(Vibe::class)->create();
+		$vibeOwner = factory(User::class)->create();
+		$vibe->users()->attach($vibeOwner->id, ['owner' => true]);
+
 		$this->post(route('join-request.store', $vibe));
 		$this->delete(route('join-request.destroy', [
-			'joinRequest' => $vibe->hasJoinRequestFrom($this->user->id), 
-			'vibe' => $vibe
+			'joinRequest' => $vibe->joinRequestFrom($this->user)
 		]));
 		$this->assertDatabaseMissing('join_requests', [
 			'vibe_id' => $vibe->id,
 			'user_id' => $this->user->id
 		]);
-		$this->assertEmpty($vibe->owner()->notifications->first());
+		$this->assertEmpty($vibe->owner->notifications->first());
 	}
 
 	public function test_vibe_owner_can_respond_to_a_join_request_from_a_user() 
 	{
 		$joinRequest = factory(JoinRequest::class)->create();
 		$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-		$response = Arr::random([true, false]);
+		$response = collect([true, false])->random();
+
 		$this->patch(route('join-request.respond', [
 			'joinRequest' => $joinRequest, 
-			'vibe' => $vibe
 		]), ['reject' => $response]);
 
-		$this->assertDatabaseMissing('join_requests', [
+		$this->assertDatabaseMissing('join_requests', [ 
 			'vibe_id' => $vibe->id,
 			'user_id' => $joinRequest->user->id
 		]);
 
-		$vibeOwnerNotificationFromJoinRequestUser = $vibe->owner()->notifications            
+		$vibeOwnerNotificationFromJoinRequestUser = $vibe->owner->notifications            
 			->where('data.requester_id', $joinRequest->user->id)
             ->where('data.vibe_id', $vibe->id)
             ->last();
