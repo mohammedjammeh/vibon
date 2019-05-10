@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\AutoDJ;
+namespace Tests\Unit\AutoDJ;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
