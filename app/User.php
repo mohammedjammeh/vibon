@@ -47,6 +47,14 @@ class User extends Authenticatable
         return $this->unreadNotifications->where('type', RequestToJoinAVibe::class);
     }
 
+    public function lastUnreadRequestNotificationFor($joinRequest)
+    {
+        return $this->unreadNotifications
+            ->where('data.requester_id', $joinRequest->user_id)
+            ->where('data.vibe_id', $joinRequest->vibe_id)
+            ->last();
+    }
+
     public function isAuthorisedWith($api) 
     {
         if($this->where('api', $api)->get()) {

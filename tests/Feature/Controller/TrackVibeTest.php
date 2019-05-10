@@ -42,7 +42,9 @@ class TrackVibeTest extends TestCase
     public function test_track_can_be_removed_from_a_vibe()
     {
         $vibe = factory(Vibe::class)->create();
-        $track = $vibe->tracks()->first();
+        $track = factory(Track::class)->create();
+        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+
         $this->delete(route('track-vibe.destroy', [
             'vibe' => $vibe->id, 
             'track' => $track->id

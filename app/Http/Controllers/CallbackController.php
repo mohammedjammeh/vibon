@@ -9,6 +9,21 @@ use Illuminate\Support\Facades\Auth;
 
 class CallbackController extends Controller
 {
+    public function spotifyAuth()
+    {
+        app('Spotify')->requestAccessToken($_GET['code']);
+        $api = new SpotifyWebAPI();
+        $api->setAccessToken(app('Spotify')->getAccessToken());
+        $user = $this->storeOrUpdateUserDetails(
+            $api->me()->id,
+            $api->me()->email, 
+            User::SPOTIFY,
+            app('Spotify')->getAccessToken(), 
+            app('Spotify')->getRefreshToken()
+        );
+        return $this->authenticateAndStoreTracks($user);
+    }
+
     public function storeOrUpdateUserDetails($username, $email, $api, $accessToken, $refreshToken)
     {
         $user = User::firstOrNew(['username' => $username]);
@@ -29,24 +44,5 @@ class CallbackController extends Controller
             AutoUser::storeTracks();
         }
         return redirect('home');
-    }
-
-    public function spotifyAuth()
-    {
-        app('Spotify')->requestAccessToken($_GET['code']);
-        $api = new SpotifyWebAPI();
-        $api->setAccessToken(app('Spotify')->getAccessToken());
-        $user = $this->storeOrUpdateUserDetails(
-            $api->me()->id,
-            $api->me()->email, 
-            User::SPOTIFY,
-            app('Spotify')->getAccessToken(), 
-            app('Spotify')->getRefreshToken()
-        );
-        return $this->authenticateAndStoreTracks($user);
-    }
-
-    public function appleAuth()
-    {
     }
 }

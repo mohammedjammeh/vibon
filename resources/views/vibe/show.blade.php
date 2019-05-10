@@ -48,7 +48,7 @@
                 <h3>Requests</h3>
                 @foreach($vibe->joinRequests as $joinRequest)
                     <p>{{ $joinRequest->user->username }}</p>
-                    <form method="POST" action="{{ route('join-request.respond', ['joinRequest' => $joinRequest->id, 'vibe' => $vibe->id]) }}">
+                    <form method="POST" action="{{ route('join-request.respond', ['joinRequest' => $joinRequest]) }}">
                         @csrf
                         @method('PATCH')
                         <input type="submit" name="accept" value="Accept">
@@ -60,14 +60,14 @@
         @endcan
 
         @cannot('delete', $vibe)
-            @if($vibe->hasMember(auth()->user()->id)) 
+            @if($vibe->hasMember(auth()->user())) 
                 <form method="POST" action="{{ route('user-vibe.destroy', ['vibe' => $vibe->id, 'user' => $user->id]) }}">
                     @csrf
                     @method('DELETE')
                     <input type="submit" name="vibe-leave" value="Leave Vibe">
                 </form>
-            @elseif($vibe->hasJoinRequestFrom(auth()->user()->id))
-                <form method="POST" action="{{ route('join-request.destroy', ['joinRequest' => $vibe->hasJoinRequestFrom(auth()->user()->id), 'vibe' => $vibe->id]) }}">
+            @elseif($vibe->hasJoinRequestFrom(auth()->user()))
+                <form method="POST" action="{{ route('join-request.destroy', ['joinRequest' => $vibe->joinRequestFrom(auth()->user())]) }}">
                     @csrf
                     @method('DELETE')
                     <input type="submit" name="vibe-join-destroy" value="Cancel Join Request">

@@ -23,6 +23,11 @@ class Vibe extends Model
         return $this->belongsToMany(Track::class)->withPivot('auto_related')->withTimestamps();
     }
 
+    public function joinRequests() 
+    {
+        return $this->hasMany(JoinRequest::class)->with('user');
+    }
+
     public function showTracks() 
     {
         if ($this->auto_dj) {
@@ -30,38 +35,32 @@ class Vibe extends Model
         }
         return $this->tracks()->where('auto_related', false)->get();
     }
-    
-    public function path() 
+
+    public function hasMember($user) 
     {
-        return route('vibe.show', $this);
+        return $this->users->where('id', $user->id)->first();
     }
 
-    public function joinRequests() 
+    public function hasJoinRequestFrom($user) 
     {
-    	return $this->hasMany(JoinRequest::class)->with('user');
+        if ($this->joinRequestFrom($user)) {
+            return true;
+        }
+        return false;
     }
 
-    public function hasMember($id) 
+    public function joinRequestFrom($user)
     {
-        return $this->users->where('id', $id)->first();
+        return $this->joinRequests->where('user_id', $user->id)->first();
     }
 
-    public function hasJoinRequestFrom($id) 
-    {
-        return $this->joinRequests->where('user_id', $id)->first();
-    }
-
-    public function owner()
+    public function getOwnerAttribute()
     {
         return $this->users()->where('owner', 1)->first();
     }
 
-    public function ownerNotificationFrom($id)
+    public function getPathAttribute() 
     {
-        return $this->owner()
-            ->unreadNotifications
-            ->where('data.requester_id', $id)
-            ->where('data.vibe_id', $this->id)
-            ->last();
+        return route('vibe.show', $this);
     }
 }
