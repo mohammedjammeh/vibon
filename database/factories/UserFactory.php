@@ -1,8 +1,6 @@
 <?php
 
 use App\User;
-use App\Track;
-use App\Music\User as UserAPI;
 use Faker\Generator as Faker;
 
 /*
@@ -26,10 +24,4 @@ $factory->define(User::class, function (Faker $faker) {
         'refresh_token' => str_random(10),
         'token_set_at' => now()
     ];
-});
-
-$factory->afterCreating(User::class, function ($user, $faker) {
-    $tracks = factory(Track::class, 2)->create();
-    $tracksIDs = $tracks->pluck('id')->toArray();
-	$user->tracks()->attach($tracksIDs, ['type' => UserAPI::TOP_TRACK]);
 });
