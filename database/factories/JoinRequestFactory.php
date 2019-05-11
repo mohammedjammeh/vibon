@@ -14,10 +14,3 @@ $factory->define(JoinRequest::class, function (Faker $faker) {
 		'user_id' => $user->id
     ];
 });
-
-$factory->afterCreating(JoinRequest::class, function ($joinRequest, $faker) {
-	$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-	$vibeOwner = factory(User::class)->create();
-	$vibe->users()->attach($vibeOwner->id, ['owner' => true]);
-	$vibe->owner->notify(new RequestToJoinAVibe($joinRequest->user_id, $vibe->id));
-});
