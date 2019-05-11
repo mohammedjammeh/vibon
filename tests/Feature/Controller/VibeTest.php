@@ -2,12 +2,6 @@
 
 namespace Tests\Feature\Controller;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Event;
-
 use App\Vibe;
 use App\User;
 use App\Track;
@@ -18,6 +12,11 @@ use App\Music\Fake\WebAPI as FakeAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\Music\User as UserAPI;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Event;
 
 class VibeTest extends TestCase
 {
