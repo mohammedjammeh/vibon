@@ -50,7 +50,7 @@
                     <p>{{ $joinRequest->user->username }}</p>
                     <form method="POST" action="{{ route('join-request.respond', ['joinRequest' => $joinRequest]) }}">
                         @csrf
-                        @method('PATCH')
+                        @method('DELETE')
                         <input type="submit" name="accept" value="Accept">
                         <input type="submit" name="reject" value="Reject">
                     </form>
