@@ -26,8 +26,8 @@ Route::apiResource('/track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
 Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
-Route::delete('/join-request/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
-Route::patch('/join-request/{joinRequest}', 'JoinRequestController@respond')->name('join-request.respond');
+Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
+Route::delete('/join-request/respond/{joinRequest}', 'JoinRequestController@respond')->name('join-request.respond');
 
 Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@store')->name('user-vibe.store');
 Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@destroy')->name('user-vibe.destroy');

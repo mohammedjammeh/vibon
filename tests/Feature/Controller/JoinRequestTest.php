@@ -6,6 +6,7 @@ use App\Vibe;
 use App\User;
 use App\JoinRequest;
 use Tests\TestCase;
+use App\Events\JoinRequestSent;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -38,25 +39,34 @@ class JoinRequestTest extends TestCase
 		$vibe = factory(Vibe::class)->create();
 		$vibeOwner = factory(User::class)->create();
 		$vibe->users()->attach($vibeOwner->id, ['owner' => true]);
-
-		$this->post(route('join-request.store', $vibe));
-		$this->delete(route('join-request.destroy', [
-			'joinRequest' => $vibe->joinRequestFrom($this->user)
-		]));
-		$this->assertDatabaseMissing('join_requests', [
+		$joinRequest = factory(JoinRequest::class)->create([
 			'vibe_id' => $vibe->id,
 			'user_id' => $this->user->id
+		]);
+		
+		$this->delete(route('join-request.destroy', [
+			'joinRequest' => $joinRequest 
+		]));
+		$this->assertDatabaseMissing('join_requests', [
+			'vibe_id' => $joinRequest->vibe_id,
+			'user_id' => $joinRequest->user_id
 		]);
 		$this->assertEmpty($vibe->owner->notifications->first());
 	}
 
 	public function test_vibe_owner_can_respond_to_a_join_request_from_a_user() 
 	{
-		$joinRequest = factory(JoinRequest::class)->create();
-		$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-		$response = collect([true, false])->random();
+		$vibe = factory(Vibe::class)->create();
+		$vibeOwner = factory(User::class)->create();
+		$vibe->users()->attach($vibeOwner->id, ['owner' => true]);
+		$joinRequest = factory(JoinRequest::class)->create([
+			'vibe_id' => $vibe->id,
+			'user_id' => $this->user->id
+		]);
+		event(new JoinRequestSent($joinRequest));
 
-		$this->patch(route('join-request.respond', [
+		$response = collect([true, false])->random();
+		$this->delete(route('join-request.respond', [
 			'joinRequest' => $joinRequest, 
 		]), ['reject' => $response]);
 
@@ -84,7 +94,7 @@ class JoinRequestTest extends TestCase
 	{
 		$joinRequest = factory(JoinRequest::class)->create();
 		$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-		$this->patch(route('join-request.respond', [
+		$this->delete(route('join-request.respond', [
 			'joinRequest' => $joinRequest, 
 			'vibe' => $vibe
 		]), ['reject' => true]);
@@ -99,7 +109,7 @@ class JoinRequestTest extends TestCase
 	{
 		$joinRequest = factory(JoinRequest::class)->create();
 		$vibe = Vibe::where('id', $joinRequest->vibe_id)->first(); 
-		$this->patch(route('join-request.respond', [
+		$this->delete(route('join-request.respond', [
 			'joinRequest' => $joinRequest, 
 			'vibe' => $vibe
 		]), ['reject' => false]);
