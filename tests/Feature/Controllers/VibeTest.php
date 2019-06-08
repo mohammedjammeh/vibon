@@ -5,10 +5,8 @@ namespace Tests\Feature\Controller;
 use App\Vibe;
 use App\User;
 use App\Track;
-use App\Music\InterfaceAPI;
 use App\Music\Playlist;
 use App\Music\Tracks;
-use App\Music\Fake\WebAPI as FakeAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\Music\User as UserAPI;
@@ -24,13 +22,13 @@ class VibeTest extends TestCase
 
 	public function test_vibe_requires_a_name()
 	{
-		$vibe = factory(Vibe::class)->raw(['name' => '']);
+		factory(Vibe::class)->raw(['name' => '']);
 		$this->post(route('vibe.store'))->assertSessionHasErrors('name');
 	}
 
 	public function test_vibe_requires_a_description() 
 	{
-		$vibe = factory(Vibe::class)->raw(['description' => '']);
+		factory(Vibe::class)->raw(['description' => '']);
 		$this->post(route('vibe.store'))->assertSessionHasErrors('description');
 	}
 
