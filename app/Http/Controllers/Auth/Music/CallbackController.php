@@ -1,34 +1,36 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth\Music;
 
 use App\User;
 use App\AutoDJ\User as AutoUser;
-use SpotifyWebAPI\SpotifyWebAPI;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Music\User as UserAPI;
+
 
 class CallbackController extends Controller
 {
-    public function spotifyAuth()
+    public function spotifyAuth(Request $request)
     {
-        app('Spotify')->requestAccessToken($_GET['code']);
-        $api = new SpotifyWebAPI();
-        $api->setAccessToken(app('Spotify')->getAccessToken());
-        $user = $this->storeOrUpdateUserDetails(
-            $api->me()->id,
-            $api->me()->email, 
-            User::SPOTIFY,
-            app('Spotify')->getAccessToken(), 
-            app('Spotify')->getRefreshToken()
-        );
+        app('SpotifySession')->requestAccessToken($request['code']);
+        $accessToken = app('SpotifySession')->getAccessToken();
+        $refreshToken = app('SpotifySession')->getRefreshToken();
+
+        $userAPI = app(UserAPI::class);
+        $userAPI->setUnauthenticatedAccessToken($accessToken);
+        $user = $this->storeOrUpdateUserDetails($userAPI, User::SPOTIFY, $accessToken, $refreshToken);
         return $this->authenticateAndStoreTracks($user);
     }
 
-    public function storeOrUpdateUserDetails($username, $email, $api, $accessToken, $refreshToken)
+    public function storeOrUpdateUserDetails($userAPI, $api, $accessToken, $refreshToken)
     {
-        $user = User::firstOrNew(['username' => $username]);
-        $user->username = $username;
-        $user->email = $email; 
+        $user = User::firstOrNew([
+            'username' => $userAPI->details()->id
+        ]);
+        $user->username = $userAPI->details()->id;
+        $user->email = $userAPI->details()->email;
         $user->api = $api;
         $user->access_token = $accessToken;
         $user->refresh_token = $refreshToken;
@@ -43,6 +45,6 @@ class CallbackController extends Controller
         if ($user->tracks->isEmpty()) {
             AutoUser::storeTracks();
         }
-        return redirect('home');
+        return redirect(route('index'));
     }
 }

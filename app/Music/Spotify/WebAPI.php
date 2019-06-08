@@ -2,56 +2,44 @@
 
 namespace App\Music\Spotify;
 
-use App\User;
-use App\Vibe;
 use App\Music\InterfaceAPI;
 use SpotifyWebAPI\SpotifyWebAPI;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class WebAPI implements InterfaceAPI
 {
     public $api;
-    public $user;
+    public $accessToken;
+    public $refreshToken;
 
     public function __construct()
     {
         $this->api = new SpotifyWebAPI();
-
-        if (Auth::check()) {
-            $this->user = auth()->user();
-            $this->setAuthorisedUserToken();
-        } else {
-            $this->setUnuthorisedUserToken();
+        if (auth()->user()) {
+            $this->setAuthenticatedUserAccessToken();
         }
     }
 
-    public function setAuthorisedUserToken() 
+    public function setAuthenticatedUserAccessToken()
     {
-        $timeUsertokenSet = $this->user->token_set_at;
-        $oneHourAgo = Carbon::now()->subHour();
-        if($oneHourAgo->greaterThanOrEqualTo($timeUsertokenSet)) {
-            $this->refreshAuthorisedUserToken();
-            $this->api->setAccessToken($this->user->access_token);
-        } else {
-            $this->api->setAccessToken($this->user->access_token);
+        if(Carbon::now()->subHour()->greaterThanOrEqualTo(auth()->user()->token_set_at)) {
+            $this->refreshUserAccessToken();
         }
-    }
-    
-    public function refreshAuthorisedUserToken()
-    {
-        app('Spotify')->refreshAccessToken($this->user->refresh_token);
-        $this->user->access_token = app('Spotify')->getAccessToken();
-        $this->user->refresh_token = app('Spotify')->getRefreshToken();
-        $this->user->token_set_at = date("Y-m-d H:i:s");
-        $this->user->save();
+        $this->api->setAccessToken(auth()->user()->access_token);
     }
 
-    public function setUnuthorisedUserToken()
+    public function refreshUserAccessToken()
     {
-        app('Spotify')->requestCredentialsToken();
-        $credentialsToken = app('Spotify')->getAccessToken();
-        $this->api->setAccessToken($credentialsToken);
+        app('SpotifySession')->refreshAccessToken(auth()->user()->refresh_token);
+        auth()->user()->access_token = app('SpotifySession')->getAccessToken();
+        auth()->user()->refresh_token = app('SpotifySession')->getRefreshToken();
+        auth()->user()->token_set_at = date("Y-m-d H:i:s");
+        auth()->user()->save();
+    }
+
+    public function setUnauthenticatedUserAccessToken($accessToken)
+    {
+        $this->api->setAccessToken($accessToken);
     }
 
     public function options()
@@ -73,7 +61,12 @@ class WebAPI implements InterfaceAPI
 
     public function authorise() 
     {
-        return redirect(app('Spotify')->getAuthorizeUrl($this->options()))->send();
+        return redirect(app('SpotifySession')->getAuthorizeUrl($this->options()))->send();
+    }
+
+    public function getUser()
+    {
+        return $this->api->me();
     }
 
     public function search($name)

@@ -3,20 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
-use App\User;
-use Illuminate\Support\Facades\Auth;
 use App\Music\Search;
 use App\Music\Tracks;
 use App\Music\Playlist;
-use App\Music\User as UserAPI;
 
 class HomeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('setAccessTokenForAPI');
+        $this->middleware('setAccessToken');
     }
-    
+
     /**
      * Show the application dashboard.
      *

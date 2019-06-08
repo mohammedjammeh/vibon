@@ -6,8 +6,6 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
-
-use App\User;
 use App\Track;
 use App\Music\User as UserAPI;
 use App\AutoDJ\User as AutoUser;

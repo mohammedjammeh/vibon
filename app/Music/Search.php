@@ -2,8 +2,6 @@
 
 namespace App\Music;
 
-use App\Music\InterfaceAPI;
-
 class Search
 {
 	protected $api;

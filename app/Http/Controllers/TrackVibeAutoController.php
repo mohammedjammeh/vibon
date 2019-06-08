@@ -7,6 +7,11 @@ use App\AutoDJ\Tracks as AutoTracks;
 
 class TrackVibeAutoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('setAccessToken');
+    }
+
     public function update(Vibe $vibe)
     {
 		AutoTracks::update($vibe);
