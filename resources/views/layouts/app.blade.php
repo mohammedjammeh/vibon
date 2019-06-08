@@ -39,10 +39,10 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('auth.spotify') }}">Spotify</a>
+                                <a class="nav-link" href="{{ route('authorise') }}">Spotify</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('auth.apple') }}">Apple</a>
+                                <a class="nav-link" href="{{ route('authorise') }}">Apple</a>
                             </li>
                         @else
                             <li class="nav-item dropdown">

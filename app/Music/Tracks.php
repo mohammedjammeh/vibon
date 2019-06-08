@@ -2,9 +2,6 @@
 
 namespace App\Music;
 
-use App\Music\InterfaceAPI;
-use App\Music\Artist;
-
 class Tracks
 {
     protected $api;

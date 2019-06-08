@@ -1,10 +1,9 @@
-<?php // used in callbackController and SetAccessTokenForUser middleware
+<?php // used in callbackController and SetAccessToken middleware
 
 namespace App\AutoDJ;
 
 use App\Track;
 use App\AutoDJ\Genre as AutoGenre;
-use App\User as UserModel;
 use App\Music\User as UserAPI;
 
 class User

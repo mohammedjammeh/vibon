@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controller;
+namespace Tests\Feature\Controllers;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -28,6 +28,7 @@ class TrackVibeTest extends TestCase
 
     public function test_new_track_can_be_added_to_a_vibe()
     {
+        $this->withoutExceptionHandling();
     	$vibe = factory(Vibe::class)->create();
     	$attributes = ['track-api-id' => '328WHEW92NWI21'];
     	$this->post(route('track-vibe.store', $vibe), $attributes);

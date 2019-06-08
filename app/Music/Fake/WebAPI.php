@@ -2,12 +2,23 @@
 
 namespace App\Music\Fake;
 
-use App\Vibe;
 use App\Music\Spotify\WebAPI as spotifyWebAPI;
-use Illuminate\Support\Facades\Session;
 
 class WebAPI extends spotifyWebAPI
 {
+
+    public function authorise()
+    {
+        return redirect('https://accounts.spotify.com/authorize?client_id=123');
+    }
+
+    public function getUser() {
+        return (object) [
+            'id' => '123iD',
+            'email' => 'faker@yahoo.com'
+        ];
+    }
+
     public function search($name)
     {
         return [

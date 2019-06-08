@@ -5,7 +5,6 @@ namespace Tests\Unit\AutoDJ;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use App\Vibe;
 use App\Track;
 use App\Genre;

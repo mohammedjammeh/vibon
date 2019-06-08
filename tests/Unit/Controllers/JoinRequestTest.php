@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Controller;
+namespace Tests\Unit\Controllers;
 
 use App\Vibe;
 use App\User;

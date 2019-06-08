@@ -13,7 +13,7 @@ class JoinRequestController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('checkAuthorisationForAPI');
+        $this->middleware('setAccessToken');
     }
 
     public function store(Vibe $vibe) 

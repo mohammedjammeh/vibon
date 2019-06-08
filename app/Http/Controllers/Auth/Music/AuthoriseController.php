@@ -3,22 +3,17 @@
 namespace App\Http\Controllers\Auth\Music;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Music\Spotify\WebAPI as SpotifyWebAPI;
-use App\Music\Apple\WebAPI as AppleWebAPI;
+use App\Music\User;
 
 class AuthoriseController extends Controller
 {
-	public function spotify() 
-	{
-		$webAPI = new SpotifyWebAPI();
-        return $webAPI->authorise();
-	}
+    public function authorise(User $user)
+    {
+        return $user->authorise();
+    }
 
-	public function apple() 
-	{
-		$webAPI = new AppleWebAPI();
-        return $webAPI->authorise();
-	}
+    public function welcome()
+    {
+        return view('welcome');
+    }
 }

@@ -3,27 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
-use App\User;
-use App\Track;
-
-use App\AutoDJ\Genre;
 use App\Music\Playlist;
 use App\Music\Tracks as TracksAPI;
-use App\Music\User as UserAPI;
-use App\Music\Artist as ArtistAPI;
-use App\Music\Spotify\WebAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
-
 use App\Http\Requests\StoreVibe;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class VibeController extends Controller
 {
-    public function __construct() {
-        $this->middleware('setAccessTokenForAPI');
-        $this->middleware('checkAuthorisationForAPI', ['only' => ['create', 'edit', 'delete']]);
+    public function __construct()
+    {
+        $this->middleware('setAccessToken');
     }
 
     /**
@@ -40,7 +30,7 @@ class VibeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(WebAPI $webAPI)
+    public function create()
     {
         return view('vibe.create');
     }

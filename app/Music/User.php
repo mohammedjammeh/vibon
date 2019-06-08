@@ -3,19 +3,37 @@
 namespace App\Music;
 
 use Illuminate\Support\Arr;
-use App\Music\InterfaceAPI;
-use App\Music\Tracks;
 
 class User
 {
     public const TOP_TRACK = 1;
     public const RECENT_TRACK = 2;
 
-    protected $api;
+    public $api;
 
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
+    }
+
+    public function details()
+    {
+        return $this->api->getUser();
+    }
+
+    public function authorise()
+    {
+        return $this->api->authorise();
+    }
+
+    public function setAuthenticatedAccessToken()
+    {
+        return $this->api->setAuthenticatedUserAccessToken();
+    }
+
+    public function setUnauthenticatedAccessToken($accessToken)
+    {
+        return $this->api->setUnauthenticatedUserAccessToken($accessToken);
     }
 
     public function topTracks()
@@ -59,7 +77,7 @@ class User
         $tracksAPI = app(Tracks::class);
         $suggestions = $tracksAPI->getRecommendations([
             'target_popularity' => 40,
-            'seed_tracks' => array($userRecentTracks[1], $userRecentTracks[2], $userRecentTracks[3]),
+            'seed_tracks' => array($userRecentTracks[1], $userTopTracks[2], $userRecentTracks[3]),
             'limit' => 10
         ]);
         return $suggestions->tracks;

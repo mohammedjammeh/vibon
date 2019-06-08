@@ -14,14 +14,12 @@
 
 Auth::routes();
 
-Route::get('/spotify', 'CallbackController@spotifyAuth');
-Route::get('/apple', 'CallbackController@appleAuth');
-
-Route::get('/spotify-login', 'Auth\Music\AuthoriseController@spotify')->name('auth.spotify');
-Route::get('/apple-login', 'Auth\Music\AuthoriseController@apple')->name('auth.apple');
+Route::get('/spotify', 'Auth\Music\CallbackController@spotifyAuth')->name('callback.spotify');
+Route::get('/authorise', 'Auth\Music\AuthoriseController@authorise')->name('authorise');
+Route::get('/welcome', 'Auth\Music\AuthoriseController@welcome')->name('welcome');
 
 Route::resource('/', 'HomeController');
-Route::resource('/home', 'HomeController');
+Route::get('/home', 'HomeController@index');
 Route::apiResource('/track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
