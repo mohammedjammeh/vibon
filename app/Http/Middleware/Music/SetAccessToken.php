@@ -3,12 +3,8 @@
 namespace App\Http\Middleware\Music;
 
 use Closure;
-use App\User;
-use Illuminate\Support\Facades\View;
-use App\Music\Playlist;
 use App\AutoDJ\User as AutoUser;
-use App\Music\Spotify\WebAPI as SpotifyWebAPI;
-use App\Music\Spotify\WebAPI as AppleWebAPI;
+use App\Music\User as UserAPI;
 use Carbon\Carbon;
 
 class SetAccessTokenForUser
@@ -26,12 +22,7 @@ class SetAccessTokenForUser
             return response(view('welcome'));
         }
         $this->checkAndUpateUserTracksForAutoVibes();
-        $this->shareUserDataWithAllViews();
-        if(auth()->user()->isAuthorisedWith(User::APPLE)) {
-            new AppleWebAPI();
-            return $next($request);
-        }
-        new SpotifyWebAPI();
+        app(UserAPI::Class)->setAccessToken();
         return $next($request);
     }
 
@@ -44,14 +35,5 @@ class SetAccessTokenForUser
                 AutoUser::updateTracks();
             } 
         }
-    }
-
-    public function shareUserDataWithAllViews()
-    {
-        View::composer('*', function($view){
-            $user = auth()->user()->load('vibes.tracks');
-            app(Playlist::class)->loadMany($user['vibes']);
-            View::share('user', $user);
-        });
     }
 }
