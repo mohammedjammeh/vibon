@@ -16,10 +16,10 @@ use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
-        'username' => $faker->name,
+        'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'remember_token' => str_random(10),
-        'api' => $faker->randomDigit,
+        'api' => $faker->randomElement([User::SPOTIFY]),
         'access_token' => str_random(10),
         'refresh_token' => str_random(10),
         'token_set_at' => now()
