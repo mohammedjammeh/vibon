@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Music\InterfaceAPI;
-use App\Music\Spotify\WebAPI;
+use App\MusicAPI\InterfaceAPI;
+use App\MusicAPI\Spotify\WebAPI;
 use SpotifyWebAPI\Session;
 
 class AppServiceProvider extends ServiceProvider

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Music\Spotify;
+namespace App\MusicAPI\Spotify;
 
-use App\Music\InterfaceAPI;
+use App\MusicAPI\InterfaceAPI;
 use SpotifyWebAPI\SpotifyWebAPI;
 use Carbon\Carbon;
 

@@ -4,7 +4,7 @@ namespace App\AutoDJ;
 
 use App\Track;
 use App\AutoDJ\Genre as AutoGenre;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 
 class User
 {

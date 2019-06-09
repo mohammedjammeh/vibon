@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Music;
+namespace App\MusicAPI;
 
 use Illuminate\Support\Arr;
 

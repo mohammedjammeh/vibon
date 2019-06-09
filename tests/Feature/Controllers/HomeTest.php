@@ -7,9 +7,9 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Vibe;
-use App\Music\Search;
-use App\Music\Tracks;
-use App\Music\Playlist;
+use App\MusicAPI\Search;
+use App\MusicAPI\Tracks;
+use App\MusicAPI\Playlist;
 
 class HomeTest extends TestCase
 {

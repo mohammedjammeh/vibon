@@ -5,7 +5,7 @@ namespace Tests\Unit\MusicAPI;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 
 class UserTest extends TestCase
 {

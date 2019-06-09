@@ -3,8 +3,8 @@
 namespace Tests;
 
 use App\User;
-use App\Music\InterfaceAPI;
-use App\Music\Fake\WebAPI as FakeAPI;
+use App\MusicAPI\InterfaceAPI;
+use App\MusicAPI\Fake\WebAPI as FakeAPI;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase

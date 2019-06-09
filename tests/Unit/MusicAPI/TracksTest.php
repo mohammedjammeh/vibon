@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Vibe;
 use App\Track;
-use App\Music\Tracks;
+use App\MusicAPI\Tracks;
 
 class TracksTest extends TestCase
 {

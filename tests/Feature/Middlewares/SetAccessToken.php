@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use App\Track;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Middleware\Music\SetAccessToken as SetAccessTokenMiddleware;

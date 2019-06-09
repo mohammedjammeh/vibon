@@ -4,7 +4,7 @@ namespace App\AutoDJ;
 
 use App\Track;
 use App\Vibe;
-use App\Music\Playlist;
+use App\MusicAPI\Playlist;
 use App\AutoDJ\Genre;
 
 class Tracks

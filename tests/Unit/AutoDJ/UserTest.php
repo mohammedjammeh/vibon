@@ -7,9 +7,9 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use App\Track;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 use App\AutoDJ\User as AutoUser;
-use App\Music\Fake\WebAPI as FakeAPI;
+use App\MusicAPI\Fake\WebAPI as FakeAPI;
 
 class UserTest extends TestCase
 {

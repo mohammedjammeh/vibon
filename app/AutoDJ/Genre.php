@@ -2,9 +2,9 @@
 
 namespace App\AutoDJ;
 
-use App\Music\Artist;
+use App\MusicAPI\Artist;
 use App\Genre as GenreModel;
-use App\Music\Tracks;
+use App\MusicAPI\Tracks;
 use Illuminate\Support\Arr;
 
 class Genre

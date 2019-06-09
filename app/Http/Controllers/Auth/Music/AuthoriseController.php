@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth\Music;
 
 use App\Http\Controllers\Controller;
-use App\Music\User;
+use App\MusicAPI\User;
 
 class AuthoriseController extends Controller
 {

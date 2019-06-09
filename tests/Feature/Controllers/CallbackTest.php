@@ -5,8 +5,8 @@ namespace Tests\Feature\Controllers;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Music\Fake\Session;
-use App\Music\User as UserAPI;
+use App\MusicAPI\Fake\Session;
+use App\MusicAPI\User as UserAPI;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 

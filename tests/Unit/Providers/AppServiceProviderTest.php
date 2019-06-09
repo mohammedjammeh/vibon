@@ -5,7 +5,7 @@ namespace Tests\Unit\Providers;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Music\Playlist;
+use App\MusicAPI\Playlist;
 use App\Vibe;
 
 class AppServiceProviderTest extends TestCase

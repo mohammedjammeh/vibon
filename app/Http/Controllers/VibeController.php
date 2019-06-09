@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
-use App\Music\Playlist;
-use App\Music\Tracks as TracksAPI;
+use App\MusicAPI\Playlist;
+use App\MusicAPI\Tracks as TracksAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\Http\Requests\StoreVibe;
