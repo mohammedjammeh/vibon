@@ -4,7 +4,7 @@ namespace App\Http\Middleware\Music;
 
 use Closure;
 use App\AutoDJ\User as AutoUser;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 use Carbon\Carbon;
 
 class SetAccessToken

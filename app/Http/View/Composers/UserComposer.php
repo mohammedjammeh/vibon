@@ -3,7 +3,7 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use App\Music\Playlist;
+use App\MusicAPI\Playlist;
 
 class UserComposer
 {

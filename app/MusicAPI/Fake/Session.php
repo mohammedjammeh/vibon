@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Music\Fake;
+namespace App\MusicAPI\Fake;
 
 class Session
 {

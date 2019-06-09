@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Music\Fake;
+namespace App\MusicAPI\Fake;
 
-use App\Music\Spotify\WebAPI as spotifyWebAPI;
+use App\MusicAPI\Spotify\WebAPI as spotifyWebAPI;
 
 class WebAPI extends spotifyWebAPI
 {

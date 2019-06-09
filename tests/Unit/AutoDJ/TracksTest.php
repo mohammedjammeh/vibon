@@ -10,7 +10,7 @@ use App\Vibe;
 use App\Track;
 use App\AutoDJ\Tracks as AutoTracks;
 use App\Events\VibeCreated;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 
 class TracksTest extends TestCase
 {

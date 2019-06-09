@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Vibe;
-use App\Music\Search;
-use App\Music\Tracks;
-use App\Music\Playlist;
+use App\MusicAPI\Search;
+use App\MusicAPI\Tracks;
+use App\MusicAPI\Playlist;
 
 class HomeController extends Controller
 {

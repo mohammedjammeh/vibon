@@ -7,7 +7,7 @@ use App\AutoDJ\User as AutoUser;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Music\User as UserAPI;
+use App\MusicAPI\User as UserAPI;
 
 
 class CallbackController extends Controller
