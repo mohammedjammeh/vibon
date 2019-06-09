@@ -6,7 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Music\Fake\Session;
-use App\Music\Fake\WebAPI;
+use App\Music\User as UserAPI;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,13 +36,9 @@ class CallbackTest extends TestCase
 
     public function test_spotify_callback_updates_a_previously_authenticated_users_details_instead_of_adding_him_as_new()
     {
-        $fakeUser = app(WebAPI::class)->getuser();
-        factory(User::class)->create([
-            'username' => $fakeUser->id
-        ]);
-
+        $user = factory(User::class)->create(['username' => app(UserAPI::class)->details()->id]);
+        $this->assertEmpty($user->tracks);
         $this->get(route('callback.spotify') . '?code=123');
-        $this->assertCount(1, User::all());
-        $this->assertEquals(User::first()->email, $fakeUser->email);
+        $this->assertNotEmpty(User::first()->tracks);
     }
 }
