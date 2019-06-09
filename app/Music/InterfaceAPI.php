@@ -22,4 +22,5 @@ interface InterfaceAPI
     function getUserTopTracks();
     function getUserRecentTracks();
     function getArtist($id);
+    function getTrackRecommendations($options);
 }

@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use App\Track;
 use App\Music\User as UserAPI;
-use App\Music\Playlist;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Middleware\Music\SetAccessToken as SetAccessTokenMiddleware;
@@ -50,13 +49,5 @@ class SetAccessToken extends TestCase
         $newTracks = $this->user->tracks->pluck('api_id');
         $this->assertNotContains($track->api_id, $newTracks);
         $this->assertNotEmpty($newTracks);
-    }
-
-    public function test_all_views_have_the_user_variable()
-    {
-        $user = $this->user->load('vibes.tracks');
-        app(Playlist::class)->loadMany($user['vibes']);
-        $response = $this->get(route('index'));
-        $response->assertViewHas('user', $user);
     }
 }
