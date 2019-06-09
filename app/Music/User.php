@@ -77,7 +77,7 @@ class User
         $tracksAPI = app(Tracks::class);
         $suggestions = $tracksAPI->getRecommendations([
             'target_popularity' => 40,
-            'seed_tracks' => array($userRecentTracks[1], $userTopTracks[2], $userRecentTracks[3]),
+            'seed_tracks' => array($userTopTracks[2], $userRecentTracks[0], $userRecentTracks[1]),
             'limit' => 10
         ]);
         return $suggestions->tracks;
