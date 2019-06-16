@@ -12,4 +12,9 @@ class JoinRequest extends Model
     {
     	return $this->belongsTo(User::class);
     }
+
+    public function vibe()
+    {
+        return $this->belongsTo(Vibe::class);
+    }
 }
