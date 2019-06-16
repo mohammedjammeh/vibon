@@ -30,30 +30,29 @@ class JoinRequestController extends Controller
     {
         $joinRequest->delete();
         event(new JoinRequestCancelled($joinRequest));
-        $vibe = Vibe::find($joinRequest->vibe_id);
-    	return redirect($vibe->path)->with('message', 'Your request to join has been cancelled.');
+    	return redirect($joinRequest->vibe->path)->with('message', 'Your request to join has been cancelled.');
+    }
+
+    public function respond(Request $request, JoinRequest $joinRequest)
+    {
+        $this->authorize('respond', $joinRequest);
+        $joinRequest->delete();
+        if($request->input('accept')) {
+            return $this->accept($joinRequest);
+        }
+        return $this->reject($joinRequest);
     }
 
     public function accept(JoinRequest $joinRequest)
     {
-        $vibe = Vibe::find($joinRequest->vibe_id);
-        $vibe->users()->attach($joinRequest->user->id, ['owner' => false]);
+        $joinRequest->vibe->users()->attach($joinRequest->user->id, ['owner' => false]);
         event(new JoinRequestResponded($joinRequest));
-        return redirect($vibe->path)->with('message', $joinRequest->user->name . ' is now part of this vibe.');
+        return redirect($joinRequest->vibe->path)->with('message', $joinRequest->user->name . ' is now part of this vibe.');
     }
 
     public function reject(JoinRequest $joinRequest)
     {
         event(new JoinRequestResponded($joinRequest));
-        return redirect($vibe->path);
-    }
-    
-    public function respond(Request $request, JoinRequest $joinRequest) 
-    {
-        $joinRequest->delete();
-    	if($request->input('reject')) {
-            return $this->reject($joinRequest);
-    	}
-        return $this->accept($joinRequest);
+        return redirect($joinRequest->vibe->path);
     }
 }
