@@ -50,7 +50,7 @@ class VibeController extends Controller
             'open' => request('open'),
             'auto_dj' => request('auto_dj')
         ]);
-        $vibe->users()->attach(Auth()->user()->id, ['owner' => 1]);
+        $vibe->users()->attach(Auth()->user()->id, ['owner' => true]);
         event(new VibeCreated($vibe));
         return redirect($vibe->path);
     }
