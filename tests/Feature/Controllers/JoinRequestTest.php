@@ -9,6 +9,7 @@ use Tests\TestCase;
 use App\Events\JoinRequestSent;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class JoinRequestTest extends TestCase
 {
@@ -54,6 +55,27 @@ class JoinRequestTest extends TestCase
 		]);
 		$this->assertEmpty($vibe->owner->notifications);
 	}
+
+    public function test_a_join_request_cannot_be_responded_to_by_a_user_who_is_not_the_owner_of_the_vibe()
+    {
+        $this->expectException(AuthorizationException::class);
+        $this->withoutExceptionHandling();
+        $vibe = factory(Vibe::class)->create();
+        $vibeOwner = factory(User::class)->create();
+        $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
+        $joinRequest = factory(JoinRequest::class)->create([
+            'vibe_id' => $vibe->id,
+            'user_id' => $this->user->id
+        ]);
+        event(new JoinRequestSent($joinRequest));
+
+        $randomUser = factory(User::class)->create();
+        $this->actingAs($randomUser);
+        $response = collect([true, false])->random();
+        $this->delete(route('join-request.respond', [
+            'joinRequest' => $joinRequest
+        ]), ['accept' => $response]);
+    }
 
 	public function test_vibe_owner_can_respond_to_a_join_request_from_a_user() 
 	{
