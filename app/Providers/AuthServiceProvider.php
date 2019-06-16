@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Vibe' => 'App\Policies\VibePolicy',
+        'App\JoinRequest' => 'App\Policies\JoinRequestPolicy',
     ];
 
     /**
