@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Events\VibeCreated;
 use App\AutoDJ\Genre as AutoGenre;
 
 class Vibe extends Model

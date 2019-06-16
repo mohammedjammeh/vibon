@@ -6,6 +6,7 @@ use App\Vibe;
 use App\MusicAPI\Search;
 use App\MusicAPI\Tracks;
 use App\MusicAPI\Playlist;
+use App\MusicAPI\User;
 
 class HomeController extends Controller
 {
@@ -19,10 +20,9 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Search $search, Tracks $tracks, Playlist $playlist)
+    public function index(Search $search, Tracks $tracks, Playlist $playlist, User $user)
     {
-        // $userAPI = app(UserAPI::class);
-        // $trackSuggestions = $userAPI->trackSuggestions();
+//        $trackSuggestions = $user->trackSuggestions();
         $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
         return view('home', [
             'apiTracks' => $tracks->check($trackSuggestions),

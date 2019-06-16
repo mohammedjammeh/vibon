@@ -29,13 +29,12 @@ class SendJoinRequestRespondedNotification
     public function handle(JoinRequestResponded $event)
     {
         $joinRequest = $event->joinRequest;
-        $vibe = Vibe::find($joinRequest->vibe_id);
-        $vibe->owner->lastUnreadRequestNotificationFor($joinRequest)->markAsRead();
+        $joinRequest->vibe->owner->lastUnreadRequestNotificationFor($joinRequest)->markAsRead();
 
-        if ($vibe->hasMember($joinRequest->user)) {
-            $joinRequest->user->notify(new ResponseToJoinAVibe($vibe->id, true));
+        if ($joinRequest->vibe->hasMember($joinRequest->user)) {
+            $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, true));
         } else {
-            $joinRequest->user->notify(new ResponseToJoinAVibe($vibe->id, false));
+            $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, false));
         }
     }
 }
