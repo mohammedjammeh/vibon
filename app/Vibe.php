@@ -35,9 +35,12 @@ class Vibe extends Model
         return $this->tracks()->where('auto_related', false)->get();
     }
 
-    public function hasMember($user) 
+    public function hasMember($user)
     {
-        return $this->users->where('id', $user->id)->first();
+        if($this->users->where('id', $user->id)->first()) {
+            return true;
+        }
+        return false;
     }
 
     public function hasJoinRequestFrom($user) 
@@ -55,7 +58,7 @@ class Vibe extends Model
 
     public function getOwnerAttribute()
     {
-        return $this->users()->where('owner', 1)->first();
+        return $this->users()->where('owner', true)->first();
     }
 
     public function getPathAttribute() 
