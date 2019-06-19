@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Middleware\Music\SetAccessToken as SetAccessTokenMiddleware;
 
-class SetAccessToken extends TestCase
+class SetAccessTokenTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
@@ -27,12 +27,9 @@ class SetAccessToken extends TestCase
     public function test_unauthorised_user_is_redirected_to_welcome_page_by_set_access_token_middleware()
     {
         Auth::logout();
-        $response = $this->get(route('index'));
-        $response->assertRedirect(route('welcome'));
-
-//        $request = Request::create(route('index'), 'GET');
-//        $response = app(SetAccessTokenMiddleware::class)->handle($request, function () {});
-//        $this->assertEquals($response->getStatusCode(), 302);
+        $request = Request::create(route('index'), 'GET');
+        $response = app(SetAccessTokenMiddleware::class)->handle($request, function () {});
+        $this->assertEquals($response->getStatusCode(), 302);
     }
 
     public function test_user_tracks_are_updated_by_set_access_token_middleware_if_his_first_track_was_attached_more_than_24_hours_ago()
@@ -44,7 +41,8 @@ class SetAccessToken extends TestCase
             'created_at' => Carbon::now()->subDays(2)
         ]);
 
-        $this->get(route('index'));
+        $request = Request::create(route('index'), 'GET');
+        app(SetAccessTokenMiddleware::class)->handle($request, function () {});
 
         $newTracks = $this->user->tracks->pluck('api_id');
         $this->assertNotContains($track->api_id, $newTracks);

@@ -23,11 +23,6 @@ class Track extends Model
         return $this->belongsToMany(Genre::class, 'track_genre')->withTimestamps();
     }
 
-    public function find($apiId)
-    {
-    	return $this->where('api_id', $apiId)->first();
-    }
-
     public function scopeAutoRelatedTo($query, $vibe) 
     {
         return $query->whereHas('vibes', function($vibeQuery) use($vibe) {
