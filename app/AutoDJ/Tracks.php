@@ -11,7 +11,7 @@ class Tracks
 {
 	public static function store($vibe)
 	{
-		$tracks = Track::belongsToMemberOf($vibe)->get();
+		$tracks = Track::belongsToMembersOf($vibe)->get();
 		$tracksIDs = array_unique($tracks->pluck('id')->toArray());
 		$vibe->tracks()->attach($tracksIDs, ['auto_related' => true]);
 	}

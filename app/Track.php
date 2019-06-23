@@ -30,7 +30,7 @@ class Track extends Model
         });
     }
 
-    public function scopeBelongsToMemberOf($query, $vibe)
+    public function scopeBelongsToMembersOf($query, $vibe)
     {
         return $query->whereHas('users', function($userQuery) use($vibe) {
             return $userQuery->isMemberOf($vibe);
