@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function isAuthorisedWith($api) 
     {
-        if($this->where('api', $api)->get()) {
+        if($this->api == $api) {
             return true;
         }
         return false;
