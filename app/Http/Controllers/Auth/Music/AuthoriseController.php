@@ -14,6 +14,9 @@ class AuthoriseController extends Controller
 
     public function welcome()
     {
-        return view('welcome');
+        if(!auth()->user()) {
+            return view('welcome');
+        }
+        return redirect(route('home'));
     }
 }
