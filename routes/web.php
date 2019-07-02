@@ -18,8 +18,8 @@ Route::get('/spotify', 'Auth\Music\CallbackController@spotifyAuth')->name('callb
 Route::get('/authorise', 'Auth\Music\AuthoriseController@authorise')->name('authorise');
 Route::get('/welcome', 'Auth\Music\AuthoriseController@welcome')->name('welcome');
 
-Route::resource('/', 'HomeController');
-Route::get('/home', 'HomeController@index');
+Route::get('/', 'HomeController@index')->name('index');
+Route::get('/home', 'HomeController@index')->name('home');
 Route::apiResource('/track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
