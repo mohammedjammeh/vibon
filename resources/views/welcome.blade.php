@@ -66,7 +66,7 @@
             <div class="content">
                 <div class="title m-b-md"> Vibon </div>
                     <div class="links">
-                        <a href="{{ route('authorise') }}">Spotify</a>
+                        <a href="{{ route('authorise') }}" class="spotifyBtn">Spotify</a>
                         <br>
                         <a href="{{ route('authorise') }}">Apple</a>
                     </div>
