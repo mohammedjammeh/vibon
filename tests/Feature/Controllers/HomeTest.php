@@ -10,6 +10,7 @@ use App\Vibe;
 use App\MusicAPI\Search;
 use App\MusicAPI\Tracks;
 use App\MusicAPI\Playlist;
+use App\MusicAPI\User as UserAPI;
 
 class HomeTest extends TestCase
 {
@@ -28,7 +29,8 @@ class HomeTest extends TestCase
 
     public function test_home_view_gets_required_data()
     {
-        $trackSuggestions = app(Search::class)->tracks('Reggae Banton');
+//        $trackSuggestions = app(Search::class)->tracks('Reggae Banton');
+        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
         factory(Vibe::class, 2)->create();
         $this->get(route('index'))->assertViewHasAll([
             'apiTracks' => app(Tracks::class)->check($trackSuggestions),
