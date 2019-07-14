@@ -7,7 +7,7 @@
                         <form method="POST" action="{{ route('track-vibe.destroy', ['vibe' => $userVibe->id, 'track' => $apiTrack->vibon_id]) }}">
                             @csrf
                             @method('DELETE')
-                            <input type="submit" name="track-vibe-store" value="{{ $userVibe->name }}" style="background:red;">
+                            <input type="submit" name="track-vibe-destroy" value="{{ $userVibe->name }}" style="background:red;">
                         </form>
                         <br>
                     @else 

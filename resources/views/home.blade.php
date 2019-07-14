@@ -15,9 +15,9 @@
                 @foreach($vibes as $vibe)
                     @if($vibe->id == $notification->data['vibe_id'])
                         @if($notification->type == 'App\Notifications\ResponseToJoinAVibe')
-                            @if($notification->data['response'] == 1)
+                            @if($notification->data['response'])
                                 <p>Your request to join '{{ $vibe->name }}' has been accepted.</p>
-                            @elseif($notification->data['response'] == 0)
+                            @else
                                 <p>Sorry, your request to join '{{ $vibe->name }}' has been rejected.</p>
                             @endif
                         @elseif($notification->type == 'App\Notifications\RemovedFromAVibe')
