@@ -51,7 +51,11 @@ services:
             - "6379:6379"
     selenium:
         container_name: vibin_selenium
-        image: selenium/standalone-chrome:3.13
+        image: selenium/standalone-chrome:3.11.0-antimony
+        depends_on:
+            - apache
+        links:
+            - apache:vibin.localhost
         volumes:
             - /dev/shm:/dev/shm
         networks:
