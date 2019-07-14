@@ -91,7 +91,7 @@
         <h3>Members</h3>
         @foreach($vibe->users as $member)
             <p>{{ $member->username }}</p>
-            @if($member->pivot->owner == 0)
+            @if(!$member->pivot->owner)
                 @can('delete', $vibe)
                     <form method="POST" action="{{ route('user-vibe.destroy', ['vibe' => $member->pivot->vibe_id, 'user' => $member->id]) }}">
                         @csrf

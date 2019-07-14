@@ -22,8 +22,8 @@ class HomeController extends Controller
      */
     public function index(Search $search, Tracks $tracks, Playlist $playlist, User $user)
     {
-//        $trackSuggestions = $user->trackSuggestions();
-        $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
+        $trackSuggestions = $user->trackSuggestions();
+//        $trackSuggestions = $search->tracks('Bob Marley and The Wailers');
         return view('home', [
             'apiTracks' => $tracks->check($trackSuggestions),
             'vibes' => $playlist->loadMany(Vibe::all())
