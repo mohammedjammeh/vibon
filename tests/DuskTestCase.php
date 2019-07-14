@@ -33,12 +33,21 @@ abstract class DuskTestCase extends BaseTestCase
             '--disable-gpu',
             '--headless',
             '--window-size=1920,1080',
+            '--no-sandbox',
+            '--ignore-ssl-errors',
+            '--whitelisted-ips=""'
         ]);
 
-        return RemoteWebDriver::create(
-            'http://localhost:9515', DesiredCapabilities::chrome()->setCapability(
+        if (env('USE_SELENIUM', 'false') == 'true') {
+             return RemoteWebDriver::create(
+                'http://selenium:4444/wd/hub', DesiredCapabilities::chrome()->setCapability(
                 ChromeOptions::CAPABILITY, $options
-            )
-        );
+            ));
+        } else {
+            return RemoteWebDriver::create(
+                'http://localhost:9515', DesiredCapabilities::chrome()->setCapability(
+                ChromeOptions::CAPABILITY, $options
+            ));
+        }
     }
 }
