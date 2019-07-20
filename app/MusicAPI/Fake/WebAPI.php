@@ -136,13 +136,20 @@ class WebAPI extends spotifyWebAPI
 
     public function getTrackRecommendations($options)
     {
+        $track01 = $this->getTrack('trackRecommendation01');
+        $track01->name = 'track Recommendation 01';
+
+        $track02 = $this->getTrack('trackRecommendation02');
+        $track02->name = 'track Recommendation 02';
+
+        $track03 = $this->getTrack('trackRecommendation03');
+        $track03->name = 'track Recommendation 03';
+
+        $track04 = $this->getTrack('trackRecommendation04');
+        $track04->name = 'track Recommendation 04';
+
         return (object) [
-            'tracks' => (object) [
-                $this->getTrack('trackRecommendation01'),
-                $this->getTrack('trackRecommendation02'),
-                $this->getTrack('trackRecommendation03'),
-                $this->getTrack('trackRecommendation04')
-            ]
+            'tracks' => (object) [$track01, $track02, $track03, $track04]
         ];
     }
 
