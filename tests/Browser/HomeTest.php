@@ -26,8 +26,19 @@ class HomeTest extends DuskTestCase
             $browser->loginAs($user)
                 ->visit(route('home'))
                 ->assertUrlIs(route('home'))
-                ->assertSee('Start a vibe')
+                ->assertSeeLink('Start a vibe')
                 ->assertAuthenticatedAs($user);
+        });
+    }
+
+    public function test_user_is_redirected_to_the_vibe_create_page_when_he_clicks_the_start_a_vibe_link()
+    {
+        $user = factory(User::class)->create();
+        $this->browse(function (Browser $browser) use($user) {
+            $browser->loginAs($user)
+                ->visit(route('home'))
+                ->clickLink('Start a vibe')
+                ->assertPathIs('/vibe/create');
         });
     }
 
@@ -111,23 +122,38 @@ class HomeTest extends DuskTestCase
         });
     }
 
-    public function test_track_suggestions_which_belong_to_the_vibe_a_user_is_a_member_of_are_identified_on_the_home_page()
+    public function test_track_suggestions_which_belong_to_the_vibes_that_a_user_is_a_member_of_are_identified_on_the_home_page_as_tracks_that_can_be_removed()
     {
         $user = factory(User::class)->create();
         $vibe = factory(Vibe::class)->create();
         $user->vibes()->attach($vibe->id, ['owner' => false]);
-        $trackSuggestions = app(UserAPI::class)->trackSuggestions(); // used because trackSuggestions are displayed on homepage
+        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
         $track = factory(Track::class)->create([
             'api_id' => collect($trackSuggestions)->first()->id
         ]);
         $vibe->tracks()->attach($track->id, ['auto_related' => 0]);
 
-        $this->browse(function (Browser $browser) use($user, $track, $vibe) {
-            $userTrackVibe = $this->loadVibesAsPlaylists([$vibe])->first();
+        $this->browse(function (Browser $browser) use($user, $vibe) {
+            $userVibe = $this->loadVibesAsPlaylists([$vibe])->first();
             $browser->loginAs($user)
                 ->visit(route('index'));
             $selector = 'form input[name="track-vibe-destroy"]';
-            $browser->assertInputValue($selector, $userTrackVibe->name);
+            $browser->assertInputValue($selector, $userVibe->name);
+        });
+    }
+
+    public function test_track_suggestions_which_do_not_belong_to_the_vibes_that_a_user_is_a_member_of_are_identified_on_the_home_page_as_tracks_that_can_be_stored()
+    {
+        $user = factory(User::class)->create();
+        $vibe = factory(Vibe::class)->create();
+        $user->vibes()->attach($vibe->id, ['owner' => false]);
+
+        $this->browse(function (Browser $browser) use($user, $vibe) {
+            $userVibe = $this->loadVibesAsPlaylists([$vibe])->first();
+            $browser->loginAs($user)
+                ->visit(route('index'));
+            $selector = 'form input[name="track-vibe-store"]';
+            $browser->assertInputValue($selector, $userVibe->name);
         });
     }
 

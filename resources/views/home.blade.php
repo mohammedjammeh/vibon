@@ -33,7 +33,7 @@
             @if(count($user['vibes']) > 0)
                 <h3>My Vibes</h3>
                 @foreach($user['vibes'] as $vibe)
-                    @if($vibe->pivot->owner == 1)
+                    @if($vibe->pivot->owner)
                         <a href="{{ route('vibe.show', ['id' => $vibe->id]) }}">
                             {{ $vibe->name }}
                             @if(count($vibe->joinRequests) > 0)
