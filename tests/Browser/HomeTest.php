@@ -7,13 +7,10 @@ use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Vibe;
 use App\User;
-use App\Track;
 use App\JoinRequest;
-use App\MusicAPI\Playlist;
 use App\MusicAPI\User as UserAPI;
 use App\Notifications\ResponseToJoinAVibe;
 use App\Notifications\RemovedFromAVibe;
-use App\MusicAPI\Tracks;
 
 class HomeTest extends DuskTestCase
 {
@@ -38,6 +35,7 @@ class HomeTest extends DuskTestCase
             $browser->loginAs($user)
                 ->visit(route('home'))
                 ->clickLink('Start a vibe')
+                ->assertUrlIs(route('vibe.create'))
                 ->assertPathIs('/vibe/create');
         });
     }
@@ -52,7 +50,7 @@ class HomeTest extends DuskTestCase
         ]);
         $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, true));
 
-        $vibe = $this->loadVibesAsPlaylists(collect([$vibe]))->first();
+        $this->loadVibesAsPlaylists(collect([$vibe]))->first();
         $this->browse(function (Browser $browser) use($user, $vibe) {
             $browser->loginAs($user)
                 ->visit(route('index'))
@@ -70,7 +68,7 @@ class HomeTest extends DuskTestCase
         ]);
         $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, false));
 
-        $vibe = $this->loadVibesAsPlaylists(collect([$vibe]))->first();
+        $this->loadVibesAsPlaylists(collect([$vibe]))->first();
         $this->browse(function (Browser $browser) use($user, $vibe) {
             $browser->loginAs($user)
                 ->visit(route('index'))
@@ -84,7 +82,7 @@ class HomeTest extends DuskTestCase
         $user = factory(User::class)->create();
         $user->notify(new RemovedFromAVibe($vibe->id));
 
-        $vibe = $this->loadVibesAsPlaylists(collect([$vibe]))->first();
+        $this->loadVibesAsPlaylists(collect([$vibe]))->first();
         $this->browse(function (Browser $browser) use($user, $vibe) {
             $browser->loginAs($user)
                 ->visit(route('index'))
@@ -99,7 +97,7 @@ class HomeTest extends DuskTestCase
         $user->vibes()->attach($vibes->pluck('id'), ['owner' => true]);
         factory(JoinRequest::class, 5)->create(['vibe_id' => $vibes->last()->id]);
 
-        $vibes = $this->loadVibesAsPlaylists($vibes);
+        $this->loadVibesAsPlaylists($vibes);
         $this->browse(function (Browser $browser) use($user, $vibes) {
             $browser->loginAs($user)
                 ->visit(route('index'))
@@ -120,46 +118,5 @@ class HomeTest extends DuskTestCase
                     ->assertSee($trackSuggestion->name);
             }
         });
-    }
-
-    public function test_track_suggestions_which_belong_to_the_vibes_that_a_user_is_a_member_of_are_identified_on_the_home_page_as_tracks_that_can_be_removed()
-    {
-        $user = factory(User::class)->create();
-        $vibe = factory(Vibe::class)->create();
-        $user->vibes()->attach($vibe->id, ['owner' => false]);
-        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
-        $track = factory(Track::class)->create([
-            'api_id' => collect($trackSuggestions)->first()->id
-        ]);
-        $vibe->tracks()->attach($track->id, ['auto_related' => 0]);
-
-        $this->browse(function (Browser $browser) use($user, $vibe) {
-            $userVibe = $this->loadVibesAsPlaylists([$vibe])->first();
-            $browser->loginAs($user)
-                ->visit(route('index'));
-            $selector = 'form input[name="track-vibe-destroy"]';
-            $browser->assertInputValue($selector, $userVibe->name);
-        });
-    }
-
-    public function test_track_suggestions_which_do_not_belong_to_the_vibes_that_a_user_is_a_member_of_are_identified_on_the_home_page_as_tracks_that_can_be_stored()
-    {
-        $user = factory(User::class)->create();
-        $vibe = factory(Vibe::class)->create();
-        $user->vibes()->attach($vibe->id, ['owner' => false]);
-
-        $this->browse(function (Browser $browser) use($user, $vibe) {
-            $userVibe = $this->loadVibesAsPlaylists([$vibe])->first();
-            $browser->loginAs($user)
-                ->visit(route('index'));
-            $selector = 'form input[name="track-vibe-store"]';
-            $browser->assertInputValue($selector, $userVibe->name);
-        });
-    }
-
-    protected function loadVibesAsPlaylists($vibes)
-    {
-        $vibes = collect($vibes);
-        return app(Playlist::class)->loadMany($vibes);
     }
 }
