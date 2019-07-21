@@ -6,6 +6,7 @@ use Laravel\Dusk\TestCase as BaseTestCase;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use App\MusicAPI\Playlist;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -49,5 +50,11 @@ abstract class DuskTestCase extends BaseTestCase
                 ChromeOptions::CAPABILITY, $options
             ));
         }
+    }
+
+    protected function loadVibesAsPlaylists($vibes)
+    {
+        $vibes = collect($vibes);
+        return app(Playlist::class)->loadMany($vibes);
     }
 }
