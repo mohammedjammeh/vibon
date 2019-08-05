@@ -86,6 +86,12 @@ Feature\Controllers\JoinRequest
  [x] A join request cannot be responded to by a user who is not the owner of the vibe
  [x] Vibe owner can respond to a join request from a user
 
+Feature\Controllers\Playback
+ [ ] User can start or resume playback
+ [ ] User can pause playback
+ [ ] User can skip to next track on playback
+ [ ] User can skip to previous track on playback
+
 Feature\Controllers\TrackVibeAuto
  [x] Auto tracks of a vibe can be updated
 
