@@ -72,5 +72,48 @@
             @yield('content')
         </main>
     </div>
+
+    {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>--}}
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const token = 'BQDl1L4iYzEn-p586LGH7k3bERLnTpWSEMqha63MVI8uOPGy2OXCPDTbnYV-i4NJakp38YglH6xhLoahtwETBdSU8Abl_nvdhhohnKzql3f4WR5ZEeZq4GxUIvtw5pClzQhS6i16wEVSIFx2Uzhyz9RVagnFQdP9_1ll8BlmoszpzsPrS06HSRZMJWA_McwGKeBEZOI7Sp_E0pZmrYr4hjpcX_AYgEiUvHRFEVyJjEs4z3mY6vMlQxanWIkQ61Jti9wJ9eqh1w4';
+            const player = new Spotify.Player({
+                name: 'Vibon',
+                getOAuthToken: cb => { cb(token); }
+            });
+
+            // Error handling
+            player.addListener('initialization_error', ({ message }) => { console.error(message); });
+            player.addListener('authentication_error', ({ message }) => { console.error(message); });
+            player.addListener('account_error', ({ message }) => { console.error(message); });
+            player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+            // Playback status updates
+            player.addListener('player_state_changed', state => { console.log(state); });
+
+            // Ready
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+                $.ajax({
+                    type: 'GET',
+                    url: '/playback/play/1',
+                    data: {'device_id':device_id},
+                    success: function(){
+                        console.log('playing');
+                    }
+                });
+            });
+
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID has gone offline', device_id);
+            });
+
+            // Connect to the player!
+            player.connect();
+        };
+    </script>
+    {{--<script src="{{ asset('js/script.js') }}"></script>--}}
 </body>
 </html>
