@@ -54,6 +54,11 @@ class WebAPI implements InterfaceAPI
                 'user-read-email',
                 'user-read-recently-played',
                 'user-top-read',
+                'user-modify-playback-state',
+                'user-read-currently-playing',
+                'user-read-playback-state',
+                'streaming',
+                'user-read-private',
             ],
         ];
         return $options;
@@ -138,5 +143,38 @@ class WebAPI implements InterfaceAPI
     public function getArtist($id)
     {
         return $this->api->getArtist($id);
+    }
+
+    public function getUserDevices()
+    {
+        return $this->api->getMyDevices()->devices;
+    }
+
+    public function playPlayback($playlistId)
+    {
+//        dd('yoo');
+//        return 'lol';
+//        dd($this->getUserDevices());
+        $deviceId = $_GET['device_id'];
+//        $deviceId = collect($this->getUserDevices())->first()->id;
+        $playlist = $this->getPlaylist($playlistId);
+        $this->api->play($deviceId, [
+            'context_uri' => $playlist->uri,
+        ]);
+    }
+
+    public function pausePlayback()
+    {
+        $this->api->pause();
+    }
+
+    public function skipPlaybackToPreviousTrack()
+    {
+        $this->api->previous();
+    }
+
+    public function skipPlaybackToNextTrack()
+    {
+        $this->api->next();
     }
 }
