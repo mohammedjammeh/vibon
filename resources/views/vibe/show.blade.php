@@ -44,6 +44,34 @@
             </form>
             <br><br>
 
+            <div>
+                <form method="POST" action="{{ route('playback.play', ['vibe' => $vibe]) }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="submit" name="play-playback" value="Play">
+                </form>
+                <br>
+
+                <form method="POST" action="{{ route('playback.pause') }}">
+                    @csrf
+                    @method('PUT')
+                    <input type="submit" name="pause-playback" value="Pause">
+                </form>
+                <br>
+
+                <form method="POST" action="{{ route('playback.previous') }}">
+                    @csrf
+                    <input type="submit" name="pause-previous" value="Previous">
+                </form>
+                <br>
+
+                <form method="POST" action="{{ route('playback.next') }}">
+                    @csrf
+                    <input type="submit" name="pause-next" value="Next">
+                </form>
+                <br>
+            </div>
+
             @if(count($vibe->joinRequests) > 0)
                 <h3>Requests</h3>
                 @foreach($vibe->joinRequests as $joinRequest)
