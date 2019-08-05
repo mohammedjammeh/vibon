@@ -23,4 +23,9 @@ interface InterfaceAPI
     function getUserRecentTracks();
     function getArtist($id);
     function getTrackRecommendations($options);
+
+    function playPlayback($playlistId);
+    function pausePlayback();
+    function skipPlaybackToPreviousTrack();
+    function skipPlaybackToNextTrack();
 }
