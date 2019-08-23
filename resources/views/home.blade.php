@@ -47,7 +47,7 @@
             @endif
 
             <h3>Random Tracks</h3>
-            @include('includes.tracks')
+            {{--@include('includes.tracks')--}}
         @endif
     </div>
 @endsection

@@ -11,9 +11,14 @@ class Playback
         $this->api = $interfaceAPI;
     }
 
-    public function play($playlistId)
+    public function play($playlistUri, $trackUri)
     {
-        return $this->api->playPlayback($playlistId);
+        return $this->api->playPlayback($playlistUri, $trackUri);
+    }
+
+    public function resume()
+    {
+        return $this->api->resumePlayback();
     }
 
     public function pause()
@@ -29,5 +34,10 @@ class Playback
     public function next()
     {
         return $this->api->skipPlaybackToNextTrack();
+    }
+
+    public function currentlyPlaying()
+    {
+        return $this->api->getPlaybackCurrentTrack();
     }
 }

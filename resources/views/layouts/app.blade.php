@@ -73,47 +73,165 @@
         </main>
     </div>
 
-    {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>--}}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <script>
+    <script type="text/javascript">
         window.onSpotifyWebPlaybackSDKReady = () => {
-            const token = 'BQDl1L4iYzEn-p586LGH7k3bERLnTpWSEMqha63MVI8uOPGy2OXCPDTbnYV-i4NJakp38YglH6xhLoahtwETBdSU8Abl_nvdhhohnKzql3f4WR5ZEeZq4GxUIvtw5pClzQhS6i16wEVSIFx2Uzhyz9RVagnFQdP9_1ll8BlmoszpzsPrS06HSRZMJWA_McwGKeBEZOI7Sp_E0pZmrYr4hjpcX_AYgEiUvHRFEVyJjEs4z3mY6vMlQxanWIkQ61Jti9wJ9eqh1w4';
+            // AUTO GET USER TOKEN
             const player = new Spotify.Player({
                 name: 'Vibon',
-                getOAuthToken: cb => { cb(token); }
+                getOAuthToken: cb => { cb(
+                    $.ajax({
+                        type: 'GET',
+                        url: '/user/access-token',
+                        data: {},
+                        success: function() {}
+                    })
+                ); }
             });
 
             // Error handling
             player.addListener('initialization_error', ({ message }) => { console.error(message); });
-            player.addListener('authentication_error', ({ message }) => { console.error(message); });
             player.addListener('account_error', ({ message }) => { console.error(message); });
             player.addListener('playback_error', ({ message }) => { console.error(message); });
+            player.addListener('authentication_error', ({ message }) => { console.error(message); });
+
+
 
             // Playback status updates
-            player.addListener('player_state_changed', state => { console.log(state); });
+            player.addListener('player_state_changed', state => {
+                if(state) {
+                    $trackID = state['track_window']['current_track']['linked_from']['id'] ? state['track_window']['current_track']['linked_from']['id'] : state['track_window']['current_track']['id'];
+                    $trackSpan = $('.playback-play-track a').children('span.track-api-id:contains(' + $trackID + ')');
+                    $trackVibonID = $trackSpan.siblings('.track-vibon-id').text();
+                    $vibeVibonID = $('.vibe-vibon-id').text();
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    if (state['position'] === 0) {
+                        $('.api-tracks > div').removeAttr('style');
+                        if(newPlayingTrackIsOnThisPage($trackSpan)) {
+                            $trackSpan.parent().parent().attr('style', 'background: green;');
+
+                            $.ajax({
+                                type: 'PUT',
+                                url: '/vibe-playback/vibe/' + $vibeVibonID + '/track/' + $trackVibonID,
+                                data: {},
+                                success: function(data) {
+                                    console.log(data);
+                                }
+                            });
+                        }
+                    }
+
+                    function newPlayingTrackIsOnThisPage($trackSpan) {
+                        if($trackSpan.length > 0) {
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    if(state['paused'] === true) {
+                        $('.playback-play').show();
+                        $('.playback-pause').hide();
+                    } else {
+                        $('.playback-play').hide();
+                        $('.playback-pause').show();
+                    }
+                }
+            });
+
+
 
             // Ready
             player.addListener('ready', ({ device_id }) => {
                 console.log('Ready with Device ID', device_id);
-                $.ajax({
-                    type: 'GET',
-                    url: '/playback/play/1',
-                    data: {'device_id':device_id},
-                    success: function(){
-                        console.log('playing');
-                    }
+
+                function trackAjax($type, $url, $text, $position) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    $.ajax({
+                        type: $type,
+                        url: $url,
+                        data: {
+                            'device_id': device_id,
+                            'position': $position
+                        },
+                        async: true,
+                        success: function() {
+                            console.log($text);
+                        }
+                    });
+                }
+
+                $(document).on('click', '.playback-play-track a', function(event) {
+                    event.preventDefault();
+
+                    $vibeURI = $('.vibe-uri').text();
+                    $trackURI = $(this).children('span.track-uri').text();
+
+                    $URL = '/playback/vibe/' + $vibeURI + '/track/' + $trackURI + '/play';
+                    trackAjax('PUT', $URL, 'Playing track.', 0);
+                });
+
+                $(document).on('click', '.playback-play a', function(event) {
+                    event.preventDefault();
+
+                    $vibeURI = $('.vibe-uri').text();
+                    $trackURI = $('.api-tracks div[style="background: green;"] span.track-uri').text();
+
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/playback/currently-playing',
+                        data: {},
+                        success: function(data) {
+                            if(data['item']) {
+                                $URL = '/playback/resume';
+                                trackAjax('PUT', $URL, 'Resume track.', data['progress_ms']);
+                            } else {
+                                $URL = '/playback/vibe/' + $vibeURI + '/track/' + $trackURI + '/play';
+                                trackAjax('PUT', $URL, 'Playing track.', 0);
+                            }
+                        }
+                    });
+                });
+
+                $(document).on('click', '.playback-pause a', function(event) {
+                    event.preventDefault();
+                    trackAjax('PUT', '/playback/pause', 'Paused track.', 0);
+                });
+
+                $(document).on('click', '.playback-previous a', function(event){
+                    event.preventDefault();
+                    trackAjax('POST', '/playback/previous', 'Playing previous track.', 0);
+                });
+
+                $(document).on('click', '.playback-next a', function(event){
+                    event.preventDefault();
+                    trackAjax('POST', '/playback/next', 'Playing next track.', 0);
                 });
             });
+
 
             // Not Ready
             player.addListener('not_ready', ({ device_id }) => {
                 console.log('Device ID has gone offline', device_id);
             });
 
+
             // Connect to the player!
             player.connect();
         };
     </script>
-    {{--<script src="{{ asset('js/script.js') }}"></script>--}}
+    <script src="{{ asset('js/script.js') }}"></script>
 </body>
 </html>

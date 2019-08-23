@@ -45,6 +45,7 @@ class Playlist
     {
         $playlist = $this->api->getPlaylist($vibe->api_id);
         $vibe->name = $playlist->name;
+        $vibe->uri = $playlist->uri;
         return $vibe;
     }
 
