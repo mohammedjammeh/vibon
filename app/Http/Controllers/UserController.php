@@ -11,7 +11,7 @@ class UserController extends Controller
         $this->middleware('setAccessToken');
     }
 
-    public function getAccessToken()
+    public function accessToken()
     {
         return auth()->user()->access_token;
     }
