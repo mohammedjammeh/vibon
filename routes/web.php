@@ -44,4 +44,4 @@ Route::get('playback/currently-playing', 'PlaybackController@currentlyPlaying')-
 
 Route::put('vibe-playback/vibe/{vibe}/track/{track}', 'VibePlaybackController@update')->name('playback.update');
 
-Route::get('user/access-token', 'UserController@getAccessToken')->name('user.access.token');
+Route::get('user/access-token', 'UserController@accessToken')->name('user.access.token');
