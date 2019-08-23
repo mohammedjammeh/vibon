@@ -35,7 +35,13 @@ Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@dest
 
 Route::post('track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
 
-Route::get('playback/play/{vibe}', 'PlaybackController@play')->name('playback.play');
+Route::put('playback/vibe/{vibeURI}/track/{trackURI}/play', 'PlaybackController@play')->name('playback.play');
+Route::put('playback/resume', 'PlaybackController@resume')->name('playback.resume');
 Route::put('playback/pause', 'PlaybackController@pause')->name('playback.pause');
 Route::post('playback/previous', 'PlaybackController@previous')->name('playback.previous');
 Route::post('playback/next', 'PlaybackController@next')->name('playback.next');
+Route::get('playback/currently-playing', 'PlaybackController@currentlyPlaying')->name('playback.current');
+
+Route::put('vibe-playback/vibe/{vibe}/track/{track}', 'VibePlaybackController@update')->name('playback.update');
+
+Route::get('user/access-token', 'UserController@getAccessToken')->name('user.access.token');

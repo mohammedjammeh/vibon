@@ -150,17 +150,26 @@ class WebAPI implements InterfaceAPI
         return $this->api->getMyDevices()->devices;
     }
 
-    public function playPlayback($playlistId)
+    public function playPlayback($playlistUri, $trackUri)
     {
-//        dd('yoo');
-//        return 'lol';
-//        dd($this->getUserDevices());
-        $deviceId = $_GET['device_id'];
-//        $deviceId = collect($this->getUserDevices())->first()->id;
-        $playlist = $this->getPlaylist($playlistId);
+        parse_str(file_get_contents('php://input'), $_PUT);
+        $deviceId = $_PUT['device_id'];
+        $position = $_PUT['position'];
+
         $this->api->play($deviceId, [
-            'context_uri' => $playlist->uri,
+            'context_uri' => $playlistUri,
+            'offset' => [
+                'uri' => $trackUri
+            ],
+            'position_ms' => $position,
         ]);
+    }
+
+    public function resumePlayback()
+    {
+        parse_str(file_get_contents('php://input'), $_PUT);
+        $deviceId = $_PUT['device_id'];
+        $this->api->play($deviceId, []);
     }
 
     public function pausePlayback()
@@ -176,5 +185,10 @@ class WebAPI implements InterfaceAPI
     public function skipPlaybackToNextTrack()
     {
         $this->api->next();
+    }
+
+    public function getPlaybackCurrentTrack()
+    {
+        return (array)$this->api->getMyCurrentTrack();
     }
 }

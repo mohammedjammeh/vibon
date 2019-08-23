@@ -12,3 +12,15 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
+
+.api-tracks {
+  & > div {
+    float: left;
+    width: 31.3333333333%;
+    margin: 2% 1%;
+
+    img {
+      max-width: 100%;
+    }
+  }
+}

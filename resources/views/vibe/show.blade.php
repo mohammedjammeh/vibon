@@ -45,32 +45,28 @@
             <br><br>
 
             <div>
-                <form method="POST" action="{{ route('playback.play', ['vibe' => $vibe]) }}">
-                    @csrf
-                    @method('PUT')
-                    <input type="submit" name="play-playback" value="Play">
-                </form>
-                <br>
-
-                <form method="POST" action="{{ route('playback.pause') }}">
-                    @csrf
-                    @method('PUT')
-                    <input type="submit" name="pause-playback" value="Pause">
-                </form>
-                <br>
-
-                <form method="POST" action="{{ route('playback.previous') }}">
-                    @csrf
-                    <input type="submit" name="pause-previous" value="Previous">
-                </form>
-                <br>
-
-                <form method="POST" action="{{ route('playback.next') }}">
-                    @csrf
-                    <input type="submit" name="pause-next" value="Next">
-                </form>
-                <br>
+                <div class="playback-play">
+                    <a href="#">Play</a>
+                    <br><br>
+                </div>
+                
+                <div class="playback-pause"  style="display: none;">
+                    <a href="#">Pause</a>
+                    <br><br>
+                </div>
+                
+                <div class="playback-previous">
+                    <a href="#">Previous</a>
+                    <br><br>
+                </div>
+                
+                <div class="playback-next">
+                    <a href="#">Next</a>
+                    <br><br>
+                </div>
             </div>
+
+            <br>
 
             @if(count($vibe->joinRequests) > 0)
                 <h3>Requests</h3>
@@ -136,15 +132,19 @@
 
         @if(count($apiTracks) > 0) 
             <h3>Tracks</h3>
-            @if($vibe->auto_dj)
-                @foreach($apiTracks as $apiTrack)
-                    <img src="{{ $apiTrack->album->images[0]->url }}">
-                    <p>{{ $apiTrack->name }}</p>
-                    <br><br>
-                @endforeach
-            @else
-                @include('includes.tracks')
-            @endif
+            {{--@if($vibe->auto_dj)--}}
+                {{--@foreach($apiTracks as $apiTrack)--}}
+                    {{--<img src="{{ $apiTrack->album->images[0]->url }}">--}}
+                    {{--<p>{{ $apiTrack->name }}</p>--}}
+                    {{--<br><br>--}}
+                {{--@endforeach--}}
+            {{--@else--}}
+                {{--@include('includes.tracks')--}}
+            {{--@endif--}}
+            <span class="vibe-vibon-id" hidden>{{ $vibe->id }}</span>
+            <span class="vibe-uri" hidden>{{ $vibe->uri }}</span>
+            {{--<span class="vibe-api-id" hidden>{{ $vibe->api_id }}</span>--}}
+            @include('includes.tracks')
         @endif
     </div>
 @endsection

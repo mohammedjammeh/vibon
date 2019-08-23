@@ -19,7 +19,10 @@ class CreateVibesTable extends Migration
             $table->text('description');
             $table->boolean('open');
             $table->boolean('auto_dj');
+            $table->unsignedInteger('last_played_track_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('last_played_track_id')->references('id')->on('tracks')->onDelete('cascade');
         });
     }
 
