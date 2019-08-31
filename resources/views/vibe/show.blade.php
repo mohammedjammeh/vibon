@@ -44,8 +44,8 @@
             </form>
             <br><br>
 
-            <div>
-                <div class="playback-play">
+            <div class="playback-buttons" style="display: none">
+                <div class="playback-resume">
                     <a href="#">Play</a>
                     <br><br>
                 </div>
