@@ -154,14 +154,12 @@ class WebAPI implements InterfaceAPI
     {
         parse_str(file_get_contents('php://input'), $_PUT);
         $deviceId = $_PUT['device_id'];
-        $position = $_PUT['position'];
 
         $this->api->play($deviceId, [
             'context_uri' => $playlistUri,
             'offset' => [
                 'uri' => $trackUri
             ],
-            'position_ms' => $position,
         ]);
     }
 
@@ -172,23 +170,8 @@ class WebAPI implements InterfaceAPI
         $this->api->play($deviceId, []);
     }
 
-    public function pausePlayback()
-    {
-        $this->api->pause();
-    }
-
-    public function skipPlaybackToPreviousTrack()
-    {
-        $this->api->previous();
-    }
-
-    public function skipPlaybackToNextTrack()
-    {
-        $this->api->next();
-    }
-
     public function getPlaybackCurrentTrack()
     {
-        return (array)$this->api->getMyCurrentTrack();
+        return (array)$this->api->getMyCurrentPlaybackInfo();
     }
 }

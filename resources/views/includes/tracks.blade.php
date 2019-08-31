@@ -1,6 +1,6 @@
             <div class="api-tracks">
                 @foreach($apiTracks as $apiTrack)
-                    <div style="background: {{ ($apiTrack->vibon_id === $vibe->last_played_track_id) ? 'green' : '' }};" class="playback-play-track">
+                    <div class="playback-play-track">
                         <a href="#">
                             <img src="{{ $apiTrack->album->images[0]->url }}">
 
