@@ -27,14 +27,6 @@ class Vibe extends Model
         return $this->hasMany(JoinRequest::class)->with('user');
     }
 
-    public function showTracks() 
-    {
-        if ($this->auto_dj) {
-            return AutoGenre::orderTracksByPopularity($this);
-        }
-        return $this->tracks()->where('auto_related', false)->get();
-    }
-
     public function hasMember($user)
     {
         if($this->users->where('id', $user->id)->first()) {
@@ -64,5 +56,13 @@ class Vibe extends Model
     public function getPathAttribute() 
     {
         return route('vibe.show', $this);
+    }
+
+    public function getShowTracksAttribute()
+    {
+        if ($this->auto_dj) {
+            return AutoGenre::orderTracksByPopularity($this);
+        }
+        return $this->tracks()->where('auto_related', false)->get();
     }
 }

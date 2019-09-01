@@ -31,15 +31,15 @@ class VibeTest extends TestCase
 
         $vibe->auto_dj = true;
         $vibe->save();
-        $this->assertEquals($vibe->showTracks()->count(), $autoTracks->count());
-        foreach ($vibe->showTracks() as $track) {
+        $this->assertEquals($vibe->showTracks->count(), $autoTracks->count());
+        foreach ($vibe->showTracks as $track) {
             $this->assertContains($track->id, $autoTracks->pluck('id'));
         }
 
         $vibe->auto_dj = false;
         $vibe->save();
-        $this->assertEquals($vibe->showTracks()->count(), $tracks->count());
-        foreach ($vibe->showTracks() as $track) {
+        $this->assertEquals($vibe->showTracks->count(), $tracks->count());
+        foreach ($vibe->showTracks as $track) {
             $this->assertContains($track->id, $tracks->pluck('id'));
         }
     }

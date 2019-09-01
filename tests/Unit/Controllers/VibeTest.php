@@ -66,7 +66,7 @@ class VibeTest extends TestCase
     public function test_vibe_show_view_gets_required_data()
     {
         $vibe = factory(Vibe::class)->create();
-        $tracks = $vibe->showTracks();
+        $tracks = $vibe->showTracks;
         $loadedTracks = app(Tracks::class)->load($tracks);
         $this->get($vibe->path)->assertViewHasAll([
             'vibe' => app(Playlist::class)->load($vibe),
