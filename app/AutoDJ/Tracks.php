@@ -30,11 +30,9 @@ class Tracks
 
 	public static function updateAPI($vibe)
 	{
-		if ($vibe->auto_dj) {
-			$tracks = Genre::orderTracksByPopularityForAPI($vibe);
-		} else {
-			$tracks = $vibe->tracks()->where('auto_related', 0)->get()->pluck('api_id')->toArray();
-		}
+		$tracks = $vibe->auto_dj ?
+            Genre::orderTracksByPopularityForAPI($vibe) :
+            $vibe->tracks->where('pivot.auto_related', false)->pluck('api_id')->toArray();
 		app(Playlist::class)->replaceTracks($vibe->api_id, $tracks);
 	}
 }
