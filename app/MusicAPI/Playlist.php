@@ -9,11 +9,16 @@ class Playlist
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
-    }   
+    }
 
     public function create($name) 
     {
         return $this->api->createPlaylist($name);
+    }
+
+    public function get($id)
+    {
+        return $this->api->getPlaylist($id);
     }
 
     public function update($id, $name)
@@ -46,6 +51,7 @@ class Playlist
         $playlist = $this->api->getPlaylist($vibe->api_id);
         $vibe->name = $playlist->name;
         $vibe->uri = $playlist->uri;
+        $this->checkIfSynced($vibe, $playlist);
         return $vibe;
     }
 
@@ -55,5 +61,13 @@ class Playlist
             $this->load($vibe);
         }
         return $vibes;
+    }
+
+    public function checkIfSynced($vibe, $playlist)
+    {
+        $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
+        $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track')->pluck('id')->toArray();
+        $vibe->synced = $vibeTracksIDs === $playlistTracksIDs ? true : false;
+        return $vibe;
     }
 }
