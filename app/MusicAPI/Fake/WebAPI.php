@@ -33,8 +33,38 @@ class WebAPI extends spotifyWebAPI
     {
         return (object) [
             'id' => '12am4HWXKjuSTWeMBDnwac',
-        	'name' => $name
+        	'name' => $name,
+            'uri' => 'spotify:track:12am4HWXKjuSTWeMBDnwac',
+            'tracks' => (object) [
+                'items' => [
+                    [
+                        'track' => $this->getTrack('9826488')
+                    ],
+                    [
+                        'track' => $this->getTrack('7609876')
+                    ]
+                ]
+            ]
         ];         
+    }
+
+    public function getPlaylist($id)
+    {
+        return (object) [
+            'id' => $id,
+            'name' => 'Reggae Reggae Sound',
+            'uri' => 'spotify:track:12am4HWXKjuSTWeMBDnwac',
+            'tracks' => (object) [
+                'items' => [
+                    [
+                        'track' => $this->getTrack('9826488')
+                    ],
+                    [
+                        'track' => $this->getTrack('7609876')
+                    ]
+                ]
+            ]
+        ];
     }
 
     public function updatePlaylist($id, $name) 
@@ -43,14 +73,6 @@ class WebAPI extends spotifyWebAPI
             'id' => $id,
             'name' => $name
         ];     
-    }
-
-    public function getPlaylist($id) 
-    {
-        return (object) [
-            'id' => $id,
-            'name' => 'Reggae Reggae Sound',
-        ];  
     }
 
     public function deletePlaylist($id)
@@ -71,7 +93,13 @@ class WebAPI extends spotifyWebAPI
         return (object) [
             'id' => $playlistId,
             'tracks' => $tracksId
-        ];   
+        ];
+//        $playlist = $this->getPlaylist($playlistId);
+//        foreach ($tracksId as $trackId) {
+//            $playlist->tracks->items[] = [
+//                'track' => $this->getTrack($trackId)
+//            ];
+//        }
     }
 
     public function getTrack($id)

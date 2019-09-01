@@ -44,6 +44,18 @@
             </form>
             <br><br>
 
+            @if($vibe->synced)
+                <p>All Synced</p>
+            @else
+                <p>Sync using one of the two:</p>
+                <form method="POST" action="{{ route('vibe.sync', ['vibe' => $vibe]) }}">
+                    @csrf
+                    <input type="submit" name="vibe" value="Vibe"><br><br>
+                    <input type="submit" name="playlist" value="Playlist">
+                </form>
+            @endif
+            <br><br>
+
             <div class="playback-buttons" style="display: none">
                 <div class="playback-resume">
                     <a href="#">Play</a>
@@ -65,7 +77,6 @@
                     <br><br>
                 </div>
             </div>
-
             <br>
 
             @if(count($vibe->joinRequests) > 0)
