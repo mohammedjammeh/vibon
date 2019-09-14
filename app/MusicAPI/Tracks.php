@@ -9,13 +9,27 @@ class Tracks
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
-    }  
+    }
 
-    public function load($tracks) 
+    public function loadFor($vibe)
+    {
+        $tracks = $vibe->showTracks;
+        $trackCollection = collect([]);
+        collect($tracks)->each(function ($track) use($trackCollection, $vibe) {
+            $loadedTrack = $this->api->getTrack($track->api_id);
+            $loadedTrack->votes_count = $track->votesCountOn($vibe);
+            $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
+            $trackCollection[] = $loadedTrack;
+        });
+        return $trackCollection;
+    }
+
+    public function load($tracks)
     {
         $trackCollection = collect([]);
         collect($tracks)->each(function ($track) use($trackCollection) {
-            $trackCollection[] = $this->api->getTrack($track->api_id);
+            $loadedTrack = $this->api->getTrack($track->api_id);
+            $trackCollection[] = $loadedTrack;
         });
         return $trackCollection;
     }

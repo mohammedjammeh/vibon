@@ -70,4 +70,9 @@ class Playlist
         $vibe->synced = $vibeTracksIDs === $playlistTracksIDs ? true : false;
         return $vibe;
     }
+
+    public function reorderTracks($id, $rangeStart, $insertBefore)
+    {
+        $this->api->reorderPlaylistTracks($id, $rangeStart, $insertBefore);
+    }
 }

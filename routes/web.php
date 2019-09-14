@@ -40,3 +40,7 @@ Route::put('vibe-playback/vibe/{vibe}/track/{track}', 'VibePlaybackController@up
 Route::get('user', 'UserController@user')->name('user');
 
 Route::post('vibe/{vibe}/sync', 'VibeSynchronisationController@sync')->name('vibe.sync');
+
+
+Route::post('/vote/vibe/{vibe}/track/{track}', 'VoteController@store')->name('vote.store');
+Route::delete('/vote/vibe/{vibe}/track/{track}', 'VoteController@destroy')->name('vote.destroy');

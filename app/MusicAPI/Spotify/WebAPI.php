@@ -47,6 +47,7 @@ class WebAPI implements InterfaceAPI
         $options = [
             'scope' => [
                 'playlist-modify-private',
+                'playlist-modify-public',
                 'playlist-modify',
                 'playlist-read-private',
                 'user-library-modify',
@@ -118,6 +119,14 @@ class WebAPI implements InterfaceAPI
     public function replaceTracksOnPlaylist($playlistId, $tracksId) 
     {
         $this->api->replacePlaylistTracks($playlistId, $tracksId);
+    }
+
+    public function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore)
+    {
+        $this->api->reorderPlaylistTracks($playlistId, [
+            'range_start' => $rangeStart,
+            'insert_before' => $insertBefore
+        ]);
     }
 
     public function getTrack($id)

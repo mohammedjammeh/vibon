@@ -17,6 +17,7 @@ interface InterfaceAPI
     function deletePlaylist($id);
     function addTracksToPlaylist($playlistId, $tracksId);
     function replaceTracksOnPlaylist($playlistId, $tracksId);
+    function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore);
 
     function getTrack($id);
     function getUserTopTracks();
