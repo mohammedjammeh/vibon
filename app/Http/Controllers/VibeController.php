@@ -63,7 +63,7 @@ class VibeController extends Controller
      */
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
     {
-        $loadedTracks = $tracksAPI->load($vibe->showTracks);
+        $loadedTracks = $tracksAPI->loadFor($vibe);
         return view('vibe.show', [
             'vibe' => $playlist->load($vibe),
             'apiTracks' => $tracksAPI->check($loadedTracks)

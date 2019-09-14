@@ -94,12 +94,6 @@ class WebAPI extends spotifyWebAPI
             'id' => $playlistId,
             'tracks' => $tracksId
         ];
-//        $playlist = $this->getPlaylist($playlistId);
-//        foreach ($tracksId as $trackId) {
-//            $playlist->tracks->items[] = [
-//                'track' => $this->getTrack($trackId)
-//            ];
-//        }
     }
 
     public function getTrack($id)
@@ -125,6 +119,7 @@ class WebAPI extends spotifyWebAPI
                 $this->getArtist('3'),
                 $this->getArtist('4')
             ],
+            'uri' => 'spotify:track:78aaIdueQSjI00fWUMAqna',
         ];  
     }
 
