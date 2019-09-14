@@ -10,17 +10,27 @@ class Track extends Model
 	
     public function vibes() 
     {
-        return $this->belongsToMany(Vibe::class)->withPivot('auto_related')->withTimestamps();
+        return $this->belongsToMany(Vibe::class)
+            ->withPivot('auto_related')
+            ->withTimestamps();
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_track')->withPivot('type')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_track')
+            ->withPivot('type')
+            ->withTimestamps();
     }
 
     public function genres()
     {
-        return $this->belongsToMany(Genre::class, 'track_genre')->withTimestamps();
+        return $this->belongsToMany(Genre::class, 'track_genre')
+            ->withTimestamps();
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
     }
 
     public function scopeAutoRelatedTo($query, $vibe) 
@@ -35,5 +45,22 @@ class Track extends Model
         return $query->whereHas('users', function($userQuery) use($vibe) {
             return $userQuery->isMemberOf($vibe);
         });
+    }
+
+    public function votesCountOn($vibe)
+    {
+        return $this->votes->where('vibe_id', $vibe->id)->count();
+    }
+
+    public function isVotedByAuthUserOn($vibe)
+    {
+        $votes = $this->votes
+            ->where('vibe_id', $vibe->id)
+            ->where('user_id', auth()->user()->id);
+
+        if ($votes->isEmpty()) {
+            return false;
+        }
+        return true;
     }
 }

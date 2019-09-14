@@ -201,9 +201,7 @@ class ShowPageTest extends DuskTestCase
 
     public function test_user_who_is_not_a_member_and_has_not_sent_a_join_request_to_a_vibe_can_send_a_request_to_join_the_vibe()
     {
-        $vibe = factory(Vibe::class)->create([
-            'open' => array_random([true, false])
-        ]);
+        $vibe = factory(Vibe::class)->create(['open' => false]);
         $user = factory(User::class)->create();
         $owner = factory(User::class)->create();
         $vibe->users()->attach($owner->id, ['owner' => true]);

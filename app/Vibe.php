@@ -27,6 +27,11 @@ class Vibe extends Model
         return $this->hasMany(JoinRequest::class)->with('user');
     }
 
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+
     public function hasMember($user)
     {
         if($this->users->where('id', $user->id)->first()) {
@@ -63,6 +68,12 @@ class Vibe extends Model
         if ($this->auto_dj) {
             return AutoGenre::orderTracksByPopularity($this);
         }
-        return $this->tracks()->where('auto_related', false)->get();
+
+        return $this->tracks()
+            ->where('auto_related', false)
+            ->withCount('votes')
+            ->orderBy('votes_count', 'desc')
+            ->orderBy('pivot_created_at', 'asc')
+            ->get();
     }
 }

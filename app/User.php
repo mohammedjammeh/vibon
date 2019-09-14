@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Track::class, 'user_track')->withPivot('type')->withTimestamps();
     }
 
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
+
     public function requestNotifications() 
     {
         return $this->unreadNotifications->where('type', RequestToJoinAVibe::class);
