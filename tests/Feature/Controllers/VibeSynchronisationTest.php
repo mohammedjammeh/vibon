@@ -36,22 +36,4 @@ class VibeSynchronisationTest extends TestCase
             ]);
         }
     }
-
-//    public function test_vibe_and_spotify_playlist_can_be_synchronised_using_tracks_on_vibe()
-//    {
-//        $playlist = app(Playlist::class)->create('Party');
-//        $vibe = factory(Vibe::class)->create([
-//            'api_id' => $playlist->id,
-//            'auto_dj' => false,
-//        ]);
-//        $tracks = factory(Track::class, 2)->create();
-//        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
-//
-//        $this->post(route('vibe.sync', ['vibe' => $vibe]),
-//            ['vibe' => 'Vibe']);
-//
-//        $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
-//        app(Playlist::class)->replaceTracks($vibe->api_id, $vibeTracksIDs);
-//        dd($playlist->tracks);
-//    }
 }

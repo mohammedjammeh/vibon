@@ -4,6 +4,7 @@ namespace Tests\Unit\Models;
 
 use App\Genre;
 use App\Track;
+use App\Vote;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,6 +43,26 @@ class VibeTest extends TestCase
         foreach ($vibe->showTracks as $track) {
             $this->assertContains($track->id, $tracks->pluck('id'));
         }
+    }
+
+    public function test_the_show_tracks_method_for_a_manual_vibe_orders_tracks_based_on_their_number_of_votes_and_relationship_created_at_date()
+    {
+        $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
+        $tracks = factory(Track::class, 2)->create();
+        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
+
+        factory(Vote::class, 2)->create([
+            'vibe_id' => $vibe->id,
+            'track_id' => $tracks->first()->id
+        ]);
+
+        sleep(1);
+        $newTrack = factory(Track::class)->create();
+        $vibe->tracks()->attach($newTrack->id, ['auto_related' => false]);
+
+        $this->assertEquals($vibe->showTracks->first()->id, $tracks->first()->id);
+        $this->assertEquals($vibe->showTracks->last()->id, $newTrack->id);
+
     }
 
     public function test_the_has_member_function_checks_if_a_user_is_a_member_of_a_vibe_or_not()

@@ -141,20 +141,11 @@
         @endforeach
         <br><br><br>
 
-        @if(count($apiTracks) > 0) 
-            <h3>Tracks</h3>
-            {{--@if($vibe->auto_dj)--}}
-                {{--@foreach($apiTracks as $apiTrack)--}}
-                    {{--<img src="{{ $apiTrack->album->images[0]->url }}">--}}
-                    {{--<p>{{ $apiTrack->name }}</p>--}}
-                    {{--<br><br>--}}
-                {{--@endforeach--}}
-            {{--@else--}}
-                {{--@include('includes.tracks')--}}
-            {{--@endif--}}
+        @if(count($apiTracks) > 0)
             <span class="vibe-vibon-id" hidden>{{ $vibe->id }}</span>
             <span class="vibe-uri" hidden>{{ $vibe->uri }}</span>
-            {{--<span class="vibe-api-id" hidden>{{ $vibe->api_id }}</span>--}}
+
+            <h3>Tracks</h3>
             @include('includes.tracks')
         @endif
     </div>

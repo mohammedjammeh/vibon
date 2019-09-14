@@ -106,17 +106,17 @@ class HomeTest extends DuskTestCase
         });
     }
 
-    public function test_track_suggestions_are_displayed_on_home_page()
-    {
-        $user = factory(User::class)->create();
-        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
-
-        $this->browse(function (Browser $browser) use($user, $trackSuggestions) {
-            foreach($trackSuggestions as $trackSuggestion) {
-                $browser->loginAs($user)
-                    ->visit(route('index'))
-                    ->assertSee($trackSuggestion->name);
-            }
-        });
-    }
+//    public function test_track_suggestions_are_displayed_on_home_page()
+//    {
+//        $user = factory(User::class)->create();
+//        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
+//
+//        $this->browse(function (Browser $browser) use($user, $trackSuggestions) {
+//            foreach($trackSuggestions as $trackSuggestion) {
+//                $browser->loginAs($user)
+//                    ->visit(route('index'))
+//                    ->assertSee($trackSuggestion->name);
+//            }
+//        });
+//    }
 }
