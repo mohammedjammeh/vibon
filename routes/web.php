@@ -18,6 +18,8 @@ Route::get('/spotify', 'Auth\Music\CallbackController@spotifyAuth')->name('callb
 Route::get('/authorise', 'Auth\Music\AuthoriseController@authorise')->name('authorise');
 Route::get('/welcome', 'Auth\Music\AuthoriseController@welcome')->name('welcome');
 
+Route::get('/search', 'SearchController@search')->name('search');
+
 Route::get('/', 'HomeController@index')->name('index');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::apiResource('/track', 'TrackController');
@@ -35,12 +37,9 @@ Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@dest
 
 Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
 
-Route::get('playback/currently-playing', 'PlaybackController@currentlyPlaying')->name('playback.current');
-Route::put('vibe-playback/vibe/{vibe}/track/{track}', 'VibePlaybackController@update')->name('playback.update');
 Route::get('user', 'UserController@user')->name('user');
 
 Route::post('vibe/{vibe}/sync', 'VibeSynchronisationController@sync')->name('vibe.sync');
-
 
 Route::post('/vote/vibe/{vibe}/track/{track}', 'VoteController@store')->name('vote.store');
 Route::delete('/vote/vibe/{vibe}/track/{track}', 'VoteController@destroy')->name('vote.destroy');
