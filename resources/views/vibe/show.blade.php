@@ -142,10 +142,8 @@
         <br><br><br>
 
         @if(count($apiTracks) > 0)
-            <span class="vibe-vibon-id" hidden>{{ $vibe->id }}</span>
-            <span class="vibe-uri" hidden>{{ $vibe->uri }}</span>
-
             <h3>Tracks</h3>
+                <span class="vibe-uri" hidden>{{ $vibe->uri }}</span>
             @include('includes.tracks')
         @endif
     </div>
