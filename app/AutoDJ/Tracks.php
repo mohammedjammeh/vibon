@@ -18,7 +18,7 @@ class Tracks
 
 	public static function storeAPI($vibe) 
 	{
-		$tracks = Genre::orderTracksByPopularityForAPI($vibe);
+		$tracks = Genre::orderTracksByPopularity($vibe)->pluck('api_id')->toArray();
         app(Playlist::class)->addTracks($vibe->api_id, $tracks);	
 	}
 
@@ -30,9 +30,7 @@ class Tracks
 
 	public static function updateAPI($vibe)
 	{
-		$tracks = $vibe->auto_dj ?
-            Genre::orderTracksByPopularityForAPI($vibe) :
-            $vibe->tracks->where('pivot.auto_related', false)->pluck('api_id')->toArray();
+		$tracks = $vibe->showTracks->pluck('api_id')->toArray();
 		app(Playlist::class)->replaceTracks($vibe->api_id, $tracks);
 	}
 }

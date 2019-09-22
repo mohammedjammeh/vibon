@@ -29,14 +29,6 @@ class Genre
         $track->genres()->sync($genresIDs);
     }
 
-    public static function orderTracksByPopularityForAPI($vibe)
-    {
-        $genres = GenreModel::orderByPopularity($vibe)->get()->pluck('tracks');
-        $allTracks = collect($genres)->collapse()->all();
-        $tracksIDs = collect($allTracks)->unique('id')->pluck('api_id')->toArray();
-        return $tracksIDs;
-    }
-
     public static function orderTracksByPopularity($vibe)
     {
         $genres = GenreModel::orderByPopularity($vibe)->get()->pluck('tracks');

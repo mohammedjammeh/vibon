@@ -2,6 +2,9 @@
 
 namespace App\MusicAPI;
 
+use App\Track;
+use Illuminate\Support\Arr;
+
 class Tracks
 {
     protected $api;
@@ -9,6 +12,11 @@ class Tracks
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
+    }
+
+    public function getRecommendations($options)
+    {
+        return $this->api->getTrackRecommendations($options);
     }
 
     public function loadFor($vibe)
@@ -36,24 +44,37 @@ class Tracks
 
     public function check($apiTracks) 
     {
-        $user = auth()->user()->load('vibes.tracks');
-        foreach ($apiTracks as $apiTrack) {
-            $apiTrack->vibes = array();
-
-            foreach ($user['vibes'] as $userVibe) {
-                foreach ($userVibe->tracks as $userVibeTrack) {
-                    if($apiTrack->id == $userVibeTrack->api_id) {
-                        $apiTrack->vibes[] = $userVibe->id;
-                        $apiTrack->vibon_id = $userVibeTrack->id;
-                    }
-                }
-            }
-        }
-        return $apiTracks;
+        $user = $this->userVibesTracks();
+        return collect($apiTracks)->each(function ($apiTrack) use($user) {
+            $apiTrack->vibon_id = $this->getTrackVibonID($apiTrack->id);
+            $apiTrack->vibes = $this->getVibesIDs($apiTrack->id, $user);
+        });
     }
 
-    public function getRecommendations($options)
+    protected function userVibesTracks()
     {
-        return $this->api->getTrackRecommendations($options);
+        return auth()->user()->load(['vibes.tracks' => function($query) {
+            $query->where('auto_related', false);
+        }]);
+    }
+
+    protected function getTrackVibonID($apiTrackID)
+    {
+        $track = Track::where('api_id', $apiTrackID)->first();
+        return !is_null($track) ? $track->id : null;
+    }
+
+    protected function getVibesIDs($apiTrackID, $user)
+    {
+        $vibesTracks = $user['vibes']->pluck('tracks', 'id')->toArray();
+        $userTracksVibes = Arr::where($vibesTracks, function ($tracks, $vibeID) use($apiTrackID) {
+            $tracksIDs = collect($tracks)->pluck('api_id');
+            if ($tracksIDs->contains($apiTrackID)) {
+                return $vibeID;
+            }
+            return null;
+        });
+
+        return array_keys(array_filter($userTracksVibes));
     }
 }
