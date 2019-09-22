@@ -11,8 +11,8 @@ class Search
         $this->api = $interfaceAPI;
     }  
 
-    public function tracks($name) 
+    public function tracks($input)
     {
-        return $this->api->search($name);
+        return $this->api->search($input);
     }
 }

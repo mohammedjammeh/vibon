@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use App\AutoDJ\Genre as AutoGenre;
 
 class Vibe extends Model
@@ -71,7 +72,9 @@ class Vibe extends Model
 
         return $this->tracks()
             ->where('auto_related', false)
-            ->withCount('votes')
+            ->withCount(['votes' => function (Builder $query) {
+                $query->where('vibe_id', $this->id);
+            }])
             ->orderBy('votes_count', 'desc')
             ->orderBy('pivot_created_at', 'asc')
             ->get();

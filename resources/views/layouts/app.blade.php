@@ -28,6 +28,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <form method="GET" action="{{ route('search') }}" style="margin-left: 29%">
+                    {{--@csrf--}}
+                    <input type="text" name="search" placeholder="Search.." style="width: 220px">
+                    <input type="submit" value="Search">
+                </form>
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
@@ -108,8 +114,8 @@
                 getOAuthToken: cb => { cb(getAccessToken()); }
             });
 
-            const play = ({
-                vibe_uri,
+            const playPlayist = ({
+                playlist_uri,
                 track_uri,
                 playerInstance: {
                     _options: {
@@ -121,7 +127,7 @@
                     fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
                         method: 'PUT',
                         body: JSON.stringify({
-                            context_uri: vibe_uri,
+                            context_uri: playlist_uri,
                             offset: {
                                 uri: track_uri
                             },
@@ -134,15 +140,57 @@
                 });
             };
 
-            // play track
+            const playSearch = ({
+               tracks_uris,
+               track_uri,
+               playerInstance: {
+                   _options: {
+                       getOAuthToken,
+                       id
+                   }
+               }}) => {
+                getOAuthToken(access_token => {
+                    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            uris: tracks_uris,
+                            offset: {
+                                uri: track_uri
+                            },
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${access_token}`
+                        },
+                    });
+                });
+            };
+
+            // playlist: play track
+            $(document).on('click', '.playback-play-track-search a', function(event) {
+                event.preventDefault();
+                let trackURI = $(this).children('span.track-uri').text();
+                let tracksURIs = [];
+                $('span.track-uri').map(function(){
+                    tracksURIs.push($.trim($(this).text()));
+                });
+
+                playSearch({
+                    playerInstance: player,
+                    tracks_uris: tracksURIs,
+                    track_uri: trackURI
+                });
+            });
+
+            // search: play track
             $(document).on('click', '.playback-play-track a', function(event) {
                 event.preventDefault();
                 let vibeURI = $('.vibe-uri').text();
                 let trackURI = $(this).children('span.track-uri').text();
 
-                play({
+                playPlayist({
                     playerInstance: player,
-                    vibe_uri: vibeURI,
+                    playlist_uri: vibeURI,
                     track_uri: trackURI
                 });
             });
@@ -150,91 +198,50 @@
             // resume
             $(document).on('click', '.playback-resume a', function(event) {
                 event.preventDefault();
-
-                player.resume().then(() => {
-                    // console.log('Resumed!');
-                });
+                player.resume().then(() => {});
             });
 
             // pause
             $(document).on('click', '.playback-pause a', function(event) {
                 event.preventDefault();
-                player.pause().then(() => {
-                    // console.log('Paused!');
-                });
+                player.pause().then(() => {});
             });
 
             // previous track
             $(document).on('click', '.playback-previous a', function(event) {
                 event.preventDefault();
-                player.previousTrack().then(() => {
-                    // console.log('Set to previous track!');
-                });
+                player.previousTrack().then(() => {});
             });
 
             // next track
             $(document).on('click', '.playback-next a', function(event) {
                 event.preventDefault();
-                player.nextTrack().then(() => {
-                    // console.log('Set to next track!');
-                });
+                player.nextTrack().then(() => {});
             });
 
 
-
-
-
             // Error handling
-            // player.addListener('initialization_error', ({ message }) => { console.error(message); });
-            // player.addListener('account_error', ({ message }) => { console.error(message); });
-            // player.addListener('playback_error', ({ message }) => { console.error(message); });
-            // player.addListener('authentication_error', ({ message }) => { console.error(message); });
-
+            player.addListener('initialization_error', ({ message }) => { console.error(message); });
+            player.addListener('account_error', ({ message }) => { console.error(message); });
+            player.addListener('playback_error', ({ message }) => { console.error(message); });
+            player.addListener('authentication_error', ({ message }) => { console.error(message); });
 
 
             // Playback status updates
             player.addListener('player_state_changed', state => {
                 if(state) {
                     $trackID = state['track_window']['current_track']['linked_from']['id'] ? state['track_window']['current_track']['linked_from']['id'] : state['track_window']['current_track']['id'];
-                    $trackSpan = $('.playback-play-track a').children('span.track-api-id:contains(' + $trackID + ')');
-                    $trackVibonID = $trackSpan.siblings('.track-vibon-id').text();
-                    $vibeVibonID = $('.vibe-vibon-id').text();
+                    $trackSpan = $('.playback-play-track a, .playback-play-track-search a').children('span.track-api-id:contains(' + $trackID + ')');
 
                     $('.playback-buttons').show();
                     $('.api-tracks > div').removeAttr('style');
                     $trackSpan.parent().parent().attr('style', 'background: green;');
 
-                    // $.ajaxSetup({
-                    //     headers: {
-                    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    //     }
-                    // });
-                    //
-                    // if (state['position'] === 0 && newPlayingTrackIsOnThisPage($trackSpan)) {
-                    //     $.ajax({
-                    //         type: 'PUT',
-                    //         url: '/vibe-playback/vibe/' + $vibeVibonID + '/track/' + $trackVibonID,
-                    //         data: {},
-                    //         success: function(data) {
-                    //             console.log(data);
-                    //         }
-                    //     });
-                    // }
                     checkAndUpdatePlayOrPauseButton();
 
                 } else {
                     $('.playback-buttons').hide();
                     $('.api-tracks > div').removeAttr('style');
-                }
-
-
-
-
-                function newPlayingTrackIsOnThisPage($trackSpan) {
-                    if($trackSpan.length > 0) {
-                        return true;
-                    }
-                    return false;
                 }
 
                 function checkAndUpdatePlayOrPauseButton() {
@@ -248,19 +255,11 @@
                 }
             });
 
-
-
             // Ready
-            player.addListener('ready', ({ device_id }) => {
-                // console.log('Ready with Device ID', device_id);
-            });
-
+            player.addListener('ready', ({ device_id }) => {});
 
             // Not Ready
-            player.addListener('not_ready', ({ device_id }) => {
-                // console.log('Device ID has gone offline', device_id);
-            });
-
+            player.addListener('not_ready', ({ device_id }) => {});
 
             // Connect to the player!
             player.connect();
