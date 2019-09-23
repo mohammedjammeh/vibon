@@ -93,6 +93,10 @@ Feature\Controllers\JoinRequest
  [x] A join request cannot be responded to by a user who is not the owner of the vibe
  [x] Vibe owner can respond to a join request from a user
 
+Feature\Controllers\Search
+ [x] User can search for tracks
+ [x] User is redirected back if search is empty
+
 Feature\Controllers\TrackVibeAuto
  [x] Auto tracks of a vibe can be updated
 

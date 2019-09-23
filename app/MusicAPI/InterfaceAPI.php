@@ -11,8 +11,8 @@ interface InterfaceAPI
     function getUser();
     function search($name);
 
-    function createPlaylist($name);
-    function updatePlaylist($id, $name);
+    function createPlaylist($name, $description);
+    function updatePlaylist($id, $name, $description);
     function getPlaylist($id);
     function deletePlaylist($id);
     function addTracksToPlaylist($playlistId, $tracksId);

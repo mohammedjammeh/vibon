@@ -18,16 +18,19 @@ class VibeTest extends TestCase
 	public function test_vibe_can_be_created()
 	{
 		Event::fake();
-		$playlist = app(Playlist::class)->create('Party');
+		$playlist = app(Playlist::class)->create('Party', 'Everybody have to party!!');
 		$attributes = factory(Vibe::class)->raw([
-			'name' => $playlist->name, 
+			'name' => $playlist->name,
+			'description' => $playlist->description,
 			'api_id' => $playlist->id
 		]);
+
 		$this->post(route('vibe.store'), $attributes)
 			->assertRedirect(Vibe::first()->path);
 		$this->assertDatabaseHas('vibes', [
 			'api_id' => $attributes['api_id'],
-			'description' => $attributes['description']
+			'open' => $attributes['open'],
+            'auto_dj' => $attributes['auto_dj']
 		]);
 	}
 
@@ -78,7 +81,8 @@ class VibeTest extends TestCase
         ])->assertRedirect(Vibe::first()->path);
 		$this->assertDatabaseHas('vibes', [
 			'id' => $vibe->id,
-			'description' => 'Shakala Boom Boom'
+            'open' => $vibe->open,
+            'auto_dj' =>  $vibe->auto_dj
 		]);
 	}
 
@@ -89,7 +93,8 @@ class VibeTest extends TestCase
             ->assertStatus(403);
         $this->assertDatabaseHas('vibes', [
             'id' => $vibe->id,
-            'description' => $vibe->description
+            'open' => $vibe->open,
+            'auto_dj' =>  $vibe->auto_dj
         ]);
     }
 

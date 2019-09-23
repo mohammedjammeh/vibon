@@ -80,14 +80,20 @@ class WebAPI implements InterfaceAPI
         return $this->api->search($name, 'track')->tracks->items;
     }
     
-    public function createPlaylist($name)
+    public function createPlaylist($name, $description)
     {
-        return $this->api->createPlaylist(['name' => $name]);
+        return $this->api->createPlaylist([
+            'name' => $name,
+            'description' => $description
+        ]);
     }
 
-    public function updatePlaylist($id, $name) 
+    public function updatePlaylist($id, $name, $description)
     {
-        return $this->api->updatePlaylist($id, ['name' => $name]);
+        return $this->api->updatePlaylist($id, [
+            'name' => $name,
+            'description' => $description
+        ]);
     }
 
     public function getPlaylist($id) 

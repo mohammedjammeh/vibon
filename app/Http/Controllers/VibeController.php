@@ -43,12 +43,15 @@ class VibeController extends Controller
      */
     public function store(StoreVibe $request, Playlist $playlist)
     {
-        $newPlaylist = $playlist->create($request->input('name'));
+        $newPlaylist = $playlist->create(
+            $request->input('name'),
+            $request->input('description')
+        );
+
         $vibe = Vibe::create([
             'api_id' => $newPlaylist->id,
-            'description' => request('description'),
-            'open' => request('open'),
-            'auto_dj' => request('auto_dj')
+            'open' => $request->input('open'),
+            'auto_dj' => $request->input('auto_dj')
         ]);
         $vibe->users()->attach(Auth()->user()->id, ['owner' => true]);
         event(new VibeCreated($vibe));
@@ -92,8 +95,8 @@ class VibeController extends Controller
     public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('update', $vibe);
-        $vibe->update(request(['description', 'open', 'auto_dj']));
-        $playlist->update($vibe->api_id, $request->input('name'));
+        $vibe->update(request(['open', 'auto_dj']));
+        $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
         event(new VibeUpdated($vibe));
         return redirect($vibe->path);
     }

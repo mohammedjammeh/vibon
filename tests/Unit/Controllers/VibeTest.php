@@ -35,10 +35,11 @@ class VibeTest extends TestCase
     public function test_vibe_created_event_is_triggered_when_a_vibe_is_created()
     {
         Event::fake();
-        $playlist = app(Playlist::class)->create('Party');
+        $playlist = app(Playlist::class)->create('Party', 'Everybody have to party!!');
         $attributes = factory(Vibe::class)->raw([
+            'api_id' => $playlist->id,
             'name' => $playlist->name,
-            'api_id' => $playlist->id
+            'description' => $playlist->description
         ]);
         $this->post(route('vibe.store'), $attributes);
         Event::assertDispatched(VibeCreated::class);

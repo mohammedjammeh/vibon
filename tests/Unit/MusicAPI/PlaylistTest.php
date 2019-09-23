@@ -15,7 +15,7 @@ class PlaylistTest extends TestCase
 
     public function test_the_playlist_load_method_checks_if_a_vibe_is_synced_with_its_playlist_and_returns_false_if_its_not()
     {
-        $playlist = app(Playlist::class)->create('Party');
+        $playlist = app(Playlist::class)->create('Party', 'Everybody have to partyy');
         $vibe = factory(Vibe::class)->create(['api_id' => $playlist->id]);
 
         $this->assertNotEquals($vibe->tracks->count(), count($playlist->tracks->items));
@@ -25,7 +25,7 @@ class PlaylistTest extends TestCase
 
     public function test_the_playlist_load_method_checks_if_a_vibe_is_synced_with_its_playlist_and_returns_true_if_it_is()
     {
-        $playlist = app(Playlist::class)->create('Party');
+        $playlist = app(Playlist::class)->create('Party', 'Everybody have to party.');
         $vibe = factory(Vibe::class)->create([
             'api_id' => $playlist->id,
             'auto_dj' => false,

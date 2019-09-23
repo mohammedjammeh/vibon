@@ -15,7 +15,7 @@ class VibeSynchronisationTest extends TestCase
 
     public function test_vibe_and_spotify_playlist_can_be_synchronised_using_tracks_on_playlist()
     {
-        $playlist = app(Playlist::class)->create('Party');
+        $playlist = app(Playlist::class)->create('Party', 'Everybody have to party');
         $playlistTracks = collect($playlist->tracks->items)->pluck('track');
         $vibe = factory(Vibe::class)->create([
             'api_id' => $playlist->id,

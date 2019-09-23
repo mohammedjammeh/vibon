@@ -17,7 +17,7 @@
             @endif
 
             <div>
-                <input type="text" name="name" placeholder="Name" class="{{ $errors->has('name') ? 'error' : '' }}" value="{{ $vibe->name }}">
+                <input type="text" name="name" placeholder="Name" class="{{ $errors->has('name') ? 'error' : '' }}" value="{!! $vibe->name !!}">
             </div>
             <br>
 
@@ -50,7 +50,7 @@
             <br>
 
             <div>
-                <textarea name="description" cols="19" rows="5" placeholder="Description" class="{{ $errors->has('description') ? 'error' : '' }}">{{ $vibe->description }}</textarea>
+                <textarea name="description" cols="19" rows="5" placeholder="Description" class="{{ $errors->has('description') ? 'error' : '' }}">{!! $vibe->description !!}</textarea>
             </div>
             <br>
 
