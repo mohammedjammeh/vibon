@@ -6,8 +6,8 @@
             <p>{{ session('message') }}</p>
         @endif
 
-        <p>{{ $vibe->name }}</p>
-        <p>{{ $vibe->description }}</p>
+        <p>{!! $vibe->name !!}</p>
+        <p>{!! $vibe->description !!}</p>
 
         @if($vibe->open)
             <p>Opened</p>

@@ -11,9 +11,9 @@ class Playlist
         $this->api = $interfaceAPI;
     }
 
-    public function create($name) 
+    public function create($name, $description)
     {
-        return $this->api->createPlaylist($name);
+        return $this->api->createPlaylist($name, $description);
     }
 
     public function get($id)
@@ -21,9 +21,9 @@ class Playlist
         return $this->api->getPlaylist($id);
     }
 
-    public function update($id, $name)
+    public function update($id, $name, $description)
     {
-        return $this->api->updatePlaylist($id, $name);
+        return $this->api->updatePlaylist($id, $name, $description);
     }
 
     public function delete($id)
@@ -51,6 +51,7 @@ class Playlist
         $playlist = $this->api->getPlaylist($vibe->api_id);
         $vibe->name = $playlist->name;
         $vibe->uri = $playlist->uri;
+        $vibe->description = $playlist->description ?? null;
         $this->checkIfSynced($vibe, $playlist);
         return $vibe;
     }

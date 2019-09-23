@@ -7,6 +7,7 @@ use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\User;
 use App\Vibe;
+use App\MusicAPI\Playlist;
 
 class EditPageTest extends DuskTestCase
 {
@@ -14,18 +15,26 @@ class EditPageTest extends DuskTestCase
 
     public function test_vibe_member_can_edit_a_vibe()
     {
-        $user = factory(User::class)->create();
-        $vibe = factory(Vibe::class)->create();
-        $user->vibes()->attach($vibe->id, ['owner' => false]);
+        $this->browse(function (Browser $browser) {
+            $user = factory(User::class)->create();
+            $vibe = factory(Vibe::class)->create();
+            $user->vibes()->attach($vibe->id, ['owner' => false]);
+            $playlist = app(Playlist::class)->get('23n32ndw923njn23');
 
-        $this->browse(function (Browser $browser) use($user, $vibe) {
             $browser->loginAs($user)
                 ->visit(route('vibe.edit', ['vibe' => $vibe->id]))
+                ->clear('name')
+                ->type('name', $playlist->name)
                 ->clear('description')
-                ->type('description', 'Welcome to Yoo Party!')
+                ->type('description', $playlist->description)
+                ->select('open', '0')
+                ->select('auto_dj', '0')
                 ->press('Update')
                 ->assertUrlIs($vibe->path)
-                ->assertSee('Welcome to Yoo Party!');
+                ->assertSee($playlist->name)
+                ->assertSee($playlist->description)
+                ->assertSee('Manual DJ')
+                ->assertSee('Not Opened');
         });
     }
 

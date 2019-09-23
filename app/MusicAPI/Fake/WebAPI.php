@@ -29,11 +29,12 @@ class WebAPI extends spotifyWebAPI
         ];
     }
 
-    public function createPlaylist($name)
+    public function createPlaylist($name, $description)
     {
         return (object) [
             'id' => '12am4HWXKjuSTWeMBDnwac',
         	'name' => $name,
+            'description' => $description,
             'uri' => 'spotify:track:12am4HWXKjuSTWeMBDnwac',
             'tracks' => (object) [
                 'items' => [
@@ -53,6 +54,7 @@ class WebAPI extends spotifyWebAPI
         return (object) [
             'id' => $id,
             'name' => 'Reggae Reggae Sound',
+            'description' => 'Reggae Reggae Sound In Town',
             'uri' => 'spotify:track:12am4HWXKjuSTWeMBDnwac',
             'tracks' => (object) [
                 'items' => [
@@ -67,11 +69,12 @@ class WebAPI extends spotifyWebAPI
         ];
     }
 
-    public function updatePlaylist($id, $name) 
+    public function updatePlaylist($id, $name, $description)
     {
         return (object) [
             'id' => $id,
-            'name' => $name
+            'name' => $name,
+            'description' => $description
         ];     
     }
 
