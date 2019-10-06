@@ -9,6 +9,7 @@ interface InterfaceAPI
     function refreshUserAccessToken();
     function setUnauthenticatedUserAccessToken($accessToken);
     function getUser();
+    function getUserDevices();
     function search($name);
 
     function createPlaylist($name, $description);

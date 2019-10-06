@@ -95,7 +95,7 @@
                         type: 'GET',
                         dataType: 'json',
                         async: false,
-                        url: '/user',
+                        url: '/playback-user',
                         success: function(data) {
                             return data;
                         }
