@@ -82,4 +82,9 @@ class User
         ]);
         return $suggestions->tracks;
     }
+
+    public function devices()
+    {
+        return $this->api->getUserDevices();
+    }
 }
