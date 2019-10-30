@@ -2,8 +2,9 @@
 @section('title', 'Vibon Home')
 @section('content')
     <div class="container">
-        <a href="{{ route('vibe.create') }}">Start a vibe</a>
+        <create-vibe route="{{ route('vibe.store') }}"></create-vibe>
         <br><br>
+
 
         @if(session('message'))
             <p>{{ session('message') }}</p>

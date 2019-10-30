@@ -25,7 +25,9 @@ class StoreVibe extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:25'],
-            'description' => ['required', 'min:3', 'max:255']
+            'description' => ['required', 'min:3', 'max:255'],
+            'open' => ['required'],
+            'auto_dj' => ['required']
         ];
     }
 }
