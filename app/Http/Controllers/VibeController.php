@@ -8,7 +8,6 @@ use App\MusicAPI\Tracks as TracksAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\Http\Requests\StoreVibe;
-use PhpParser\Node\Expr\Array_;
 
 class VibeController extends Controller
 {
@@ -20,16 +19,20 @@ class VibeController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return  \Illuminate\Http\Response
+     * @param \App\MusicAPI\Playlist  $playlist
+     * @return array
      */
-    public function index()
+    public function index(Playlist $playlist)
     {
+        $vibes = $playlist->loadMany(Vibe::all());
+        dd($vibes);
+        return compact('vibes');
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return  \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -39,8 +42,8 @@ class VibeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param   \App\Http\Requests\StoreVibe  $request
-     * @param   \App\MusicAPI\Playlist  $playlist
+     * @param \App\Http\Requests\StoreVibe  $request
+     * @param \App\MusicAPI\Playlist  $playlist
      * @return  array
      */
     public function store(StoreVibe $request, Playlist $playlist)
@@ -63,13 +66,14 @@ class VibeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param   \App\vibe  $vibe
-     * @param   \App\MusicAPI\Playlist  $playlist
-     * @param   \App\MusicAPI\Tracks  $tracksAPI
-     * @return  \Illuminate\Http\Response
+     * @param \App\vibe  $vibe
+     * @param \App\MusicAPI\Playlist  $playlist
+     * @param \App\MusicAPI\Tracks  $tracksAPI
+     * @return \Illuminate\Http\Response
      */
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
     {
+//        this needs to be updated if it is to be used as the loadFor method now has the functionality which checks the tracks..
         $loadedTracks = $tracksAPI->loadFor($vibe);
         return view('vibe.show', [
             'vibe' => $playlist->load($vibe),
@@ -80,9 +84,9 @@ class VibeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param   \App\vibe  $vibe
-     * @param   \App\MusicAPI\Playlist  $playlist
-     * @return  \Illuminate\Http\Response
+     * @param \App\vibe  $vibe
+     * @param \App\MusicAPI\Playlist  $playlist
+     * @return \Illuminate\Http\Response
      */
     public function edit(Vibe $vibe, Playlist $playlist)
     {

@@ -75,7 +75,17 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            <div class="container">
+                <div id="#app">
+                    <create-vibe route="{{ route('vibe.store') }}"></create-vibe>
+                    <br><br>
+
+                    <vibes route="{{ route('vibe.index') }}"></vibes>
+                    <br><br>
+
+                    <router-view :key="$route.fullPath"></router-view>
+                </div>
+            </div>
         </main>
     </div>
 
