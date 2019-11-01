@@ -22,11 +22,16 @@ class Tracks
     public function loadFor($vibe)
     {
         $tracks = $vibe->showTracks;
+        $user = $this->userVibesTracks();
         $trackCollection = collect([]);
-        collect($tracks)->each(function ($track) use($trackCollection, $vibe) {
+        collect($tracks)->each(function ($track) use($trackCollection, $vibe, $user) {
             $loadedTrack = $this->api->getTrack($track->api_id);
             $loadedTrack->votes_count = $track->votesCountOn($vibe);
             $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
+
+            $loadedTrack->vibon_id = $this->getTrackVibonID($loadedTrack->id);
+            $loadedTrack->vibes = $this->getVibesIDs($loadedTrack->id, $user);
+
             $trackCollection[] = $loadedTrack;
         });
         return $trackCollection;
