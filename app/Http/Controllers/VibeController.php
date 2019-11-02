@@ -25,7 +25,6 @@ class VibeController extends Controller
     public function index(Playlist $playlist)
     {
         $vibes = $playlist->loadMany(Vibe::all());
-        dd($vibes);
         return compact('vibes');
     }
 
@@ -74,11 +73,11 @@ class VibeController extends Controller
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
     {
 //        this needs to be updated if it is to be used as the loadFor method now has the functionality which checks the tracks..
-        $loadedTracks = $tracksAPI->loadFor($vibe);
-        return view('vibe.show', [
-            'vibe' => $playlist->load($vibe),
-            'apiTracks' => $tracksAPI->check($loadedTracks)
-        ]);
+//        $loadedTracks = $tracksAPI->loadFor($vibe);
+//        return view('vibe.show', [
+//            'vibe' => $playlist->load($vibe),
+//            'apiTracks' => $tracksAPI->check($loadedTracks)
+//        ]);
     }
 
     /**
