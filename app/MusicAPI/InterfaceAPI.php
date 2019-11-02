@@ -21,6 +21,7 @@ interface InterfaceAPI
     function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore);
 
     function getTrack($id);
+    function getTracks($ids);
     function getUserTopTracks();
     function getUserRecentTracks();
     function getArtist($id);

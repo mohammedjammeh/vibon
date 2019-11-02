@@ -140,6 +140,11 @@ class WebAPI implements InterfaceAPI
         return $this->api->getTrack($id);
     }
 
+    public function getTracks($ids)
+    {
+        return $this->api->getTracks($ids);
+    }
+
     public function getTrackRecommendations($options)
     {
         return $this->api->getRecommendations($options);
