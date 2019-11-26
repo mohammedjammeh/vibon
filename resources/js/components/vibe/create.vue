@@ -6,7 +6,7 @@
             name="create-vibe-modal"
             height="auto"
         >
-            <form method="POST" :action="this.route" @submit.prevent="onSubmit" autocomplete="off">
+            <form method="POST" :action="this.vibes.routes.create" @submit.prevent="onSubmit" autocomplete="off">
                 <div>
                     <input type="text" name="name" placeholder="Name" v-model="form.name" @keydown="form.errors.clear('name')">
                     <span v-text="form.errors.get('name')" v-if="form.errors.has('name')"></span>
@@ -56,9 +56,9 @@
 
 <script>
     import Form from '../../core/Form.js';
+    import Vibes from '../../core/Vibes.js';
 
     export default {
-        props: ['route'],
         data() {
             return {
                 form: new Form({
@@ -66,14 +66,14 @@
                     description: '',
                     open: '',
                     auto_dj: '',
-                })
+                }),
+                vibes: Vibes
             }
         },
         methods: {
             onSubmit() {
-                this.form.post(this.route)
-                    .then(response => console.log(response))
-                    .catch(errors => console.log(errors));
+                this.vibes.create(this.form);
+                this.$modal.hide('create-vibe-modal');
             }
         }
     }
