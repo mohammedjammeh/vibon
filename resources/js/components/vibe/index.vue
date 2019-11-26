@@ -5,8 +5,8 @@
         <p v-else-if="this.emptyVibes()">Rahh &#128562; No vibes around you, you gotta start one!</p>
 
         <ul v-else>
-            <li v-for="vibe in this.vibes" >
-                <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}"> {{ vibe.name }} </router-link> <br>
+            <li v-for="vibe in this.vibes.all">
+                <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" > {{ vibe.name }} </router-link> <br>
             </li>
         </ul>
 
@@ -14,24 +14,24 @@
 </template>
 
 <script>
+    import Vibes from '../../core/Vibes.js';
+
     export default {
-        props: ['route'],
         data() {
             return {
-                vibes: {},
+                vibes: Vibes,
                 loading: true
             }
         },
-        created() {
-            axios.get(this.route)
-                .then(response => this.vibes = response.data.vibes)
-                .catch(error => console.log(error))
-                .finally(() => this.loading = false);
 
+        created() {
+            this.vibes.getAll()
+                .then(() => this.loading = false);
         },
+
         methods: {
             emptyVibes() {
-                return Object.keys(this.vibes).length === 0;
+                return Object.keys(this.vibes.all).length === 0;
             }
         }
     }

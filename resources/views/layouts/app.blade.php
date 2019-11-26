@@ -77,10 +77,10 @@
         <main class="py-4">
             <div class="container">
                 <div id="#app">
-                    <create-vibe route="{{ route('vibe.store') }}"></create-vibe>
+                    <create-vibe></create-vibe>
                     <br><br>
 
-                    <vibes route="{{ route('vibe.index') }}"></vibes>
+                    <vibes></vibes>
                     <br><br>
 
                     <router-view :key="$route.fullPath"></router-view>

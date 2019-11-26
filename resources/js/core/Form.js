@@ -31,12 +31,20 @@ class Form {
         return this.submit('post', url);
     }
 
+    delete(url) {
+        return this.submit('delete', url);
+    }
+
+    update(url) {
+        return this.submit('put', url);
+    }
+
     submit(requestType, url) {
         return new Promise((resolve, reject) => {
             axios[requestType](url, this.data())
                 .then(response => {
-                    this.onSuccess(response.data.message);
-                    resolve(response.data.message);
+                    this.onSuccess();
+                    resolve(response.data);
                 })
                 .catch(error => {
                     this.onFail(error.response.data.errors);
@@ -45,8 +53,7 @@ class Form {
         });
     }
 
-    onSuccess(response) {
-        alert(response);
+    onSuccess() {
         this.reset();
     }
 
