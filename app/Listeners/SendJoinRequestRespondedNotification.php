@@ -29,7 +29,9 @@ class SendJoinRequestRespondedNotification
     public function handle(JoinRequestResponded $event)
     {
         $joinRequest = $event->joinRequest;
-        $joinRequest->vibe->owner->lastUnreadRequestNotificationFor($joinRequest)->markAsRead();
+
+//        the reading of notification shouldn't really depend on the action, it should only depend on where it is viewed or not
+//        $joinRequest->vibe->owner->lastUnreadRequestNotificationFor($joinRequest)->markAsRead();
 
         if ($joinRequest->vibe->hasMember($joinRequest->user)) {
             $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, true));
