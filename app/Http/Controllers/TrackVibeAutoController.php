@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\AutoDJ\Tracks as AutoTracks;
+use App\MusicAPI\Playlist;
 
 class TrackVibeAutoController extends Controller
 {
+    use VibeShowTrait;
+
     public function __construct()
     {
         $this->middleware('setAccessToken');
@@ -16,6 +20,9 @@ class TrackVibeAutoController extends Controller
     {
 		AutoTracks::update($vibe);
 		AutoTracks::updateAPI($vibe);
-		return redirect()->back();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = $loadedVibe->name . ' has been refreshed.';
+        return $this->showResponse($loadedVibe, $message);
     }
 }

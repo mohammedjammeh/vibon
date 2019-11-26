@@ -7,10 +7,13 @@ use App\JoinRequest;
 use App\Events\JoinRequestSent;
 use App\Events\JoinRequestCancelled;
 use App\Events\JoinRequestResponded;
-use Illuminate\Http\Request;
+use App\Traits\VibeShowTrait;
+use App\MusicAPI\Playlist;
 
 class JoinRequestController extends Controller
 {
+    use VibeShowTrait;
+
     public function __construct()
     {
         $this->middleware('setAccessToken');
@@ -23,36 +26,42 @@ class JoinRequestController extends Controller
             'user_id' => auth()->user()->id
         ]);
         event(new JoinRequestSent($joinRequest));
-        return redirect($vibe->path)->with('message', 'Your request has been sent.');
+
+        $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
+        $message = 'Your request to join ' . $loadedVibe->name . ' has been been sent.';
+        return $this->showResponse($loadedVibe, $message);
     }
 
     public function destroy(JoinRequest $joinRequest) 
     {
         $joinRequest->delete();
         event(new JoinRequestCancelled($joinRequest));
-    	return redirect($joinRequest->vibe->path)->with('message', 'Your request to join has been cancelled.');
-    }
 
-    public function respond(Request $request, JoinRequest $joinRequest)
-    {
-        $this->authorize('respond', $joinRequest);
-        $joinRequest->delete();
-        if($request->input('accept')) {
-            return $this->accept($joinRequest);
-        }
-        return $this->reject($joinRequest);
+        $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
+        $message = 'Your request to join ' . $loadedVibe->name . ' has been been cancelled.';
+        return $this->showResponse($loadedVibe, $message);
     }
 
     public function accept(JoinRequest $joinRequest)
     {
+        $this->authorize('respond', $joinRequest);
+        $joinRequest->delete();
         $joinRequest->vibe->users()->attach($joinRequest->user->id, ['owner' => false]);
         event(new JoinRequestResponded($joinRequest));
-        return redirect($joinRequest->vibe->path)->with('message', $joinRequest->user->name . ' is now part of this vibe.');
+
+        $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
+        $message = "You have accepted " . $joinRequest->user->username . "'s request to join " . $loadedVibe->name . ".";
+        return $this->showResponse($loadedVibe, $message);
     }
 
     public function reject(JoinRequest $joinRequest)
     {
+        $this->authorize('respond', $joinRequest);
+        $joinRequest->delete();
         event(new JoinRequestResponded($joinRequest));
-        return redirect($joinRequest->vibe->path);
+
+        $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
+        $message = "You have rejected " . $joinRequest->user->username . "'s request to join " . $loadedVibe->name . ".";
+        return $this->showResponse($loadedVibe, $message);
     }
 }

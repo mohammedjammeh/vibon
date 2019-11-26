@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\MusicAPI\Playlist;
 use App\MusicAPI\Tracks as TracksAPI;
@@ -11,40 +12,27 @@ use App\Http\Requests\StoreVibe;
 
 class VibeController extends Controller
 {
+    use VibeShowTrait;
+
     public function __construct()
     {
         $this->middleware('setAccessToken');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param \App\MusicAPI\Playlist  $playlist
-     * @return array
-     */
     public function index(Playlist $playlist)
     {
-        $vibes = $playlist->loadMany(Vibe::all());
+        $vibes = Vibe::all()->map(function($vibe) use($playlist) {
+            return $this->loadAndUpdateAttributes($vibe);
+        });
+
         return compact('vibes');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('vibe.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \App\Http\Requests\StoreVibe  $request
-     * @param \App\MusicAPI\Playlist  $playlist
-     * @return  array
-     */
     public function store(StoreVibe $request, Playlist $playlist)
     {
         $newPlaylist = $playlist->create(
@@ -59,17 +47,10 @@ class VibeController extends Controller
         ]);
         $vibe->users()->attach(Auth()->user()->id, ['owner' => true]);
         event(new VibeCreated($vibe));
-        return ['message' => $request->input('name') . ' has been created.'];
+
+        return ['vibe' => $this->loadAndUpdateAttributes($vibe)];
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\vibe  $vibe
-     * @param \App\MusicAPI\Playlist  $playlist
-     * @param \App\MusicAPI\Tracks  $tracksAPI
-     * @return \Illuminate\Http\Response
-     */
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
     {
 //        this needs to be updated if it is to be used as the loadFor method now has the functionality which checks the tracks..
@@ -80,43 +61,22 @@ class VibeController extends Controller
 //        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\vibe  $vibe
-     * @param \App\MusicAPI\Playlist  $playlist
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Vibe $vibe, Playlist $playlist)
     {
-        $this->authorize('update', $vibe);
-        return view('vibe.edit')->with('vibe', $playlist->load($vibe));
+//        $this->authorize('update', $vibe);
+//        return view('vibe.edit')->with('vibe', $playlist->load($vibe));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreVibe  $request
-     * @param  \App\vibe  $vibe
-     * @param  \App\MusicAPI\Playlist  $playlist
-     * @return \Illuminate\Http\Response
-     */
     public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('update', $vibe);
         $vibe->update(request(['open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
         event(new VibeUpdated($vibe));
-        return redirect($vibe->path);
+
+        return ['vibe' => $this->loadAndUpdateAttributes($vibe)];
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\vibe  $vibe
-     * @param  \App\MusicAPI\Playlist  $playlist
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('delete', $vibe);
@@ -125,6 +85,6 @@ class VibeController extends Controller
         $vibe->users()->detach();
         $vibe->tracks()->detach();
         $vibe->delete();
-        return redirect(route('index'))->with('message', $message);
+        return ['message' => $message];
     }
 }
