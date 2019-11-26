@@ -46,6 +46,19 @@ class Playlist
         return $this->api->replaceTracksOnPlaylist($playlistId, $tracksId);
     }
 
+    public function reorderTracks($id, $rangeStart, $insertBefore)
+    {
+        $this->api->reorderPlaylistTracks($id, $rangeStart, $insertBefore);
+    }
+
+    public function loadMany($vibes)
+    {
+        foreach ($vibes as $vibe) {
+            $this->load($vibe);
+        }
+        return $vibes;
+    }
+
     public function load($vibe) 
     {
         $playlist = $this->api->getPlaylist($vibe->api_id);
@@ -59,24 +72,11 @@ class Playlist
         return $vibe;
     }
 
-    public function loadMany($vibes) 
-    {
-        foreach ($vibes as $vibe) {
-            $this->load($vibe);
-        }
-        return $vibes;
-    }
-
     public function checkIfSynced($vibe, $playlist)
     {
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
         $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track')->pluck('id')->toArray();
         $vibe->synced = $vibeTracksIDs === $playlistTracksIDs ? true : false;
         return $vibe;
-    }
-
-    public function reorderTracks($id, $rangeStart, $insertBefore)
-    {
-        $this->api->reorderPlaylistTracks($id, $rangeStart, $insertBefore);
     }
 }

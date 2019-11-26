@@ -9,11 +9,12 @@ class Tracks
 {
     protected $api;
 
-    protected $unloadedTracks = [];
+    protected $unloadedTracks;
 
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
+        $this->unloadedTracks = collect([]);
     }
 
     public function getRecommendations($options)
@@ -27,20 +28,23 @@ class Tracks
         $playlistTracks = collect($playlist->tracks->items)->pluck('track');
         $playlistTracksIDs = $playlistTracks->pluck('id')->toArray();
         $user = $this->userVibesTracks();
+        $trackCollection = collect([]);
 
-        $trackCollection = collect($tracks)->map(function ($track) use($playlistTracksIDs, $playlistTracks, $vibe, $user) {
+        foreach ($tracks as $track) {
             $loadedTrack = $this->getTrackAPI($track, $playlistTracks, $playlistTracksIDs);
-            $loadedTrack = $this->checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user);
-            return $loadedTrack;
-        });
-
-        if (!empty($this->unloadedTracks)) {
-            $newLoadedTracks = $this->loadUnloadedTracks();
-            collect($newLoadedTracks)->each(function ($loadedTrack) use($vibe, $user, $trackCollection, $tracks) {
-                $track = $tracks->where('id', $loadedTrack->id)->first();
+            if($loadedTrack) {
                 $loadedTrack = $this->checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user);
                 $trackCollection->push($loadedTrack);
-            });
+            }
+        }
+
+        if ($this->unloadedTracks->isNotEmpty()) {
+            $newLoadedTracks = $this->loadUnloadedTracks();
+            foreach ($newLoadedTracks as $loadedTrack) {
+                $track = $tracks->where('api_id', $loadedTrack->id)->first();
+                $loadedTrack = $this->checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user);
+                $trackCollection->push($loadedTrack);
+            }
         }
 
         return $trackCollection;
@@ -53,7 +57,7 @@ class Tracks
             return $playlistTracks->where('id', $trackID)->first();
         }
 
-        $this->unloadedTracks[] = $trackID;
+        $this->unloadedTracks->push($trackID);
     }
 
     public function checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user)
@@ -69,7 +73,7 @@ class Tracks
 
     public function loadUnloadedTracks()
     {
-        return $this->api->getTracks($this->unloadedTracks);
+        return $this->api->getTracks($this->unloadedTracks->toArray())->tracks;
     }
 
 //    public function load($tracks)
