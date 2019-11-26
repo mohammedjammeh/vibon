@@ -2,31 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\User;
 use App\Notifications\RemovedFromAVibe;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\MusicAPI\Playlist;
 
 class UserVibeController extends Controller
 {
+    use VibeShowTrait;
+
     public function __construct()
     {
         $this->middleware('setAccessToken');
     }
 
-    public function store(Vibe $vibe)
+    public function join(Vibe $vibe)
     {
         $vibe->users()->attach(auth()->user()->id, ['owner' => false]);
-		return redirect($vibe->path)->with('message', 'Welcome to our vibe.');
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = 'Welcome to ' .  $loadedVibe->name . '.';
+        return $this->showResponse($loadedVibe, $message);
     }
 
-    public function destroy(Request $request, Vibe $vibe, User $user) 
+    public function leave(Vibe $vibe)
     {
-        if($request->input('vibe-member-remove')) {
-            $user->notify(new RemovedFromAVibe($vibe->id));
-        } 
+        $user = auth()->user();
+        $vibe->users()->detach($user->id);
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = 'You are no longer part of ' . $loadedVibe->name . '.';
+        return $this->showResponse($loadedVibe, $message);
+    }
+
+    public function remove(Vibe $vibe, User $user)
+    {
+        $user->notify(new RemovedFromAVibe($vibe->id));
     	$vibe->users()->detach($user->id);
-        return redirect()->back();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = $user->username . ' is no longer a member of ' . $loadedVibe->name . '.';
+        return $this->showResponse($loadedVibe, $message);
     }
 }

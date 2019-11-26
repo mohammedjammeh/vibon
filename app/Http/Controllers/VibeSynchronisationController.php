@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\MusicAPI\Playlist;
-use Illuminate\Http\Request;
+use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Track;
 use App\AutoDJ\Genre as AutoGenre;
@@ -11,22 +11,19 @@ use App\AutoDJ\Tracks as AutoTracks;
 
 class VibeSynchronisationController extends Controller
 {
-    public function sync(Request $request, Vibe $vibe)
-    {
-        if($request->input('vibe')) {
-            return $this->updatePlaylistTracks($vibe);
-        }
-        return $this->updateVibeTracks($vibe);
-    }
+    use VibeShowTrait;
 
-    public function updatePlaylistTracks($vibe)
+    public function updatePlaylistTracks(Vibe $vibe)
     {
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
         app(Playlist::class)->replaceTracks($vibe->api_id, $vibeTracksIDs);
-        return back();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = $loadedVibe->name . ' has been synced using vibe tracks.';
+        return $this->showResponse($loadedVibe, $message);
     }
 
-    public function updateVibeTracks($vibe)
+    public function updateVibeTracks(Vibe $vibe)
     {
         $vibe->tracks()->where('auto_related', $vibe->auto_dj)->detach();
 
@@ -40,7 +37,9 @@ class VibeSynchronisationController extends Controller
 
         AutoTracks::updateAPI($vibe);
 
-        return back();
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $message = $loadedVibe->name . ' has been synced using playlist tracks.';
+        return $this->showResponse($loadedVibe, $message);
     }
 
     public function storeUnstoredPlaylistTracks($playlistTracks)
