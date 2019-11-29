@@ -23,6 +23,8 @@ class CreateVotesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('track_id')->references('id')->on('tracks')->onDelete('cascade');
             $table->foreign('vibe_id')->references('id')->on('vibes')->onDelete('cascade');
+
+            $table->unique(['user_id', 'track_id', 'vibe_id']);
         });
     }
 
