@@ -28,6 +28,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::apiResource('/track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
+Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
+
 Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
 Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
 Route::delete('/join-request/accept/{joinRequest}', 'JoinRequestController@accept')->name('join-request.accept');
@@ -37,7 +39,7 @@ Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@join')->name('user-vib
 Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@remove')->name('user-vibe.remove');
 Route::delete('/user-vibe/vibe/{vibe}', 'UserVibeController@leave')->name('user-vibe.leave');
 
-Route::post('/track-vibe/vibe/{vibe}', 'TrackVibeController@store')->name('track-vibe.store');
+Route::post('/track-vibe/vibe/{vibe}/track-api/{track}', 'TrackVibeController@store')->name('track-vibe.store');
 Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
 
 Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');

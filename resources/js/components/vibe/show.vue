@@ -144,7 +144,7 @@
                         <input type="submit" name="vibe-leave" value="Leave Vibe">
                     </form>
                 </div>
-                <div v-else-if="this.vibes.show.hasJointRequestFromUser">
+                <div v-else-if="this.vibes.show.hasJoinRequestFromUser">
                     <form method="POST" :action="vibes.routes.cancelJoinRequest(vibes.show.joinRequestFromUser.id)" @submit.prevent="onCancelJoinRequestSubmit(vibes.show.joinRequestFromUser.id)">
                         <input type="submit" name="vibe-join-destroy" value="Cancel Join Request">
                     </form>
@@ -198,6 +198,38 @@
                         </a>
 
                         <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
+
+                        <div v-for="userVibeID in vibes.userVibesIDs">
+                            <div v-if="track.vibes.includes(userVibeID)">
+                                <form method="POST" :action="vibes.routes.removeTrack(userVibeID, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(userVibeID, track.vibon_id)">
+                                    <input type="submit" name="track-vibe-destroy" :value="getVibeName(userVibeID)" style="background:red;">
+                                </form>
+                                <br>
+                            </div>
+                            <div v-else>
+                                <form method="POST" :action="vibes.routes.addTrack(userVibeID, track.id)" @submit.prevent="onAddTrackSubmit(userVibeID, track.id)">
+                                    <input type="submit" name="track-vibe-destroy" :value="getVibeName(userVibeID)">
+                                </form>
+                                <br>
+                            </div>
+                        </div>
+
+                        <div v-if="!vibes.show.auto_dj">
+                            <div v-if="track.is_voted_by_user">
+                                <form method="POST" :action="vibes.routes.downvoteTrack(this.id, track.vibon_id)" @submit.prevent="onDownvoteTrackSubmit(track.vibon_id)">
+                                    <input type="submit" name="vote-store" value="Unvote" style="background:red;">
+                                    {{ track.votes_count }}
+                                </form>
+                                <br>
+                            </div>
+                            <div v-else>
+                                <form method="POST" :action="vibes.routes.upvoteTrack(this.id, track.vibon_id)" @submit.prevent="onUpvoteTrackSubmit(track.vibon_id)">
+                                    <input type="submit" name="vote-store" value="Vote">
+                                    {{ track.votes_count }}
+                                </form>
+                                <br>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -235,7 +267,11 @@
                 cancelJoinRequestForm: new Form({}),
                 leaveVibeForm: new Form({}),
                 joinVibeForm: new Form({}),
-                removeUserForm: new Form({})
+                removeUserForm: new Form({}),
+                removeTrackForm: new Form({}),
+                addTrackForm: new Form({}),
+                upvoteTrackForm: new Form({}),
+                downvoteTrackForm: new Form({})
             }
         },
 
@@ -244,6 +280,10 @@
         },
 
         methods: {
+            getVibeName(vibeID) {
+                return this.vibes.all.find(vibe => vibe.id === vibeID).name;
+            },
+
             vibeHasTracks() {
                 return Object.keys(this.vibes.show.api_tracks).length > 0;
             },
@@ -307,6 +347,22 @@
 
             onSyncPlaylistSubmit() {
                 this.vibes.syncPlaylist(this.syncPlaylistForm, this.id)
+            },
+
+            onRemoveTrackSubmit(vibeID, trackID) {
+                this.vibes.removeTrack(this.removeTrackForm, vibeID, trackID);
+            },
+
+            onAddTrackSubmit(vibeID, trackApiId) {
+                this.vibes.addTrack(this.addTrackForm, vibeID, trackApiId);
+            },
+
+            onUpvoteTrackSubmit(trackID) {
+                this.vibes.upvoteTrack(this.upvoteTrackForm, this.id, trackID);
+            },
+
+            onDownvoteTrackSubmit(trackID) {
+                this.vibes.downvoteTrack(this.downvoteTrackForm, this.id, trackID);
             }
         }
     }
