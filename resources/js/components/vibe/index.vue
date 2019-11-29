@@ -27,6 +27,8 @@
         created() {
             this.vibes.getAll()
                 .then(() => this.loading = false);
+
+            this.vibes.getUserVibes();
         },
 
         methods: {

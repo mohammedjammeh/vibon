@@ -620,13 +620,16 @@ module.exports = function normalizeComponent (
 "use strict";
 var Vibes = {
     all: [],
-
     show: {},
     showID: '',
     message: '',
     deletedMessage: '',
 
+    userVibesIDs: [],
+
     routes: {
+        'userVibes': '/user/vibes',
+
         'index': '/vibe',
         'create': '/vibe',
         'update': function update(vibeID) {
@@ -668,6 +671,20 @@ var Vibes = {
 
         'removeUser': function removeUser(vibeID, userID) {
             return '/user-vibe/vibe/' + vibeID + '/user/' + userID;
+        },
+
+        'removeTrack': function removeTrack(vibeID, trackID) {
+            return '/track-vibe/vibe/' + vibeID + '/track/' + trackID;
+        },
+        'addTrack': function addTrack(vibeID, trapApiId) {
+            return '/track-vibe/vibe/' + vibeID + '/track-api/' + trapApiId;
+        },
+
+        'upvoteTrack': function upvoteTrack(vibeID, trackID) {
+            return '/vote/vibe/' + vibeID + '/track/' + trackID;
+        },
+        'downvoteTrack': function downvoteTrack(vibeID, trackID) {
+            return '/vote/vibe/' + vibeID + '/track/' + trackID;
         }
     },
 
@@ -700,18 +717,28 @@ var Vibes = {
             return vibe;
         });
     },
-    getAll: function getAll() {
+    getUserVibes: function getUserVibes() {
         var _this3 = this;
 
+        return axios.get(this.routes.userVibes).then(function (response) {
+            _this3.userVibesIDs = response.data;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getAll: function getAll() {
+        var _this4 = this;
+
         return new Promise(function (resolve, reject) {
-            return axios.get(_this3.routes.index).then(function (response) {
-                var vibesData = response.data.vibes;
+            return axios.get(_this4.routes.index).then(function (response) {
+                var vibesData = response.data;
                 for (var key in vibesData) {
                     if (vibesData.hasOwnProperty(key)) {
-                        _this3.all.push(vibesData[key]);
+                        _this4.all.push(vibesData[key].vibe);
                     }
                 }
-                _this3.updateShowData();
+
+                _this4.updateShowData();
                 resolve(vibesData);
             }).catch(function (error) {
                 reject(error.response.data.errors);
@@ -719,34 +746,35 @@ var Vibes = {
         });
     },
     create: function create(form) {
-        var _this4 = this;
+        var _this5 = this;
 
         form.post(this.routes.create).then(function (response) {
-            _this4.all.push(response.vibe);
+            _this5.all.push(response.vibe);
+            _this5.userVibesIDs.push(response.vibe.id);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
     display: function display(vibeID) {
-        var _this5 = this;
+        var _this6 = this;
 
         this.showID = parseInt(vibeID);
 
         if (Object.keys(this.all).length > 0) {
             this.all.forEach(function (vibe) {
-                if (vibe.id === _this5.showID) {
-                    _this5.show = vibe;
+                if (vibe.id === _this6.showID) {
+                    _this6.show = vibe;
                 }
             });
         }
     },
     update: function update(form, vibeID) {
-        var _this6 = this;
+        var _this7 = this;
 
         return form.update(this.routes.update(vibeID)).then(function (response) {
-            _this6.all = _this6.all.map(function (vibe) {
+            _this7.all = _this7.all.map(function (vibe) {
                 if (vibe.id === response.vibe.id) {
-                    _this6.show = response.vibe;
+                    _this7.show = response.vibe;
                     return response.vibe;
                 }
                 return vibe;
@@ -756,68 +784,71 @@ var Vibes = {
         });
     },
     delete: function _delete(form, vibeID) {
-        var _this7 = this;
+        var _this8 = this;
 
         form.delete(this.routes.delete(vibeID)).then(function (response) {
-            _this7.all = _this7.all.filter(function (vibe) {
+            _this8.all = _this8.all.filter(function (vibe) {
                 return vibe.id !== vibeID;
             });
-            _this7.show = {};
-            _this7.deletedMessage = response.message;
+            _this8.userVibesIDs = _this8.userVibesIDs.filter(function (id) {
+                return id !== vibeID;
+            });
+            _this8.show = {};
+            _this8.deletedMessage = response.message;
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
     autoRefresh: function autoRefresh(form, vibeID) {
-        var _this8 = this;
-
-        form.post(this.routes.autoRefresh(vibeID)).then(function (response) {
-            _this8.updateData(response);
-        }).catch(function (errors) {
-            return console.log(errors);
-        });
-    },
-    syncVibe: function syncVibe(form, vibeID) {
         var _this9 = this;
 
-        form.post(this.routes.syncVibe(vibeID)).then(function (response) {
+        form.post(this.routes.autoRefresh(vibeID)).then(function (response) {
             _this9.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
-    syncPlaylist: function syncPlaylist(form, vibeID) {
+    syncVibe: function syncVibe(form, vibeID) {
         var _this10 = this;
 
-        form.post(this.routes.syncPlaylist(vibeID)).then(function (response) {
+        form.post(this.routes.syncVibe(vibeID)).then(function (response) {
             _this10.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
-    acceptJoinRequest: function acceptJoinRequest(form, requestID) {
+    syncPlaylist: function syncPlaylist(form, vibeID) {
         var _this11 = this;
 
-        form.delete(this.routes.acceptJoinRequest(requestID)).then(function (response) {
+        form.post(this.routes.syncPlaylist(vibeID)).then(function (response) {
             _this11.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
-    rejectJoinRequest: function rejectJoinRequest(form, requestID) {
+    acceptJoinRequest: function acceptJoinRequest(form, requestID) {
         var _this12 = this;
 
-        form.delete(this.routes.rejectJoinRequest(requestID)).then(function (response) {
+        form.delete(this.routes.acceptJoinRequest(requestID)).then(function (response) {
             _this12.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
-    sendJoinRequest: function sendJoinRequest(form, vibeID) {
+    rejectJoinRequest: function rejectJoinRequest(form, requestID) {
         var _this13 = this;
 
-        form.post(this.routes.sendJoinRequest(vibeID)).then(function (response) {
+        form.delete(this.routes.rejectJoinRequest(requestID)).then(function (response) {
             _this13.updateData(response);
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    sendJoinRequest: function sendJoinRequest(form, vibeID) {
+        var _this14 = this;
+
+        form.post(this.routes.sendJoinRequest(vibeID)).then(function (response) {
+            _this14.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
@@ -825,40 +856,111 @@ var Vibes = {
 
 
     cancelJoinRequest: function cancelJoinRequest(form, requestID) {
-        var _this14 = this;
-
-        form.delete(this.routes.cancelJoinRequest(requestID)).then(function (response) {
-            _this14.updateData(response);
-        }).catch(function (errors) {
-            return console.log(errors);
-        });
-    },
-
-    joinVibe: function joinVibe(form, vibeID) {
         var _this15 = this;
 
-        form.post(this.routes.joinVibe(vibeID)).then(function (response) {
+        form.delete(this.routes.cancelJoinRequest(requestID)).then(function (response) {
             _this15.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
 
-    leaveVibe: function leaveVibe(form, vibeID) {
+    joinVibe: function joinVibe(form, vibeID) {
         var _this16 = this;
 
-        form.delete(this.routes.leaveVibe(vibeID)).then(function (response) {
+        form.post(this.routes.joinVibe(vibeID)).then(function (response) {
             _this16.updateData(response);
+            _this16.userVibesIDs.push(response.vibe.id);
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+
+    leaveVibe: function leaveVibe(form, vibeID) {
+        var _this17 = this;
+
+        form.delete(this.routes.leaveVibe(vibeID)).then(function (response) {
+            _this17.updateData(response);
+            _this17.userVibesIDs = _this17.userVibesIDs.filter(function (id) {
+                return id !== vibeID;
+            });
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
 
     removeUser: function removeUser(form, vibeID, userID) {
-        var _this17 = this;
+        var _this18 = this;
 
         form.delete(this.routes.removeUser(vibeID, userID)).then(function (response) {
-            _this17.updateData(response);
+            _this18.updateData(response);
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+
+    removeTrack: function removeTrack(form, vibeID, trackID) {
+        var _this19 = this;
+
+        form.delete(this.routes.removeTrack(vibeID, trackID)).then(function (response) {
+            _this19.all = _this19.all.map(function (vibe) {
+                if (!vibe.auto_jd) {
+                    vibe.api_tracks.forEach(function (track) {
+                        if (track.vibon_id === trackID) {
+                            var index = track.vibes.indexOf(response.vibe.id);
+                            if (index !== -1) track.vibes.splice(index, 1);
+                        }
+                    });
+                }
+
+                if (vibe.id === response.vibe.id) {
+                    return response.vibe;
+                }
+                return vibe;
+            });
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+
+    addTrack: function addTrack(form, vibeID, trackApiId) {
+        var _this20 = this;
+
+        form.post(this.routes.addTrack(vibeID, trackApiId)).then(function (response) {
+            _this20.all = _this20.all.map(function (vibe) {
+                if (!vibe.auto_jd) {
+                    vibe.api_tracks.forEach(function (track) {
+                        if (track.id === trackApiId) {
+                            track.vibes.push(response.vibe.id);
+                        }
+                    });
+                }
+
+                if (vibe.id === response.vibe.id) {
+                    return response.vibe;
+                }
+                return vibe;
+            });
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+
+    upvoteTrack: function upvoteTrack(form, vibeID, trackID) {
+        var _this21 = this;
+
+        form.post(this.routes.upvoteTrack(vibeID, trackID)).then(function (response) {
+            _this21.updateData(response);
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+
+    downvoteTrack: function downvoteTrack(form, vibeID, trackID) {
+        var _this22 = this;
+
+        form.delete(this.routes.downvoteTrack(vibeID, trackID)).then(function (response) {
+            _this22.updateData(response);
         }).catch(function (errors) {
             return console.log(errors);
         });
@@ -52565,6 +52667,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -52591,7 +52725,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             cancelJoinRequestForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
             leaveVibeForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
             joinVibeForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
-            removeUserForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({})
+            removeUserForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
+            removeTrackForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
+            addTrackForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
+            upvoteTrackForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({}),
+            downvoteTrackForm: new __WEBPACK_IMPORTED_MODULE_1__core_Form_js__["a" /* default */]({})
         };
     },
     created: function created() {
@@ -52600,6 +52738,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
     methods: {
+        getVibeName: function getVibeName(vibeID) {
+            return this.vibes.all.find(function (vibe) {
+                return vibe.id === vibeID;
+            }).name;
+        },
         vibeHasTracks: function vibeHasTracks() {
             return Object.keys(this.vibes.show.api_tracks).length > 0;
         },
@@ -52652,6 +52795,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         onSyncPlaylistSubmit: function onSyncPlaylistSubmit() {
             this.vibes.syncPlaylist(this.syncPlaylistForm, this.id);
+        },
+        onRemoveTrackSubmit: function onRemoveTrackSubmit(vibeID, trackID) {
+            this.vibes.removeTrack(this.removeTrackForm, vibeID, trackID);
+        },
+        onAddTrackSubmit: function onAddTrackSubmit(vibeID, trackApiId) {
+            this.vibes.addTrack(this.addTrackForm, vibeID, trackApiId);
+        },
+        onUpvoteTrackSubmit: function onUpvoteTrackSubmit(trackID) {
+            this.vibes.upvoteTrack(this.upvoteTrackForm, this.id, trackID);
+        },
+        onDownvoteTrackSubmit: function onDownvoteTrackSubmit(trackID) {
+            this.vibes.downvoteTrack(this.downvoteTrackForm, this.id, trackID);
         }
     }
 });
@@ -53275,7 +53430,7 @@ var render = function() {
                         ]
                       )
                     ])
-                  : this.vibes.show.hasJointRequestFromUser
+                  : this.vibes.show.hasJoinRequestFromUser
                   ? _c("div", [
                       _c(
                         "form",
@@ -53439,36 +53594,203 @@ var render = function() {
                   "div",
                   { staticClass: "api-tracks" },
                   _vm._l(this.vibes.show.api_tracks, function(track) {
-                    return _c("div", { staticClass: "playback-play-track" }, [
-                      _c("a", { attrs: { href: "#" } }, [
-                        _c("img", {
-                          attrs: { src: track.album.images[0].url }
+                    return _c(
+                      "div",
+                      { staticClass: "playback-play-track" },
+                      [
+                        _c("a", { attrs: { href: "#" } }, [
+                          _c("img", {
+                            attrs: { src: track.album.images[0].url }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "span",
+                            {
+                              staticClass: "track-api-id",
+                              attrs: { hidden: "" }
+                            },
+                            [_vm._v(_vm._s(track.api_id))]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "span",
+                            { staticClass: "track-uri", attrs: { hidden: "" } },
+                            [_vm._v(_vm._s(track.uri))]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("p", {
+                          staticStyle: {
+                            "white-space": "nowrap",
+                            overflow: "hidden"
+                          },
+                          domProps: { textContent: _vm._s(track.name) }
                         }),
                         _vm._v(" "),
-                        _c(
-                          "span",
-                          {
-                            staticClass: "track-api-id",
-                            attrs: { hidden: "" }
-                          },
-                          [_vm._v(_vm._s(track.api_id))]
-                        ),
+                        _vm._l(_vm.vibes.userVibesIDs, function(userVibeID) {
+                          return _c("div", [
+                            track.vibes.includes(userVibeID)
+                              ? _c("div", [
+                                  _c(
+                                    "form",
+                                    {
+                                      attrs: {
+                                        method: "POST",
+                                        action: _vm.vibes.routes.removeTrack(
+                                          userVibeID,
+                                          track.vibon_id
+                                        )
+                                      },
+                                      on: {
+                                        submit: function($event) {
+                                          $event.preventDefault()
+                                          return _vm.onRemoveTrackSubmit(
+                                            userVibeID,
+                                            track.vibon_id
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("input", {
+                                        staticStyle: { background: "red" },
+                                        attrs: {
+                                          type: "submit",
+                                          name: "track-vibe-destroy"
+                                        },
+                                        domProps: {
+                                          value: _vm.getVibeName(userVibeID)
+                                        }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("br")
+                                ])
+                              : _c("div", [
+                                  _c(
+                                    "form",
+                                    {
+                                      attrs: {
+                                        method: "POST",
+                                        action: _vm.vibes.routes.addTrack(
+                                          userVibeID,
+                                          track.id
+                                        )
+                                      },
+                                      on: {
+                                        submit: function($event) {
+                                          $event.preventDefault()
+                                          return _vm.onAddTrackSubmit(
+                                            userVibeID,
+                                            track.id
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("input", {
+                                        attrs: {
+                                          type: "submit",
+                                          name: "track-vibe-destroy"
+                                        },
+                                        domProps: {
+                                          value: _vm.getVibeName(userVibeID)
+                                        }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("br")
+                                ])
+                          ])
+                        }),
                         _vm._v(" "),
-                        _c(
-                          "span",
-                          { staticClass: "track-uri", attrs: { hidden: "" } },
-                          [_vm._v(_vm._s(track.uri))]
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("p", {
-                        staticStyle: {
-                          "white-space": "nowrap",
-                          overflow: "hidden"
-                        },
-                        domProps: { textContent: _vm._s(track.name) }
-                      })
-                    ])
+                        !_vm.vibes.show.auto_dj
+                          ? _c("div", [
+                              track.is_voted_by_user
+                                ? _c("div", [
+                                    _c(
+                                      "form",
+                                      {
+                                        attrs: {
+                                          method: "POST",
+                                          action: _vm.vibes.routes.downvoteTrack(
+                                            this.id,
+                                            track.vibon_id
+                                          )
+                                        },
+                                        on: {
+                                          submit: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.onDownvoteTrackSubmit(
+                                              track.vibon_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("input", {
+                                          staticStyle: { background: "red" },
+                                          attrs: {
+                                            type: "submit",
+                                            name: "vote-store",
+                                            value: "Unvote"
+                                          }
+                                        }),
+                                        _vm._v(
+                                          "\n                                " +
+                                            _vm._s(track.votes_count) +
+                                            "\n                            "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("br")
+                                  ])
+                                : _c("div", [
+                                    _c(
+                                      "form",
+                                      {
+                                        attrs: {
+                                          method: "POST",
+                                          action: _vm.vibes.routes.upvoteTrack(
+                                            this.id,
+                                            track.vibon_id
+                                          )
+                                        },
+                                        on: {
+                                          submit: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.onUpvoteTrackSubmit(
+                                              track.vibon_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("input", {
+                                          attrs: {
+                                            type: "submit",
+                                            name: "vote-store",
+                                            value: "Vote"
+                                          }
+                                        }),
+                                        _vm._v(
+                                          "\n                                " +
+                                            _vm._s(track.votes_count) +
+                                            "\n                            "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("br")
+                                  ])
+                            ])
+                          : _vm._e()
+                      ],
+                      2
+                    )
                   }),
                   0
                 )
@@ -53632,6 +53954,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.vibes.getAll().then(function () {
             return _this.loading = false;
         });
+
+        this.vibes.getUserVibes();
     },
 
 
