@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\MusicAPI\Playlist;
 use App\Track;
+use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Vote;
 use Illuminate\Http\Request;
 
 class VoteController extends Controller
 {
+    use VibeShowTrait;
+
     public function store(Vibe $vibe, Track $track)
     {
         $rangeStart = $vibe->showTracks->where('id', $track->id)->keys()->first();
@@ -23,7 +26,9 @@ class VoteController extends Controller
         $insertBefore = $vibe->showTracks->where('id', $track->id)->keys()->first();
 
         app(Playlist::class)->reorderTracks($vibe->api_id, $rangeStart, $insertBefore);
-        return back();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        return $this->showResponse($loadedVibe);
     }
 
     public function destroy(Vibe $vibe, Track $track)
@@ -38,6 +43,8 @@ class VoteController extends Controller
         $insertBefore = $vibe->showTracks->where('id', $track->id)->keys()->first();
 
         app(Playlist::class)->reorderTracks($vibe->api_id, $rangeStart, $insertBefore + 1);
-        return back();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        return $this->showResponse($loadedVibe);
     }
 }

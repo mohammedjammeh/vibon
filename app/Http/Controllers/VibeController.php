@@ -21,11 +21,10 @@ class VibeController extends Controller
 
     public function index(Playlist $playlist)
     {
-        $vibes = Vibe::all()->map(function($vibe) use($playlist) {
-            return $this->loadAndUpdateAttributes($vibe);
+        return Vibe::all()->map(function($vibe) use($playlist) {
+            $loadedVibe = app(Playlist::class)->load($vibe);
+            return $this->showResponse($loadedVibe);
         });
-
-        return compact('vibes');
     }
 
     public function create()
@@ -48,7 +47,8 @@ class VibeController extends Controller
         $vibe->users()->attach(Auth()->user()->id, ['owner' => true]);
         event(new VibeCreated($vibe));
 
-        return ['vibe' => $this->loadAndUpdateAttributes($vibe)];
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        return $this->showResponse($loadedVibe);
     }
 
     public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
@@ -74,7 +74,8 @@ class VibeController extends Controller
         $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
         event(new VibeUpdated($vibe));
 
-        return ['vibe' => $this->loadAndUpdateAttributes($vibe)];
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        return $this->showResponse($loadedVibe);
     }
 
     public function destroy(Vibe $vibe, Playlist $playlist)
