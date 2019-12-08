@@ -44,6 +44,7 @@ class Form {
             axios[requestType](url, this.data())
                 .then(response => {
                     this.onSuccess();
+                    // console.log(JSON.parse(response.data));
                     resolve(response.data);
                 })
                 .catch(error => {
