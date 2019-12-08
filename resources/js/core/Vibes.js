@@ -1,3 +1,5 @@
+import User from "./User";
+
 let Vibes = {
     all: [],
     show: {},
@@ -5,11 +7,7 @@ let Vibes = {
     message: '',
     deletedMessage: '',
 
-    userVibesIDs: [],
-
     routes: {
-        'userVibes': '/user/vibes',
-
         'index': '/vibe',
         'create': '/vibe',
         'update': function (vibeID) {
@@ -95,12 +93,8 @@ let Vibes = {
         });
     },
 
-    getUserVibes() {
-        return axios.get(this.routes.userVibes)
-            .then(response => {
-                this.userVibesIDs = response.data;
-            })
-            .catch(errors => console.log(errors));
+    getVibeName(vibeID) {
+       return this.all.find(vibe => vibe.id === vibeID).name;
     },
 
     getAll() {
@@ -126,8 +120,9 @@ let Vibes = {
     create(form) {
         form.post(this.routes.create)
             .then(response => {
+                console.log(response.vibe);
                 this.all.push(response.vibe);
-                this.userVibesIDs.push(response.vibe.id);
+                User.updateVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -150,6 +145,7 @@ let Vibes = {
                 this.all = this.all.map((vibe) => {
                     if(vibe.id === response.vibe.id) {
                         this.show = response.vibe;
+                        User.updateVibesIDs(response.vibe);
                         return response.vibe;
                     }
                     return vibe;
@@ -162,7 +158,7 @@ let Vibes = {
         form.delete(this.routes.delete(vibeID))
             .then(response => {
                 this.all = this.all.filter(vibe => vibe.id !== vibeID);
-                this.userVibesIDs = this.userVibesIDs.filter(id => id !== vibeID);
+                User.vibesIDs = User.vibesIDs.filter(id => id !== vibeID);
                 this.show = {};
                 this.deletedMessage = response.message;
             })
@@ -229,7 +225,7 @@ let Vibes = {
         form.post(this.routes.joinVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                this.userVibesIDs.push(response.vibe.id);
+                User.updateVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -238,7 +234,7 @@ let Vibes = {
         form.delete(this.routes.leaveVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                this.userVibesIDs = this.userVibesIDs.filter(id => id !== vibeID);
+                User.vibesIDs = User.vibesIDs.filter(id => id !== vibeID);
             })
             .catch(errors => console.log(errors));
     },
@@ -258,15 +254,19 @@ let Vibes = {
                     if(!vibe.auto_jd) {
                         vibe.api_tracks.forEach(track => {
                             if(track.vibon_id === trackID) {
-                                var index = track.vibes.indexOf(response.vibe.id);
-                                if (index !== -1) track.vibes.splice(index, 1);
+                                let trackVibeIndex = track.vibes.indexOf(response.vibe.id);
+                                if (trackVibeIndex !== -1) {
+                                    track.vibes.splice(trackVibeIndex, 1);
+                                }
                             }
                         });
                     }
 
                     if(vibe.id === response.vibe.id) {
+                        this.show = response.vibe;
                         return response.vibe;
                     }
+
                     return vibe;
                 });
             })
@@ -286,6 +286,7 @@ let Vibes = {
                     }
 
                     if(vibe.id === response.vibe.id) {
+                        this.show = response.vibe;
                         return response.vibe;
                     }
                     return vibe;
