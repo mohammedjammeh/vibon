@@ -40,7 +40,11 @@ class TrackVibeController extends Controller
 
     public function destroy(Vibe $vibe, Track $track) 
     {
-        $vibe->tracks()->wherePivot('auto_related', '=', false)->detach();
+        $vibe->tracks()
+            ->wherePivot('auto_related', false)
+            ->wherePivot('track_id', $track->id)
+            ->detach();
+
         $this->destroyOnPlaylist($vibe, $track);
 
         $loadedVibe = app(Playlist::class)->load($vibe);

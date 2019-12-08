@@ -66,7 +66,7 @@ class Playlist
         $vibe->uri = $playlist->uri;
         $vibe->description = $playlist->description ?? null;
 
-        $vibe->api_tracks = app(Tracks::class)->load($vibe, $playlist);
+        $vibe->api_tracks = app(Tracks::class)->loadFor($vibe, $playlist);
 
         $this->checkIfSynced($vibe, $playlist);
         return $vibe;

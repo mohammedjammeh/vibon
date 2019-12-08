@@ -17,12 +17,13 @@ class Tracks
         $this->unloadedTracks = collect([]);
     }
 
-    public function getRecommendations($options)
+    public function load($tracks)
     {
-        return $this->api->getTrackRecommendations($options);
+        $tracksIDs = collect($tracks)->pluck('api_id')->toArray();
+        return $this->api->getTracks($tracksIDs)->tracks;
     }
 
-    public function load($vibe, $playlist)
+    public function loadFor($vibe, $playlist)
     {
         $tracks = $vibe->showTracks;
         $playlistTracks = collect($playlist->tracks->items)->pluck('track');
@@ -33,16 +34,16 @@ class Tracks
         foreach ($tracks as $track) {
             $loadedTrack = $this->getTrackAPI($track, $playlistTracks, $playlistTracksIDs);
             if($loadedTrack) {
-                $loadedTrack = $this->checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user);
+                $loadedTrack = $this->updateTrackInfo($track, $loadedTrack, $vibe, $user);
                 $trackCollection->push($loadedTrack);
             }
         }
 
         if ($this->unloadedTracks->isNotEmpty()) {
-            $newLoadedTracks = $this->loadUnloadedTracks();
+            $newLoadedTracks = $this->load($this->unloadedTracks);
             foreach ($newLoadedTracks as $loadedTrack) {
                 $track = $tracks->where('api_id', $loadedTrack->id)->first();
-                $loadedTrack = $this->checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user);
+                $loadedTrack = $this->updateTrackInfo($track, $loadedTrack, $vibe, $user);
                 $trackCollection->push($loadedTrack);
             }
         }
@@ -50,50 +51,43 @@ class Tracks
         return $trackCollection;
     }
 
-    public function getTrackAPI($track, $playlistTracks, $playlistTracksIDs)
+    public function getRecommendations($options)
+    {
+        return $this->api->getTrackRecommendations($options);
+    }
+
+    protected function getTrackAPI($track, $playlistTracks, $playlistTracksIDs)
     {
         $trackID = $track->api_id;
         if (in_array($trackID, $playlistTracksIDs)) {
             return $playlistTracks->where('id', $trackID)->first();
         }
 
-        $this->unloadedTracks->push($trackID);
+        $this->unloadedTracks->push($track);
     }
 
-    public function checkAndUpdateTrackInfo($track, $loadedTrack, $vibe, $user)
+    protected function updateTrackInfo($track, $loadedTrack, $vibe, $user)
     {
         $loadedTrack->votes_count = $track->votesCountOn($vibe);
         $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
-
-        $loadedTrack->vibon_id = $this->getTrackVibonID($loadedTrack->id);
-        $loadedTrack->vibes = $this->getVibesIDs($loadedTrack->id, $user);
-
+        $loadedTrack = $this->updateTrackVibonInfo($loadedTrack, $user);
         return $loadedTrack;
     }
 
-    public function loadUnloadedTracks()
+    public function updateTracksVibonInfo($apiTracks)
     {
-        return $this->api->getTracks($this->unloadedTracks->toArray())->tracks;
+        $user = $this->userVibesTracks();
+        return collect($apiTracks)->each(function ($apiTrack) use($user) {
+            return $this->updateTrackVibonInfo($apiTrack, $user);
+        });
     }
 
-//    public function load($tracks)
-//    {
-//        $trackCollection = collect([]);
-//        collect($tracks)->each(function ($track) use($trackCollection) {
-//            $loadedTrack = $this->api->getTrack($track->api_id);
-//            $trackCollection[] = $loadedTrack;
-//        });
-//        return $trackCollection;
-//    }
-//
-//    public function check($apiTracks)
-//    {
-//        $user = $this->userVibesTracks();
-//        return collect($apiTracks)->each(function ($apiTrack) use($user) {
-//            $apiTrack->vibon_id = $this->getTrackVibonID($apiTrack->id);
-//            $apiTrack->vibes = $this->getVibesIDs($apiTrack->id, $user);
-//        });
-//    }
+    protected function updateTrackVibonInfo($loadedTrack, $user)
+    {
+        $loadedTrack->vibon_id = $this->getTrackVibonID($loadedTrack->id);
+        $loadedTrack->vibes = $this->getVibesIDs($loadedTrack->id, $user);
+        return $loadedTrack;
+    }
 
     protected function userVibesTracks()
     {
