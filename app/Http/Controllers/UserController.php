@@ -28,6 +28,6 @@ class UserController extends Controller
 //        $lol = app(Playlist::class)->loadMany($user['vibes']);
 //        dd($lol);
 
-        return auth()->user()->load('vibes')->vibes->pluck('id');
+        return auth()->user()->load('vibes')->vibes->where('auto_dj', false)->pluck('id');
     }
 }
