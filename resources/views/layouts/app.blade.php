@@ -28,11 +28,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <form method="GET" action="{{ route('search') }}" style="margin-left: 29%">
-                    {{--@csrf--}}
-                    <input type="text" name="search" placeholder="Search.." style="width: 220px">
-                    <input type="submit" value="Search">
-                </form>
+                <search-form></search-form>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
@@ -76,7 +72,7 @@
 
         <main class="py-4">
             <div class="container">
-                <div id="#app">
+                <div>
                     <create-vibe></create-vibe>
                     <br><br>
 

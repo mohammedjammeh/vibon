@@ -21,7 +21,7 @@ Route::get('/spotify', 'Auth\Music\CallbackController@spotifyAuth')->name('callb
 Route::get('/authorise', 'Auth\Music\AuthoriseController@authorise')->name('authorise');
 Route::get('/welcome', 'Auth\Music\AuthoriseController@welcome')->name('welcome');
 
-Route::get('/search', 'SearchController@search')->name('search');
+Route::get('/search/{input}', 'SearchController@search')->name('search');
 
 Route::get('/', 'HomeController@index')->name('index');
 Route::get('/home', 'HomeController@index')->name('home');
