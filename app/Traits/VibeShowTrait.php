@@ -7,13 +7,6 @@ use App\MusicAPI\Playlist;
 
 trait VibeShowTrait
 {
-//    public function loadAndUpdateAttributes($vibe)
-//    {
-//        $loadedVibe = app(Playlist::class)->load($vibe);
-//        $this->updateAttributes($loadedVibe);
-//        return $loadedVibe;
-//    }
-
     public function showResponse($loadedVibe, $message = '')
     {
         $this->updateAttributes($loadedVibe);

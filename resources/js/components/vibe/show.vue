@@ -199,19 +199,28 @@
 
                         <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
 
-                        <div v-for="userVibeID in vibes.userVibesIDs">
-                            <div v-if="track.vibes.includes(userVibeID)">
+                        <div>
+                            <div v-for="userVibeID in user.allVibesIDsExcept(id)" v-if="track.vibes.includes(userVibeID)">
                                 <form method="POST" :action="vibes.routes.removeTrack(userVibeID, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(userVibeID, track.vibon_id)">
-                                    <input type="submit" name="track-vibe-destroy" :value="getVibeName(userVibeID)" style="background:red;">
+                                    <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)" style="background:red;">
                                 </form>
                                 <br>
                             </div>
                             <div v-else>
                                 <form method="POST" :action="vibes.routes.addTrack(userVibeID, track.id)" @submit.prevent="onAddTrackSubmit(userVibeID, track.id)">
-                                    <input type="submit" name="track-vibe-destroy" :value="getVibeName(userVibeID)">
+                                    <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)">
                                 </form>
                                 <br>
                             </div>
+                        </div>
+
+
+                        <div>
+                            <form method="POST" :action="vibes.routes.removeTrack(vibes.show.id, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(vibes.show.id, track.vibon_id)">
+                                <input v-if="parseInt(vibes.show.auto_dj)" type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibes.show.id)" style="background:red;" disabled>
+                                <input v-else type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibes.show.id)" style="background:red;">
+                            </form>
+                            <br>
                         </div>
 
                         <div v-if="!vibes.show.auto_dj">
@@ -243,13 +252,15 @@
 
 <script>
     import Vibes from '../../core/Vibes.js';
+    import User from '../../core/User.js';
     import Form from '../../core/Form.js';
 
     export default {
         data() {
             return {
-                id: this.$route.params.id,
+                id: parseInt(this.$route.params.id),
                 vibes: Vibes,
+                user: User,
                 editMode: false,
                 editForm: new Form({
                     name: '',
@@ -280,10 +291,6 @@
         },
 
         methods: {
-            getVibeName(vibeID) {
-                return this.vibes.all.find(vibe => vibe.id === vibeID).name;
-            },
-
             vibeHasTracks() {
                 return Object.keys(this.vibes.show.api_tracks).length > 0;
             },
@@ -349,12 +356,12 @@
                 this.vibes.syncPlaylist(this.syncPlaylistForm, this.id)
             },
 
-            onRemoveTrackSubmit(vibeID, trackID) {
-                this.vibes.removeTrack(this.removeTrackForm, vibeID, trackID);
+            onRemoveTrackSubmit(vibeID, trackVibonID) {
+                this.vibes.removeTrack(this.removeTrackForm, vibeID, trackVibonID);
             },
 
-            onAddTrackSubmit(vibeID, trackApiId) {
-                this.vibes.addTrack(this.addTrackForm, vibeID, trackApiId);
+            onAddTrackSubmit(vibeID, trackID) {
+                this.vibes.addTrack(this.addTrackForm, vibeID, trackID);
             },
 
             onUpvoteTrackSubmit(trackID) {
