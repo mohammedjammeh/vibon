@@ -36,10 +36,10 @@
 </template>
 
 <script>
-    import Search from '../../core/Search';
-    import Vibes from '../../core/Vibes';
-    import User from '../../core/User';
-    import Form from '../../core/Form';
+    import Search from '../../core/search';
+    import Vibes from '../../core/vibes';
+    import User from '../../core/user';
+    import Form from '../../classes/Form';
 
     export default {
         data() {

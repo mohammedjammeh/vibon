@@ -7,8 +7,8 @@
 </template>
 
 <script>
-    import Form from '../../core/Form';
-    import Search from '../../core/Search';
+    import Form from '../../classes/Form';
+    import Search from '../../core/search';
     import _ from 'lodash';
 
     export default {
