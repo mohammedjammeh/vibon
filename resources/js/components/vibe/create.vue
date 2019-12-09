@@ -55,8 +55,8 @@
 </template>
 
 <script>
-    import Form from '../../core/Form.js';
-    import Vibes from '../../core/Vibes.js';
+    import Form from '../../classes/Form.js';
+    import vibes from '../../core/vibes.js';
 
     export default {
         data() {
@@ -67,7 +67,7 @@
                     open: '',
                     auto_dj: '',
                 }),
-                vibes: Vibes
+                vibes: vibes
             }
         },
         methods: {

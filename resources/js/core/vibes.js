@@ -1,4 +1,4 @@
-import User from "./User";
+import User from "./user";
 
 let Vibes = {
     all: [],
@@ -6,6 +6,8 @@ let Vibes = {
     showID: '',
     message: '',
     deletedMessage: '',
+
+    user: User,
 
     routes: {
         'index': '/vibe',
@@ -122,7 +124,7 @@ let Vibes = {
             .then(response => {
                 console.log(response.vibe);
                 this.all.push(response.vibe);
-                User.updateVibesIDs(response.vibe);
+                this.user.updateVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -145,7 +147,7 @@ let Vibes = {
                 this.all = this.all.map((vibe) => {
                     if(vibe.id === response.vibe.id) {
                         this.show = response.vibe;
-                        User.updateVibesIDs(response.vibe);
+                        this.user.updateVibesIDs(response.vibe);
                         return response.vibe;
                     }
                     return vibe;
@@ -158,7 +160,7 @@ let Vibes = {
         form.delete(this.routes.delete(vibeID))
             .then(response => {
                 this.all = this.all.filter(vibe => vibe.id !== vibeID);
-                User.vibesIDs = User.vibesIDs.filter(id => id !== vibeID);
+                this.user.vibesIDs = this.user.vibesIDs.filter(id => id !== vibeID);
                 this.show = {};
                 this.deletedMessage = response.message;
             })
@@ -225,7 +227,7 @@ let Vibes = {
         form.post(this.routes.joinVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                User.updateVibesIDs(response.vibe);
+                this.user.updateVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -234,7 +236,7 @@ let Vibes = {
         form.delete(this.routes.leaveVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                User.vibesIDs = User.vibesIDs.filter(id => id !== vibeID);
+                this.user.vibesIDs = this.user.vibesIDs.filter(id => id !== vibeID);
             })
             .catch(errors => console.log(errors));
     },

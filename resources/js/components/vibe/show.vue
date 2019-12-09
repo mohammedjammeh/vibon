@@ -251,16 +251,16 @@
 </template>
 
 <script>
-    import Vibes from '../../core/Vibes.js';
-    import User from '../../core/User.js';
-    import Form from '../../core/Form.js';
+    import vibes from '../../core/vibes.js';
+    import user from '../../core/user.js';
+    import Form from '../../classes/Form.js';
 
     export default {
         data() {
             return {
                 id: parseInt(this.$route.params.id),
-                vibes: Vibes,
-                user: User,
+                vibes: vibes,
+                user: user,
                 editMode: false,
                 editForm: new Form({
                     name: '',

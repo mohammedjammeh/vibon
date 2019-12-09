@@ -29,14 +29,14 @@
 </template>
 
 <script>
-    import Vibes from '../../core/Vibes';
-    import User from '../../core/User';
+    import vibes from '../../core/vibes';
+    import user from '../../core/user';
 
     export default {
         data() {
             return {
-                vibes: Vibes,
-                user: User,
+                vibes: vibes,
+                user: user,
                 loading: true
             }
         },

@@ -12,7 +12,7 @@
 */
 
 /*
-Whenever you update this, remember it also has to be updated in resources/js/core/Vibes.js
+Whenever you update this, remember it also has to be updated in resources/js/core/vibes.js
 */
 
 Auth::routes();
