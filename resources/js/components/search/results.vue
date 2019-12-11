@@ -2,12 +2,9 @@
     <div>
         <h4>Search Results..</h4>
         <div class="api-tracks" v-if="tracksAndVibesAreloaded()">
-            <div v-for="track in this.tracks" class="playback-play-track-search">
-                <a href="#">
+            <div v-for="track in this.tracks" :class="isActive(track)">
+                <a @click="playTrack(track.uri)">
                     <img v-bind:src="track.album.images[0].url">
-
-                    <span class="track-api-id" hidden>{{ track.api_id }}</span>
-                    <span class="track-uri" hidden>{{ track.uri }}</span>
                 </a>
 
                 <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
@@ -36,17 +33,19 @@
 </template>
 
 <script>
-    import Search from '../../core/search';
-    import Vibes from '../../core/vibes';
-    import User from '../../core/user';
+    import search from '../../core/search';
+    import vibes from '../../core/vibes';
+    import user from '../../core/user';
+    import playback from '../../core/playback.js';
     import Form from '../../classes/Form';
 
     export default {
         data() {
             return {
-                vibes: Vibes,
-                user: User,
-                search: Search,
+                vibes: vibes,
+                user: user,
+                playback: playback,
+                search: search,
                 input: this.$route.params.input,
                 tracks: [],
                 removeTrackForm: new Form({}),
@@ -86,6 +85,27 @@
                 let track =  this.tracks.find(track => track.id === trackID);
                 track.vibes.push(vibeID);
             },
+
+            playTrack(trackURI) {
+                this.playback.playTracks({
+                    playerInstance: this.playback.player,
+                    tracks_uris: this.tracks.map(track => track.uri),
+                    track_uri: trackURI
+                });
+            },
+
+            isActive(track) {
+                if(track.active) {
+                    return 'playback-play-track-search active';
+                }
+                return 'playback-play-track-search';
+            }
         }
     }
 </script>
+
+<style scoped>
+    .active {
+        background: green;
+    }
+</style>
