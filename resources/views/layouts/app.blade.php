@@ -80,150 +80,28 @@
                     <br><br>
 
                     <router-view :key="$route.fullPath"></router-view>
+                    <br><br>
+
+                    <playback></playback>
+                    <br><br>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="{{ asset('js/user.js') }}"></script>
+    <script src="{{ asset('js/playback.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script type="text/javascript">
         window.onSpotifyWebPlaybackSDKReady = () => {
-            function getAccessToken() {
-                var now = new Date();
-                now.setHours(now.getHours() - 1);
-                var oneHourAgo = now.getTime();
-
-                if(localStorage['token_set_at'] >= oneHourAgo) {
-                    return localStorage['access_token'];
-                } else {
-                    var user = $.ajax({
-                        type: 'GET',
-                        dataType: 'json',
-                        async: false,
-                        url: '/playback-user',
-                        success: function(data) {
-                            return data;
-                        }
-                    });
-
-                    var userAttributes = JSON.parse(user.responseText);
-                    localStorage['token_set_at'] = new Date(userAttributes['token_set_at']).getTime();
-                    localStorage['access_token'] = userAttributes['access_token'];
-                    return localStorage['access_token'];
-                }
-            }
-
-
+            let userAccessToken = user.getAccessToken();
             const player = new Spotify.Player({
                 name: 'Vibon',
-                getOAuthToken: cb => { cb(getAccessToken()); }
+                getOAuthToken: cb => { cb(userAccessToken); }
             });
 
-            const playPlayist = ({
-                playlist_uri,
-                track_uri,
-                playerInstance: {
-                    _options: {
-                      getOAuthToken,
-                      id
-                    }
-            }}) => {
-                getOAuthToken(access_token => {
-                    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
-                        method: 'PUT',
-                        body: JSON.stringify({
-                            context_uri: playlist_uri,
-                            offset: {
-                                uri: track_uri
-                            },
-                        }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${access_token}`
-                        },
-                    });
-                });
-            };
-
-            const playSearch = ({
-               tracks_uris,
-               track_uri,
-               playerInstance: {
-                   _options: {
-                       getOAuthToken,
-                       id
-                   }
-               }}) => {
-                getOAuthToken(access_token => {
-                    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
-                        method: 'PUT',
-                        body: JSON.stringify({
-                            uris: tracks_uris,
-                            offset: {
-                                uri: track_uri
-                            },
-                        }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${access_token}`
-                        },
-                    });
-                });
-            };
-
-            // playlist: play track
-            $(document).on('click', '.playback-play-track-search a', function(event) {
-                event.preventDefault();
-                let trackURI = $(this).children('span.track-uri').text();
-                let tracksURIs = [];
-                $('span.track-uri').map(function(){
-                    tracksURIs.push($.trim($(this).text()));
-                });
-
-                playSearch({
-                    playerInstance: player,
-                    tracks_uris: tracksURIs,
-                    track_uri: trackURI
-                });
-            });
-
-            // search: play track
-            $(document).on('click', '.playback-play-track a', function(event) {
-                event.preventDefault();
-                let vibeURI = $('.vibe-uri').text();
-                let trackURI = $(this).children('span.track-uri').text();
-
-                playPlayist({
-                    playerInstance: player,
-                    playlist_uri: vibeURI,
-                    track_uri: trackURI
-                });
-            });
-
-            // resume
-            $(document).on('click', '.playback-resume a', function(event) {
-                event.preventDefault();
-                player.resume().then(() => {});
-            });
-
-            // pause
-            $(document).on('click', '.playback-pause a', function(event) {
-                event.preventDefault();
-                player.pause().then(() => {});
-            });
-
-            // previous track
-            $(document).on('click', '.playback-previous a', function(event) {
-                event.preventDefault();
-                player.previousTrack().then(() => {});
-            });
-
-            // next track
-            $(document).on('click', '.playback-next a', function(event) {
-                event.preventDefault();
-                player.nextTrack().then(() => {});
-            });
+            playback.player = player;
 
 
             // Error handling
@@ -235,30 +113,7 @@
 
             // Playback status updates
             player.addListener('player_state_changed', state => {
-                if(state) {
-                    $trackID = state['track_window']['current_track']['linked_from']['id'] ? state['track_window']['current_track']['linked_from']['id'] : state['track_window']['current_track']['id'];
-                    $trackSpan = $('.playback-play-track a, .playback-play-track-search a').children('span.track-api-id:contains(' + $trackID + ')');
-
-                    $('.playback-buttons').show();
-                    $('.api-tracks > div').removeAttr('style');
-                    $trackSpan.parent().parent().attr('style', 'background: green;');
-
-                    checkAndUpdatePlayOrPauseButton();
-
-                } else {
-                    $('.playback-buttons').hide();
-                    $('.api-tracks > div').removeAttr('style');
-                }
-
-                function checkAndUpdatePlayOrPauseButton() {
-                    if(state['paused'] === true) {
-                        $('.playback-resume').show();
-                        $('.playback-pause').hide();
-                    } else {
-                        $('.playback-resume').hide();
-                        $('.playback-pause').show();
-                    }
-                }
+                playback.updateData(state);
             });
 
             // Ready

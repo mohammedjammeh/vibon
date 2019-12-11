@@ -1,4 +1,4 @@
-let User = {
+let user = {
     vibesIDs: [],
 
     routes: {
@@ -11,6 +11,31 @@ let User = {
                 this.vibesIDs = response.data;
             })
             .catch(errors => console.log(errors));
+    },
+
+    getAccessToken() {
+        let now = new Date();
+        now.setHours(now.getHours() - 1);
+        let oneHourAgo = now.getTime();
+
+        if(localStorage['token_set_at'] >= oneHourAgo) {
+            return localStorage['access_token'];
+        } else {
+            let user = $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                async: false,
+                url: '/playback-user',
+                success: function(data) {
+                    return data;
+                }
+            });
+
+            let userAttributes = JSON.parse(user.responseText);
+            localStorage['token_set_at'] = new Date(userAttributes['token_set_at']).getTime();
+            localStorage['access_token'] = userAttributes['access_token'];
+            return localStorage['access_token'];
+        }
     },
 
     updateVibesIDs(vibe) {
@@ -26,4 +51,5 @@ let User = {
     },
 };
 
-export default User;
+window.user = user;
+export default user;

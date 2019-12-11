@@ -98,29 +98,6 @@
                 </div>
                 <br>
 
-                <div class="playback-buttons" style="display: none">
-                    <div class="playback-resume">
-                        <a href="#">Play</a>
-                        <br><br>
-                    </div>
-
-                    <div class="playback-pause"  style="display: none;">
-                        <a href="#">Pause</a>
-                        <br><br>
-                    </div>
-
-                    <div class="playback-previous">
-                        <a href="#">Previous</a>
-                        <br><br>
-                    </div>
-
-                    <div class="playback-next">
-                        <a href="#">Next</a>
-                        <br><br>
-                    </div>
-                </div>
-                <br>
-
                 <div v-if="this.vibeHasJoinRequests()">
                     <h4>Requests</h4>
                     <div v-for="joinRequest in this.vibes.show.requests">
@@ -189,12 +166,9 @@
                 <span class="vibe-uri" hidden>{{ this.vibes.show.uri }}</span>
 
                 <div class="api-tracks">
-                    <div v-for="track in this.vibes.show.api_tracks" class="playback-play-track">
-                        <a href="#">
+                    <div v-for="track in this.vibes.show.api_tracks" :class="isActive(track)">
+                        <a @click="playTrack(vibes.show.uri, track.uri)">
                             <img v-bind:src="track.album.images[0].url">
-
-                            <span class="track-api-id" hidden>{{ track.api_id }}</span>
-                            <span class="track-uri" hidden>{{ track.uri }}</span>
                         </a>
 
                         <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
@@ -253,6 +227,7 @@
 <script>
     import vibes from '../../core/vibes.js';
     import user from '../../core/user.js';
+    import playback from '../../core/playback.js';
     import Form from '../../classes/Form.js';
 
     export default {
@@ -261,6 +236,7 @@
                 id: parseInt(this.$route.params.id),
                 vibes: vibes,
                 user: user,
+                playback: playback,
                 editMode: false,
                 editForm: new Form({
                     name: '',
@@ -370,7 +346,28 @@
 
             onDownvoteTrackSubmit(trackID) {
                 this.vibes.downvoteTrack(this.downvoteTrackForm, this.id, trackID);
+            },
+
+            playTrack(vibeURI, trackURI) {
+                this.playback.playVibe({
+                    playerInstance: this.playback.player,
+                    playlist_uri: vibeURI,
+                    track_uri: trackURI
+                });
+            },
+
+            isActive(track) {
+                if(track.active) {
+                    return 'playback-play-track active';
+                }
+                return 'playback-play-track';
             }
         }
     }
 </script>
+
+<style scoped>
+    .active {
+        background: green;
+    }
+</style>
