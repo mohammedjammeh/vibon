@@ -66,23 +66,22 @@ const playback = {
     },
 
     updateData(state) {
-        console.log(state);
-        // if (state) {
-        //     this.show = true;
-        //     this.paused = state['paused'];
-        //
-        //     let trackID = state['track_window']['current_track']['linked_from']['id']
-        //         ? state['track_window']['current_track']['linked_from']['id']
-        //         : state['track_window']['current_track']['id'];
-        //
-        //     let vibeURI = state['context']['uri'];
-        //
-        //     if(vibeURI === null) {
-        //         this.updateSearchPlayingTracks(trackID);
-        //     } else {
-        //         this.updateVibePlayingTracks(trackID, vibeURI);
-        //     }
-        // }
+        if (state) {
+            this.show = true;
+            this.paused = state['paused'];
+
+            let trackID = state['track_window']['current_track']['linked_from']['id']
+                ? state['track_window']['current_track']['linked_from']['id']
+                : state['track_window']['current_track']['id'];
+
+            let vibeURI = state['context']['uri'];
+
+            if(vibeURI === null) {
+                this.updateSearchPlayingTracks(trackID);
+            } else {
+                this.updateVibePlayingTracks(trackID, vibeURI);
+            }
+        }
     },
 
     updateSearchPlayingTracks(trackID) {
