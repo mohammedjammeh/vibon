@@ -8,6 +8,7 @@ let Vibes = {
     deletedMessage: '',
 
     user: User,
+    playingTracks: {},
 
     routes: {
         'index': '/vibe',
@@ -83,6 +84,14 @@ let Vibes = {
         }
     },
 
+    updatePlayingTracksData() {
+        let playingVibesTracks = {};
+        this.all.forEach(vibe => {
+            playingVibesTracks[vibe.id] = '';
+        });
+        this.playingTracks = playingVibesTracks;
+    },
+
     updateData(response) {
         this.all = this.all.map((vibe) => {
             if(vibe.id === response.vibe.id) {
@@ -109,7 +118,7 @@ let Vibes = {
                             this.all.push(vibesData[key].vibe);
                         }
                     }
-
+                    this.updatePlayingTracksData();
                     this.updateShowData();
                     resolve(vibesData);
                 })

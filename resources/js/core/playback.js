@@ -1,11 +1,17 @@
 import vibes from './vibes';
+import search from './search';
 
 const playback = {
     vibes: vibes,
+    search: search,
 
     player: {},
     show: false,
     paused: false,
+
+    yoo: {
+        43: 'loool'
+    },
 
     playVibe: ({
          playlist_uri,
@@ -60,30 +66,42 @@ const playback = {
     },
 
     updateData(state) {
-        if (state) {
-            this.show = true;
+        console.log(state);
+        // if (state) {
+        //     this.show = true;
+        //     this.paused = state['paused'];
+        //
+        //     let trackID = state['track_window']['current_track']['linked_from']['id']
+        //         ? state['track_window']['current_track']['linked_from']['id']
+        //         : state['track_window']['current_track']['id'];
+        //
+        //     let vibeURI = state['context']['uri'];
+        //
+        //     if(vibeURI === null) {
+        //         this.updateSearchPlayingTracks(trackID);
+        //     } else {
+        //         this.updateVibePlayingTracks(trackID, vibeURI);
+        //     }
+        // }
+    },
 
-            let trackID = state['track_window']['current_track']['linked_from']['id']
-                ? state['track_window']['current_track']['linked_from']['id']
-                : state['track_window']['current_track']['id'];
+    updateSearchPlayingTracks(trackID) {
+        this.search.playingTrack = trackID;
+    },
 
-            if(Object.keys(this.vibes.show).length > 0) {
-                this.vibes.show.api_tracks = this.vibes.show.api_tracks.map(track => {
-                    if (track.id === trackID) {
-                        track.active = true;
-                        return track;
-                    }
-                    track.active = false;
-                    return track;
-                });
-            }
-
-            if(state['paused']) {
-                this.paused = true
-            } else {
-                this.paused = false;
-            }
+    updateVibePlayingTracks(trackID, vibeURI) {
+        if(Object.keys(this.vibes.all).length > 0) {
+            this.vibes.all.map((vibe) => {
+                if(vibe.uri === vibeURI) {
+                    vibe.api_tracks.forEach(track => {
+                        if(track.id === trackID) {
+                            this.vibes.playingTracks[vibe.id] = track.id;
+                        }
+                    });
+                }
+            });
         }
+
     },
 
     playOrResume() {
