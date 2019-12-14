@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 74);
+/******/ 	return __webpack_require__(__webpack_require__.s = 84);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 2:
+/***/ 1:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -131,117 +131,11 @@ window.user = user;
 
 /***/ }),
 
-/***/ 4:
+/***/ 2:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(5);
-
-
-var playback = {
-    vibes: __WEBPACK_IMPORTED_MODULE_0__vibes__["a" /* default */],
-
-    player: {},
-    show: false,
-    paused: false,
-
-    playVibe: function playVibe(_ref) {
-        var playlist_uri = _ref.playlist_uri,
-            track_uri = _ref.track_uri,
-            _ref$playerInstance$_ = _ref.playerInstance._options,
-            getOAuthToken = _ref$playerInstance$_.getOAuthToken,
-            id = _ref$playerInstance$_.id;
-
-        getOAuthToken(function (access_token) {
-            fetch('https://api.spotify.com/v1/me/player/play?device_id=' + id, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    context_uri: playlist_uri,
-                    offset: {
-                        uri: track_uri
-                    }
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + access_token
-                }
-            });
-        });
-    },
-
-    playTracks: function playTracks(_ref2) {
-        var tracks_uris = _ref2.tracks_uris,
-            track_uri = _ref2.track_uri,
-            _ref2$playerInstance$ = _ref2.playerInstance._options,
-            getOAuthToken = _ref2$playerInstance$.getOAuthToken,
-            id = _ref2$playerInstance$.id;
-
-        getOAuthToken(function (access_token) {
-            fetch('https://api.spotify.com/v1/me/player/play?device_id=' + id, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    uris: tracks_uris,
-                    offset: {
-                        uri: track_uri
-                    }
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + access_token
-                }
-            });
-        });
-    },
-
-    updateData: function updateData(state) {
-        if (state) {
-            this.show = true;
-
-            var trackID = state['track_window']['current_track']['linked_from']['id'] ? state['track_window']['current_track']['linked_from']['id'] : state['track_window']['current_track']['id'];
-
-            if (Object.keys(this.vibes.show).length > 0) {
-                this.vibes.show.api_tracks = this.vibes.show.api_tracks.map(function (track) {
-                    if (track.id === trackID) {
-                        track.active = true;
-                        return track;
-                    }
-                    track.active = false;
-                    return track;
-                });
-            }
-
-            if (state['paused']) {
-                this.paused = true;
-            } else {
-                this.paused = false;
-            }
-        }
-    },
-    playOrResume: function playOrResume() {
-        this.player.resume().then(function () {});
-    },
-    pause: function pause() {
-        this.player.pause().then(function () {});
-    },
-    previous: function previous() {
-        this.player.previousTrack().then(function () {});
-    },
-    next: function next() {
-        this.player.nextTrack().then(function () {});
-    }
-};
-
-window.playback = playback;
-/* harmony default export */ __webpack_exports__["default"] = (playback);
-
-/***/ }),
-
-/***/ 5:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(1);
 
 
 var Vibes = {
@@ -252,6 +146,7 @@ var Vibes = {
     deletedMessage: '',
 
     user: __WEBPACK_IMPORTED_MODULE_0__user__["default"],
+    playingTracks: {},
 
     routes: {
         'index': '/vibe',
@@ -326,6 +221,13 @@ var Vibes = {
             });
         }
     },
+    updatePlayingTracksData: function updatePlayingTracksData() {
+        var playingVibesTracks = {};
+        this.all.forEach(function (vibe) {
+            playingVibesTracks[vibe.id] = '';
+        });
+        this.playingTracks = playingVibesTracks;
+    },
     updateData: function updateData(response) {
         var _this2 = this;
 
@@ -357,7 +259,7 @@ var Vibes = {
                         _this3.all.push(vibesData[key].vibe);
                     }
                 }
-
+                _this3.updatePlayingTracksData();
                 _this3.updateShowData();
                 resolve(vibesData);
             }).catch(function (error) {
@@ -598,7 +500,165 @@ var Vibes = {
 
 /***/ }),
 
-/***/ 74:
+/***/ 20:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var Search = {
+    route: '',
+    tracks: {},
+    playingTrack: '',
+
+    setRoute: function setRoute(input) {
+        this.route = '/search/' + input;
+    },
+
+    searchInput: function searchInput(input) {
+        var _this = this;
+
+        this.setRoute(input);
+        return new Promise(function (resolve, reject) {
+            axios.get(_this.route).then(function (response) {
+                _this.tracks = response.data;
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error.response.data.errors);
+            });
+        });
+    }
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Search);
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(20);
+
+
+
+var playback = {
+    vibes: __WEBPACK_IMPORTED_MODULE_0__vibes__["a" /* default */],
+    search: __WEBPACK_IMPORTED_MODULE_1__search__["a" /* default */],
+
+    player: {},
+    show: false,
+    paused: false,
+
+    yoo: {
+        43: 'loool'
+    },
+
+    playVibe: function playVibe(_ref) {
+        var playlist_uri = _ref.playlist_uri,
+            track_uri = _ref.track_uri,
+            _ref$playerInstance$_ = _ref.playerInstance._options,
+            getOAuthToken = _ref$playerInstance$_.getOAuthToken,
+            id = _ref$playerInstance$_.id;
+
+        getOAuthToken(function (access_token) {
+            fetch('https://api.spotify.com/v1/me/player/play?device_id=' + id, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    context_uri: playlist_uri,
+                    offset: {
+                        uri: track_uri
+                    }
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            });
+        });
+    },
+
+    playTracks: function playTracks(_ref2) {
+        var tracks_uris = _ref2.tracks_uris,
+            track_uri = _ref2.track_uri,
+            _ref2$playerInstance$ = _ref2.playerInstance._options,
+            getOAuthToken = _ref2$playerInstance$.getOAuthToken,
+            id = _ref2$playerInstance$.id;
+
+        getOAuthToken(function (access_token) {
+            fetch('https://api.spotify.com/v1/me/player/play?device_id=' + id, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    uris: tracks_uris,
+                    offset: {
+                        uri: track_uri
+                    }
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            });
+        });
+    },
+
+    updateData: function updateData(state) {
+        console.log(state);
+        // if (state) {
+        //     this.show = true;
+        //     this.paused = state['paused'];
+        //
+        //     let trackID = state['track_window']['current_track']['linked_from']['id']
+        //         ? state['track_window']['current_track']['linked_from']['id']
+        //         : state['track_window']['current_track']['id'];
+        //
+        //     let vibeURI = state['context']['uri'];
+        //
+        //     if(vibeURI === null) {
+        //         this.updateSearchPlayingTracks(trackID);
+        //     } else {
+        //         this.updateVibePlayingTracks(trackID, vibeURI);
+        //     }
+        // }
+    },
+    updateSearchPlayingTracks: function updateSearchPlayingTracks(trackID) {
+        this.search.playingTrack = trackID;
+    },
+    updateVibePlayingTracks: function updateVibePlayingTracks(trackID, vibeURI) {
+        var _this = this;
+
+        if (Object.keys(this.vibes.all).length > 0) {
+            this.vibes.all.map(function (vibe) {
+                if (vibe.uri === vibeURI) {
+                    vibe.api_tracks.forEach(function (track) {
+                        if (track.id === trackID) {
+                            _this.vibes.playingTracks[vibe.id] = track.id;
+                        }
+                    });
+                }
+            });
+        }
+    },
+    playOrResume: function playOrResume() {
+        this.player.resume().then(function () {});
+    },
+    pause: function pause() {
+        this.player.pause().then(function () {});
+    },
+    previous: function previous() {
+        this.player.previousTrack().then(function () {});
+    },
+    next: function next() {
+        this.player.nextTrack().then(function () {});
+    }
+};
+
+window.playback = playback;
+/* harmony default export */ __webpack_exports__["default"] = (playback);
+
+/***/ }),
+
+/***/ 84:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(4);
