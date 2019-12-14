@@ -91,7 +91,6 @@
 
     <script src="{{ asset('js/user.js') }}"></script>
     <script src="{{ asset('js/playback.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script type="text/javascript">
         window.onSpotifyWebPlaybackSDKReady = () => {
@@ -102,7 +101,6 @@
             });
 
             playback.player = player;
-
 
             // Error handling
             player.addListener('initialization_error', ({ message }) => { console.error(message); });

@@ -22,7 +22,7 @@
         },
 
         methods: {
-            sendRequest: _.debounce( function() {
+            sendRequest: _.debounce(function() {
                 let input = this.form.input.trim();
 
                 if (input.length > 0) {
