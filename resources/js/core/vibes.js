@@ -74,8 +74,7 @@ let Vibes = {
     },
 
     updateShowData() {
-        if(this.showID !== '')
-        {
+        if(this.showID !== '') {
             this.all.forEach(vibe => {
                 if (vibe.id === this.showID) {
                     this.show = vibe;
@@ -274,7 +273,6 @@ let Vibes = {
                     }
 
                     if(vibe.id === response.vibe.id) {
-                        this.show = response.vibe;
                         return response.vibe;
                     }
 
@@ -297,9 +295,9 @@ let Vibes = {
                     }
 
                     if(vibe.id === response.vibe.id) {
-                        this.show = response.vibe;
                         return response.vibe;
                     }
+
                     return vibe;
                 });
             })
