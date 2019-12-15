@@ -29,6 +29,7 @@ Route::apiResource('/track', 'TrackController');
 Route::resource('/vibe', 'VibeController');
 
 Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
+Route::get('/user/attributes', 'UserController@attributes')->name('user.attributes');
 
 Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
 Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
@@ -44,7 +45,6 @@ Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@dest
 
 Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
 
-Route::get('playback-user', 'PlaybackController@user')->name('playback-user');
 Route::get('playback-user-devices', 'PlaybackController@userDevices')->name('playback-user-devices');
 
 Route::post('sync/vibe/{vibe}', 'VibeSynchronisationController@updatePlaylistTracks')->name('vibe-sync.vibe');

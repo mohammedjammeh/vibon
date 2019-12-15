@@ -12,11 +12,6 @@ class PlaybackController extends Controller
         $this->middleware('setAccessToken');
     }
 
-    public function user()
-    {
-        return json_encode(auth()->user());
-    }
-
     public function userDevices()
     {
         return app(User::class)->devices();
