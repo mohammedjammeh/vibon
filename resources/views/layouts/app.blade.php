@@ -94,34 +94,41 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script type="text/javascript">
         window.onSpotifyWebPlaybackSDKReady = () => {
-            let userAccessToken = user.getAccessToken();
-            const player = new Spotify.Player({
-                name: 'Vibon',
-                getOAuthToken: cb => { cb(userAccessToken); }
+            async function getAccessToken() {
+                return await user.getAccessToken();
+            }
+
+            getAccessToken().then((response) => {
+                const player = new Spotify.Player({
+                    name: 'Vibon',
+                    getOAuthToken: cb => { cb(response); }
+                });
+
+                playback.player = player;
+
+                // Error handling
+                player.addListener('initialization_error', ({ message }) => { console.error(message); });
+                player.addListener('account_error', ({ message }) => { console.error(message); });
+                player.addListener('playback_error', ({ message }) => { console.error(message); });
+                player.addListener('authentication_error', ({ message }) => { console.error(message); });
+
+
+                // Playback status updates
+                player.addListener('player_state_changed', state => {
+                    playback.updateData(state);
+                });
+
+                // Ready
+                player.addListener('ready', ({ device_id }) => {});
+
+                // Not Ready
+                player.addListener('not_ready', ({ device_id }) => {});
+
+                // Connect to the player!
+                player.connect();
             });
 
-            playback.player = player;
-
-            // Error handling
-            player.addListener('initialization_error', ({ message }) => { console.error(message); });
-            player.addListener('account_error', ({ message }) => { console.error(message); });
-            player.addListener('playback_error', ({ message }) => { console.error(message); });
-            player.addListener('authentication_error', ({ message }) => { console.error(message); });
-
-
-            // Playback status updates
-            player.addListener('player_state_changed', state => {
-                playback.updateData(state);
-            });
-
-            // Ready
-            player.addListener('ready', ({ device_id }) => {});
-
-            // Not Ready
-            player.addListener('not_ready', ({ device_id }) => {});
-
-            // Connect to the player!
-            player.connect();
+            setTimeout(getAccessToken, 900000);
         };
     </script>
 </body>

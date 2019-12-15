@@ -74,41 +74,39 @@ var user = {
     vibesIDs: [],
 
     routes: {
-        'userVibes': '/user/vibes'
+        'vibes': '/user/vibes',
+        'attributes': 'user/attributes'
     },
 
     getVibesIDs: function getVibesIDs() {
         var _this = this;
 
-        return axios.get(this.routes.userVibes).then(function (response) {
+        return axios.get(this.routes.vibes).then(function (response) {
             _this.vibesIDs = response.data;
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
     getAccessToken: function getAccessToken() {
+        var _this2 = this;
+
         var now = new Date();
         now.setHours(now.getHours() - 1);
         var oneHourAgo = now.getTime();
 
-        if (localStorage['token_set_at'] >= oneHourAgo) {
-            return localStorage['access_token'];
-        } else {
-            var _user = $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                async: false,
-                url: '/playback-user',
-                success: function success(data) {
-                    return data;
-                }
-            });
-
-            var userAttributes = JSON.parse(_user.responseText);
-            localStorage['token_set_at'] = new Date(userAttributes['token_set_at']).getTime();
-            localStorage['access_token'] = userAttributes['access_token'];
-            return localStorage['access_token'];
-        }
+        return new Promise(function (resolve, reject) {
+            if (localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                axios.get(_this2.routes.attributes).then(function (response) {
+                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                    localStorage['access_token'] = response.data.access_token;
+                    resolve(localStorage['access_token']);
+                }).catch(function (error) {
+                    reject(error.response.data.errors);
+                });
+            }
+        });
     },
     updateVibesIDs: function updateVibesIDs(vibe) {
         if (!parseInt(vibe.auto_dj)) {
@@ -440,7 +438,6 @@ var Vibes = {
                 }
 
                 if (vibe.id === response.vibe.id) {
-                    _this18.show = response.vibe;
                     return response.vibe;
                 }
 
@@ -465,9 +462,9 @@ var Vibes = {
                 }
 
                 if (vibe.id === response.vibe.id) {
-                    _this19.show = response.vibe;
                     return response.vibe;
                 }
+
                 return vibe;
             });
         }).catch(function (errors) {
@@ -500,45 +497,13 @@ var Vibes = {
 
 /***/ }),
 
-/***/ 20:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var Search = {
-    route: '',
-    tracks: {},
-    playingTrack: '',
-
-    setRoute: function setRoute(input) {
-        this.route = '/search/' + input;
-    },
-
-    searchInput: function searchInput(input) {
-        var _this = this;
-
-        this.setRoute(input);
-        return new Promise(function (resolve, reject) {
-            axios.get(_this.route).then(function (response) {
-                _this.tracks = response.data;
-                resolve(response.data);
-            }).catch(function (error) {
-                reject(error.response.data.errors);
-            });
-        });
-    }
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (Search);
-
-/***/ }),
-
 /***/ 4:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(5);
 
 
 
@@ -652,6 +617,38 @@ var playback = {
 
 window.playback = playback;
 /* harmony default export */ __webpack_exports__["default"] = (playback);
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var Search = {
+    route: '',
+    tracks: {},
+    playingTrack: '',
+
+    setRoute: function setRoute(input) {
+        this.route = '/search/' + input;
+    },
+
+    searchInput: function searchInput(input) {
+        var _this = this;
+
+        this.setRoute(input);
+        return new Promise(function (resolve, reject) {
+            axios.get(_this.route).then(function (response) {
+                _this.tracks = response.data;
+                resolve(response.data);
+            }).catch(function (error) {
+                reject(error.response.data.errors);
+            });
+        });
+    }
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Search);
 
 /***/ }),
 

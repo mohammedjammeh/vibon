@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\MusicAPI\Playlist;
-
 class UserController extends Controller
 {
     public function __construct()
@@ -29,5 +27,10 @@ class UserController extends Controller
 //        dd($lol);
 
         return auth()->user()->load('vibes')->vibes->where('auto_dj', false)->pluck('id');
+    }
+
+    public function attributes()
+    {
+        return auth()->user();
     }
 }

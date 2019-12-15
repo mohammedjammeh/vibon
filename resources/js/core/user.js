@@ -1,12 +1,13 @@
-let user = {
+const user = {
     vibesIDs: [],
 
     routes: {
-        'userVibes': '/user/vibes',
+        'vibes': '/user/vibes',
+        'attributes': 'user/attributes'
     },
 
     getVibesIDs() {
-        return axios.get(this.routes.userVibes)
+        return axios.get(this.routes.vibes)
             .then(response => {
                 this.vibesIDs = response.data;
             })
@@ -18,24 +19,21 @@ let user = {
         now.setHours(now.getHours() - 1);
         let oneHourAgo = now.getTime();
 
-        if(localStorage['token_set_at'] >= oneHourAgo) {
-            return localStorage['access_token'];
-        } else {
-            let user = $.ajax({
-                type: 'GET',
-                dataType: 'json',
-                async: false,
-                url: '/playback-user',
-                success: function(data) {
-                    return data;
-                }
-            });
-
-            let userAttributes = JSON.parse(user.responseText);
-            localStorage['token_set_at'] = new Date(userAttributes['token_set_at']).getTime();
-            localStorage['access_token'] = userAttributes['access_token'];
-            return localStorage['access_token'];
-        }
+        return new Promise((resolve, reject) => {
+            if(localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                axios.get(this.routes.attributes)
+                    .then(response => {
+                        localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                        localStorage['access_token'] = response.data.access_token;
+                        resolve(localStorage['access_token']);
+                    })
+                    .catch(error => {
+                        reject(error.response.data.errors);
+                    });
+            }
+        });
     },
 
     updateVibesIDs(vibe) {
