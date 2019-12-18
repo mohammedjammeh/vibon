@@ -407,7 +407,7 @@ var user = {
             if (localStorage['token_set_at'] >= oneHourAgo) {
                 resolve(localStorage['access_token']);
             } else {
-                axios.get(_this2.routes.attributes).then(function (response) {
+                return axios.get(_this2.routes.attributes).then(function (response) {
                     localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
                     localStorage['access_token'] = response.data.access_token;
                     resolve(localStorage['access_token']);
@@ -930,10 +930,6 @@ var playback = {
     player: {},
     show: false,
     paused: false,
-
-    yoo: {
-        43: 'loool'
-    },
 
     playVibe: function playVibe(_ref) {
         var playlist_uri = _ref.playlist_uri,

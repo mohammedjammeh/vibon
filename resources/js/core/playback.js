@@ -9,10 +9,6 @@ const playback = {
     show: false,
     paused: false,
 
-    yoo: {
-        43: 'loool'
-    },
-
     playVibe: ({
          playlist_uri,
          track_uri,
@@ -100,7 +96,6 @@ const playback = {
                 }
             });
         }
-
     },
 
     playOrResume() {
@@ -118,7 +113,6 @@ const playback = {
     next() {
         this.player.nextTrack().then(() => {});
     }
-
 };
 
 window.playback = playback;

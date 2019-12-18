@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\MusicAPI\User;
+
 class UserController extends Controller
 {
     public function __construct()
@@ -31,6 +33,7 @@ class UserController extends Controller
 
     public function attributes()
     {
+        app(User::class)->setAuthenticatedAccessToken();
         return auth()->user();
     }
 }

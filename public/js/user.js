@@ -98,7 +98,7 @@ var user = {
             if (localStorage['token_set_at'] >= oneHourAgo) {
                 resolve(localStorage['access_token']);
             } else {
-                axios.get(_this2.routes.attributes).then(function (response) {
+                return axios.get(_this2.routes.attributes).then(function (response) {
                     localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
                     localStorage['access_token'] = response.data.access_token;
                     resolve(localStorage['access_token']);
