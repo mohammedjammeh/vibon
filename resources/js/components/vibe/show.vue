@@ -66,6 +66,7 @@
                 <div v-else>
                     <button @click="this.turnOnEditMode">Edit</button>
                 </div>
+                <br>
 
                 <form method="POST" :action="this.vibes.routes.delete(this.id)" @submit.prevent="onDeleteSubmit">
                     <div>

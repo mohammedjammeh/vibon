@@ -69,44 +69,6 @@ let Vibes = {
         }
     },
 
-    readyToShow() {
-        return Object.keys(this.show).length > 0;
-    },
-
-    updateShowData() {
-        if(this.showID !== '') {
-            this.all.forEach(vibe => {
-                if (vibe.id === this.showID) {
-                    this.show = vibe;
-                }
-            })
-        }
-    },
-
-    updatePlayingTracksData() {
-        let playingVibesTracks = {};
-        this.all.forEach(vibe => {
-            playingVibesTracks[vibe.id] = '';
-        });
-        this.playingTracks = playingVibesTracks;
-    },
-
-    updateData(response) {
-        this.all = this.all.map((vibe) => {
-            if(vibe.id === response.vibe.id) {
-                this.show = response.vibe;
-                this.message = response.message;
-                setTimeout(() => this.message = '', 10000);
-                return response.vibe;
-            }
-            return vibe;
-        });
-    },
-
-    getVibeName(vibeID) {
-       return this.all.find(vibe => vibe.id === vibeID).name;
-    },
-
     getAll() {
         return new Promise((resolve, reject) => {
             return axios.get(this.routes.index)
@@ -261,22 +223,8 @@ let Vibes = {
         form.delete(this.routes.removeTrack(vibeID, trackID))
             .then(response => {
                 this.all = this.all.map((vibe) => {
-                    if(!vibe.auto_jd) {
-                        vibe.api_tracks.forEach(track => {
-                            if(track.vibon_id === trackID) {
-                                let trackVibeIndex = track.vibes.indexOf(response.vibe.id);
-                                if (trackVibeIndex !== -1) {
-                                    track.vibes.splice(trackVibeIndex, 1);
-                                }
-                            }
-                        });
-                    }
-
-                    if(vibe.id === response.vibe.id) {
-                        return response.vibe;
-                    }
-
-                    return vibe;
+                    this.updateTracksVibesDataForRemovedTrack(vibe, trackID, response);
+                    return vibe.id === response.vibe.id ? response.vibe : vibe;
                 });
                 this.updateShowData();
             })
@@ -287,19 +235,8 @@ let Vibes = {
         form.post(this.routes.addTrack(vibeID, trackApiId))
             .then(response => {
                 this.all = this.all.map((vibe) => {
-                    if(!vibe.auto_jd) {
-                        vibe.api_tracks.forEach(track => {
-                            if(track.id === trackApiId) {
-                                track.vibes.push(response.vibe.id);
-                            }
-                        });
-                    }
-
-                    if(vibe.id === response.vibe.id) {
-                        return response.vibe;
-                    }
-
-                    return vibe;
+                    this.updateTracksVibesDataForAddedTrack(vibe, trackApiId, response);
+                    return vibe.id === response.vibe.id ? response.vibe : vibe;
                 });
                 this.updateShowData();
             })
@@ -320,7 +257,68 @@ let Vibes = {
                 this.updateData(response);
             })
             .catch(errors => console.log(errors));
-    }
+    },
+
+    readyToShow() {
+        return Object.keys(this.show).length > 0;
+    },
+
+    updateShowData() {
+        if(this.showID !== '') {
+            this.all.forEach(vibe => {
+                if (vibe.id === this.showID) {
+                    this.show = vibe;
+                }
+            })
+        }
+    },
+
+    updatePlayingTracksData() {
+        let playingVibesTracks = {};
+        this.all.forEach(vibe => {
+            playingVibesTracks[vibe.id] = '';
+        });
+        this.playingTracks = playingVibesTracks;
+    },
+
+    updateData(response) {
+        this.all = this.all.map((vibe) => {
+            if(vibe.id === response.vibe.id) {
+                this.show = response.vibe;
+                this.message = response.message;
+                setTimeout(() => this.message = '', 10000);
+                return response.vibe;
+            }
+            return vibe;
+        });
+    },
+
+    getVibeName(vibeID) {
+        return this.all.find(vibe => vibe.id === vibeID).name;
+    },
+
+    updateTracksVibesDataForRemovedTrack(vibe, trackID, response) {
+        if(!vibe.auto_jd) {
+            vibe.api_tracks.forEach(track => {
+                if(track.vibon_id === trackID) {
+                    let trackVibeIndex = track.vibes.indexOf(response.vibe.id);
+                    if (trackVibeIndex !== -1) {
+                        track.vibes.splice(trackVibeIndex, 1);
+                    }
+                }
+            });
+        }
+    },
+
+    updateTracksVibesDataForAddedTrack(vibe, trackApiId, response) {
+        if(!vibe.auto_jd) {
+            vibe.api_tracks.forEach(track => {
+                if(track.id === trackApiId) {
+                    track.vibes.push(response.vibe.id);
+                }
+            });
+        }
+    },
 };
 
 export default Vibes;
