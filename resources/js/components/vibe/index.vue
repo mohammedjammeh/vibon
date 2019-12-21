@@ -8,8 +8,10 @@
             <div>
                 <h5>Auto Vibes</h5>
                 <ul>
-                    <li v-for="vibe in this.vibes.all.filter(filterVibe => parseInt(filterVibe.auto_dj))">
-                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" > {{ vibe.name }} </router-link> <br>
+                    <li v-for="vibe in filteredAutoVibes">
+                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
+                            {{ vibe.name }}
+                        </router-link> <br>
                     </li>
                 </ul>
             </div>
@@ -18,8 +20,10 @@
             <div>
                 <h5>Manual Vibes</h5>
                 <ul>
-                    <li v-for="vibe in this.vibes.all.filter(filterVibe => !parseInt(filterVibe.auto_dj))">
-                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" > {{ vibe.name }} </router-link> <br>
+                    <li v-for="vibe in filteredManualVibes">
+                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
+                            {{ vibe.name }}
+                        </router-link> <br>
                     </li>
                 </ul>
             </div>
@@ -59,7 +63,27 @@
 
             manualVibes() {
                 return this.vibes.all.filter(vibe => vibe.auto_dj === 0);
+            },
+
+            isShowing: function (vibe) {
+                return vibe.id === this.vibes.showID ? 'showing' : '';
+            }
+        },
+
+        computed: {
+            filteredAutoVibes: function() {
+                return this.vibes.all.filter(filterVibe => parseInt(filterVibe.auto_dj))
+            },
+
+            filteredManualVibes: function () {
+                return this.vibes.all.filter(filterVibe => !parseInt(filterVibe.auto_dj));
             }
         }
     }
 </script>
+
+<style scoped>
+    .showing {
+        color: brown;
+    }
+</style>

@@ -75,7 +75,7 @@
                 </form>
                 <br>
 
-                <form method="POST" :action="this.vibes.routes.autoRefresh(this.id)" @submit.prevent="onAutoRefreshSubmit" v-if="this.vibes.show.auto_dj">
+                <form method="POST" :action="this.vibes.routes.autoRefresh(this.id)" @submit.prevent="onAutoRefreshSubmit" v-if="parseInt(this.vibes.show.auto_dj)">
                     <input type="submit" name="vibe-tracks-update" value="Refresh">
                 </form>
                 <br>
