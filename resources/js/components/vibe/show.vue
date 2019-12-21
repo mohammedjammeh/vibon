@@ -15,8 +15,9 @@
                 <p v-if="this.vibes.show.auto_dj">Auto DJ</p>
                 <p v-else>Manual DJ</p>
             </div>
+            <br>
 
-            <div v-if="this.vibes.show.updatable">
+            <div v-if="this.vibes.show.destroyable">
                 <div v-if="this.editMode">
                     <form method="POST" :action="this.vibes.routes.update(this.id)" @submit.prevent="onUpdateSubmit" autocomplete="off">
                         <div>
@@ -37,7 +38,6 @@
                             <span v-text="editForm.errors.get('open')" v-if="editForm.errors.has('open')"></span>
                         </div>
                         <br>
-
 
                         <div>
                             <p>Auto DJ:</p>
@@ -63,14 +63,10 @@
                         </div>
                     </form>
                 </div>
-
                 <div v-else>
                     <button @click="this.turnOnEditMode">Edit</button>
                 </div>
-            </div>
-            <br>
 
-            <div v-if="this.vibes.show.destroyable">
                 <form method="POST" :action="this.vibes.routes.delete(this.id)" @submit.prevent="onDeleteSubmit">
                     <div>
                         <input type="submit" name="vibe-delete" value="Delete">
