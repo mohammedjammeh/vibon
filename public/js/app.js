@@ -53263,10 +53263,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -53896,7 +53892,9 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          this.vibes.show.updatable
+          _c("br"),
+          _vm._v(" "),
+          this.vibes.show.destroyable
             ? _c("div", [
                 this.editMode
                   ? _c("div", [
@@ -54188,14 +54186,8 @@ var render = function() {
                       _c("button", { on: { click: this.turnOnEditMode } }, [
                         _vm._v("Edit")
                       ])
-                    ])
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _c("br"),
-          _vm._v(" "),
-          this.vibes.show.destroyable
-            ? _c("div", [
+                    ]),
+                _vm._v(" "),
                 _c(
                   "form",
                   {

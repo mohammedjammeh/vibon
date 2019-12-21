@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Policies\VibePolicy;
-use App\MusicAPI\Playlist;
 
 trait VibeShowTrait
 {
@@ -18,7 +17,6 @@ trait VibeShowTrait
 
     public function updateAttributes($loadedVibe)
     {
-        $loadedVibe->updatable = App(VibePolicy::class)->update(auth()->user(), $loadedVibe);
         $loadedVibe->destroyable = App(VibePolicy::class)->delete(auth()->user(), $loadedVibe);
         $loadedVibe->requests = $loadedVibe->joinRequests;
         $loadedVibe->currentUserIsAMember = $loadedVibe->hasMember(auth()->user());

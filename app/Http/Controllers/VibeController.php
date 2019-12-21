@@ -69,7 +69,7 @@ class VibeController extends Controller
 
     public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)
     {
-        $this->authorize('update', $vibe);
+        $this->authorize('delete', $vibe);
         $vibe->update(request(['open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
         event(new VibeUpdated($vibe));
