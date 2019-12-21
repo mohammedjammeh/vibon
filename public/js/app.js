@@ -751,6 +751,7 @@ var Vibes = {
 
                 return vibe;
             });
+            _this18.updateShowData();
         }).catch(function (errors) {
             return console.log(errors);
         });
@@ -775,6 +776,7 @@ var Vibes = {
 
                 return vibe;
             });
+            _this19.updateShowData();
         }).catch(function (errors) {
             return console.log(errors);
         });

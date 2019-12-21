@@ -278,6 +278,7 @@ let Vibes = {
 
                     return vibe;
                 });
+                this.updateShowData();
             })
             .catch(errors => console.log(errors));
     },
@@ -300,6 +301,7 @@ let Vibes = {
 
                     return vibe;
                 });
+                this.updateShowData();
             })
             .catch(errors => console.log(errors));
     },
