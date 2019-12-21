@@ -34,7 +34,7 @@ class TrackVibeController extends Controller
     public function storeOnPlaylist($vibe, $track)
     {
         if (!$vibe->auto_dj) {
-            return app(Playlist::class)->addTracks($vibe->api_id, [$track->api_id]);
+            return app(Playlist::class)->addTracks($vibe, [$track->api_id]);
         }
     }
 
@@ -54,7 +54,7 @@ class TrackVibeController extends Controller
     public function destroyOnPlaylist($vibe, $track)
     {
         if (!$vibe->auto_dj) {
-            return app(Playlist::class)->deleteTrack($vibe->api_id, $track->api_id);
+            return app(Playlist::class)->deleteTrack($vibe, $track->api_id);
         }
     }
 }

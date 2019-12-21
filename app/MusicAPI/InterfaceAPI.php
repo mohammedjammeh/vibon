@@ -5,9 +5,8 @@ namespace App\MusicAPI;
 interface InterfaceAPI
 {
     function authorise();
-    function setAuthenticatedUserAccessToken();
-    function refreshUserAccessToken();
-    function setUnauthenticatedUserAccessToken($accessToken);
+    function setAuthenticatedUserAccessToken($user);
+    function refreshUserAccessToken($user);
     function getUser();
     function getUserDevices();
     function search($name);
@@ -17,6 +16,7 @@ interface InterfaceAPI
     function getPlaylist($id);
     function deletePlaylist($id);
     function addTracksToPlaylist($playlistId, $tracksId);
+    function deleteTrackFromPlaylist($playlistId, $trackId);
     function replaceTracksOnPlaylist($playlistId, $tracksId);
     function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore);
 

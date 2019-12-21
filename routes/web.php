@@ -45,8 +45,6 @@ Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@dest
 
 Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
 
-Route::get('playback-user-devices', 'PlaybackController@userDevices')->name('playback-user-devices');
-
 Route::post('sync/vibe/{vibe}', 'VibeSynchronisationController@updatePlaylistTracks')->name('vibe-sync.vibe');
 Route::post('sync/playlist/{vibe}', 'VibeSynchronisationController@updateVibeTracks')->name('vibe-sync.playlist');
 
