@@ -13,6 +13,11 @@ class VoteController extends Controller
 {
     use VibeShowTrait;
 
+    public function __construct()
+    {
+        $this->middleware('setAccessToken');
+    }
+
     public function store(Vibe $vibe, Track $track)
     {
         $rangeStart = $vibe->showTracks->where('id', $track->id)->keys()->first();
@@ -25,7 +30,7 @@ class VoteController extends Controller
 
         $insertBefore = $vibe->showTracks->where('id', $track->id)->keys()->first();
 
-        app(Playlist::class)->reorderTracks($vibe->api_id, $rangeStart, $insertBefore);
+        app(Playlist::class)->reorderTracks($vibe, $rangeStart, $insertBefore);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
@@ -42,7 +47,7 @@ class VoteController extends Controller
 
         $insertBefore = $vibe->showTracks->where('id', $track->id)->keys()->first();
 
-        app(Playlist::class)->reorderTracks($vibe->api_id, $rangeStart, $insertBefore + 1);
+        app(Playlist::class)->reorderTracks($vibe, $rangeStart, $insertBefore + 1);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);

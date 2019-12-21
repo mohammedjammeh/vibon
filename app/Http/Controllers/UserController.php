@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function attributes()
     {
-        app(User::class)->setAuthenticatedAccessToken();
+        app(User::class)->setAccessToken(auth()->user());
         return auth()->user();
     }
 }

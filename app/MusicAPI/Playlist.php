@@ -31,14 +31,18 @@ class Playlist
         return $this->api->deletePlaylist($id);
     }
 
-    public function addTracks($playlistId, $tracksId) 
+    public function addTracks($vibe, $tracksId)
     {
-        return $this->api->addTracksToPlaylist($playlistId, $tracksId);
+        app(User::class)->setAccessToken($vibe->owner);
+        $this->api->addTracksToPlaylist($vibe->api_id, $tracksId);
+        app(User::class)->setAccessToken(auth()->user());
     }
 
-    public function deleteTrack($playlistId, $trackId) 
+    public function deleteTrack($vibe, $trackId)
     {
-        return $this->api->deleteTrackFromPlaylist($playlistId, $trackId);
+        app(User::class)->setAccessToken($vibe->owner);
+        $this->api->deleteTrackFromPlaylist($vibe->api_id, $trackId);
+        app(User::class)->setAccessToken(auth()->user());
     }
 
     public function replaceTracks($playlistId, $tracksId)
@@ -46,9 +50,11 @@ class Playlist
         return $this->api->replaceTracksOnPlaylist($playlistId, $tracksId);
     }
 
-    public function reorderTracks($id, $rangeStart, $insertBefore)
+    public function reorderTracks($vibe, $rangeStart, $insertBefore)
     {
-        $this->api->reorderPlaylistTracks($id, $rangeStart, $insertBefore);
+        app(User::class)->setAccessToken($vibe->owner);
+        $this->api->reorderPlaylistTracks($vibe->api_id, $rangeStart, $insertBefore);
+        app(User::class)->setAccessToken(auth()->user());
     }
 
     public function loadMany($vibes)

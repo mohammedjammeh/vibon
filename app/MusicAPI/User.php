@@ -26,14 +26,9 @@ class User
         return $this->api->authorise();
     }
 
-    public function setAuthenticatedAccessToken()
+    public function setAccessToken($user)
     {
-        return $this->api->setAuthenticatedUserAccessToken();
-    }
-
-    public function setUnauthenticatedAccessToken($accessToken)
-    {
-        return $this->api->setUnauthenticatedUserAccessToken($accessToken);
+        return $this->api->setAuthenticatedUserAccessToken($user);
     }
 
     public function topTracks()

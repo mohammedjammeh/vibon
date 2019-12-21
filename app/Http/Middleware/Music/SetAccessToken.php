@@ -22,7 +22,7 @@ class SetAccessToken
             return redirect(route('welcome'));
         }
         $this->checkAndUpateUserTracksForAutoVibes();
-        app(UserAPI::Class)->setAuthenticatedAccessToken();
+        app(UserAPI::Class)->setAccessToken(auth()->user());
         return $next($request);
     }
 
