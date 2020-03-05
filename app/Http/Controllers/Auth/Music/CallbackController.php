@@ -19,9 +19,12 @@ class CallbackController extends Controller
         $refreshToken = app('SpotifySession')->getRefreshToken();
 
         $userAPI = app(UserAPI::class);
-        $userAPI->setUnauthenticatedAccessToken($accessToken);
+        $userAPI->setAccessToken($accessToken);
+
         $user = $this->storeOrUpdateUserDetails($userAPI, User::SPOTIFY, $accessToken, $refreshToken);
-        return $this->authenticateAndStoreTracks($user);
+        Auth::login($user, true);
+        $this->storeTracks($user);
+        return redirect(route('home'));
     }
 
     public function storeOrUpdateUserDetails($userAPI, $api, $accessToken, $refreshToken)
@@ -39,12 +42,10 @@ class CallbackController extends Controller
         return $user;
     }
 
-    public function authenticateAndStoreTracks($user)
+    public function storeTracks($user)
     {
-        Auth::login($user, true);
         if ($user->tracks->isEmpty()) {
             AutoUser::storeTracks();
         }
-        return redirect(route('index'));
     }
 }

@@ -16,19 +16,24 @@ class User
         $this->api = $interfaceAPI;
     }
 
-    public function details()
-    {
-        return $this->api->getUser();
-    }
-
     public function authorise()
     {
         return $this->api->authorise();
     }
 
-    public function setAccessToken($user)
+    public function refreshAccessToken($accessToken)
     {
-        return $this->api->setAuthenticatedUserAccessToken($user);
+        $this->api->refreshUserAccessToken($accessToken);
+    }
+
+    public function setAccessToken($accessToken)
+    {
+        return $this->api->setUserAccessToken($accessToken);
+    }
+
+    public function details()
+    {
+        return $this->api->getUser();
     }
 
     public function topTracks()

@@ -90,9 +90,8 @@ let Vibes = {
     },
 
     create(form) {
-        form.post(this.routes.create)
+        return form.post(this.routes.create)
             .then(response => {
-                console.log(response.vibe);
                 this.all.push(response.vibe);
                 this.user.updateVibesIDs(response.vibe);
             })
