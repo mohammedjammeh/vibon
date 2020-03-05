@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 84);
+/******/ 	return __webpack_require__(__webpack_require__.s = 86);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -227,8 +227,7 @@ var Vibes = {
     create: function create(form) {
         var _this2 = this;
 
-        form.post(this.routes.create).then(function (response) {
-            console.log(response.vibe);
+        return form.post(this.routes.create).then(function (response) {
             _this2.all.push(response.vibe);
             _this2.user.updateVibesIDs(response.vibe);
         }).catch(function (errors) {
@@ -647,7 +646,7 @@ var Search = {
 
 /***/ }),
 
-/***/ 84:
+/***/ 86:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(4);

@@ -72,8 +72,12 @@
         },
         methods: {
             onSubmit() {
-                this.vibes.create(this.form);
-                this.$modal.hide('create-vibe-modal');
+                this.vibes.create(this.form)
+                    .then(() => {
+                        if(!this.form.errors.any()) {
+                            this.$modal.hide('create-vibe-modal');
+                        }
+                    });
             }
         }
     }

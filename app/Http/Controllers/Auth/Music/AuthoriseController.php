@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth\Music;
 
 use App\Http\Controllers\Controller;
-use App\MusicAPI\User;
+use App\MusicAPI\User as UserAPI;
 
 class AuthoriseController extends Controller
 {
-    public function authorise(User $user)
+    public function authorise(UserAPI $user)
     {
         return $user->authorise();
     }

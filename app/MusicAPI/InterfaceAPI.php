@@ -5,8 +5,8 @@ namespace App\MusicAPI;
 interface InterfaceAPI
 {
     function authorise();
-    function setAuthenticatedUserAccessToken($user);
-    function refreshUserAccessToken($user);
+    function setUserAccessToken($accessToken);
+    function refreshUserAccessToken($accessToken);
     function getUser();
     function getUserDevices();
     function search($name);

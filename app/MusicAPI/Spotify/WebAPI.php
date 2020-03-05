@@ -9,30 +9,31 @@ use Carbon\Carbon;
 class WebAPI implements InterfaceAPI
 {
     public $api;
-    public $accessToken;
-    public $refreshToken;
 
     public function __construct()
     {
         $this->api = new SpotifyWebAPI();
-        $this->setAuthenticatedUserAccessToken(auth()->user());
-    }
-
-    public function setAuthenticatedUserAccessToken($user)
-    {
-        if(Carbon::now()->subHour()->greaterThanOrEqualTo($user->token_set_at)) {
-            $this->refreshUserAccessToken($user);
+        if(auth()->check()) {
+            $this->refreshUserAccessToken(auth()->user()->access_token);
+            $this->setUserAccessToken(auth()->user()->access_token);
         }
-        $this->api->setAccessToken($user->access_token);
     }
 
-    public function refreshUserAccessToken($user)
+    public function refreshUserAccessToken($accessToken)
     {
-        app('SpotifySession')->refreshAccessToken($user->refresh_token);
-        $user->access_token = app('SpotifySession')->getAccessToken();
-        $user->refresh_token = app('SpotifySession')->getRefreshToken();
-        $user->token_set_at = date("Y-m-d H:i:s");
-        $user->save();
+        if(Carbon::now()->subHour()->greaterThanOrEqualTo(auth()->user()->token_set_at)) {
+            app('SpotifySession')->refreshAccessToken($accessToken);
+            auth()->user()->update([
+                'access_token' => app('SpotifySession')->getAccessToken(),
+                'refresh_token' => app('SpotifySession')->getRefreshToken(),
+                'token_set_at' => date("Y-m-d H:i:s")
+            ]);
+        }
+    }
+
+    public function setUserAccessToken($accessToken)
+    {
+        $this->api->setAccessToken($accessToken);
     }
 
     public function options()

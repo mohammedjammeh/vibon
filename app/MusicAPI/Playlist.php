@@ -33,28 +33,28 @@ class Playlist
 
     public function addTracks($vibe, $tracksId)
     {
-        app(User::class)->setAccessToken($vibe->owner);
+        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->addTracksToPlaylist($vibe->api_id, $tracksId);
-        app(User::class)->setAccessToken(auth()->user());
+        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
     public function deleteTrack($vibe, $trackId)
     {
-        app(User::class)->setAccessToken($vibe->owner);
+        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->deleteTrackFromPlaylist($vibe->api_id, $trackId);
-        app(User::class)->setAccessToken(auth()->user());
+        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
-    public function replaceTracks($playlistId, $tracksId)
+    public function replaceTracks($vibe, $tracksIDs)
     {
-        return $this->api->replaceTracksOnPlaylist($playlistId, $tracksId);
+        return $this->api->replaceTracksOnPlaylist($vibe->api_id, $tracksIDs);
     }
 
     public function reorderTracks($vibe, $rangeStart, $insertBefore)
     {
-        app(User::class)->setAccessToken($vibe->owner);
+        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->reorderPlaylistTracks($vibe->api_id, $rangeStart, $insertBefore);
-        app(User::class)->setAccessToken(auth()->user());
+        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
     public function loadMany($vibes)
