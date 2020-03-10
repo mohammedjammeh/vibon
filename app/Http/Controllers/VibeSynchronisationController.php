@@ -16,7 +16,7 @@ class VibeSynchronisationController extends Controller
     public function updatePlaylistTracks(Vibe $vibe)
     {
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
-        app(Playlist::class)->replaceTracks($vibe->api_id, $vibeTracksIDs);
+        app(Playlist::class)->replaceTracks($vibe, $vibeTracksIDs);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using vibe tracks.';
