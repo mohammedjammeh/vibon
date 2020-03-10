@@ -104,7 +104,7 @@ class JoinRequestTest extends TestCase
         event(new JoinRequestSent($joinRequest));
 
         $this->actingAs($vibeOwner);
-        $this->delete(route('join-request.respond', [
+        $this->delete(route('join-request.accept', [
             'joinRequest' => $joinRequest
         ]), ['accept' => true]);
 
@@ -128,9 +128,9 @@ class JoinRequestTest extends TestCase
         event(new JoinRequestSent($joinRequest));
 
         $this->actingAs($vibeOwner);
-        $this->delete(route('join-request.respond', [
+        $this->delete(route('join-request.reject', [
             'joinRequest' => $joinRequest
-        ]), ['accept' => false]);
+        ]));
 
         $this->assertDatabaseMissing('user_vibe', [
             'user_id' => $joinRequest->user->id,
@@ -150,7 +150,7 @@ class JoinRequestTest extends TestCase
         event(new JoinRequestSent($joinRequest));
 
         $this->actingAs($vibeOwner);
-        $this->delete(route('join-request.respond', [
+        $this->delete(route('join-request.accept', [
             'joinRequest' => $joinRequest
         ]), ['accept' => true]);
 
@@ -175,9 +175,9 @@ class JoinRequestTest extends TestCase
         event(new JoinRequestSent($joinRequest));
 
         $this->actingAs($vibeOwner);
-        $this->delete(route('join-request.respond', [
+        $this->delete(route('join-request.reject', [
             'joinRequest' => $joinRequest
-        ]), ['accept' => false]);
+        ]));
 
         $joinRequesterResponseNotification = $joinRequest->user->notifications->first();
         $this->assertDatabaseHas('notifications', [

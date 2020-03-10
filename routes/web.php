@@ -37,8 +37,8 @@ Route::delete('/join-request/accept/{joinRequest}', 'JoinRequestController@accep
 Route::delete('/join-request/reject/{joinRequest}', 'JoinRequestController@reject')->name('join-request.reject');
 
 Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@join')->name('user-vibe.join');
-Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@remove')->name('user-vibe.remove');
 Route::delete('/user-vibe/vibe/{vibe}', 'UserVibeController@leave')->name('user-vibe.leave');
+Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@remove')->name('user-vibe.remove');
 
 Route::post('/track-vibe/vibe/{vibe}/track-api/{track}', 'TrackVibeController@store')->name('track-vibe.store');
 Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');

@@ -22,10 +22,10 @@ class WebAPI extends spotifyWebAPI
     public function search($name)
     {
         return [
-            $this->getTrack('1'),
-            $this->getTrack('2'),
-            $this->getTrack('3'),
-            $this->getTrack('4')
+            $this->getTrack('search101'),
+            $this->getTrack('search123'),
+            $this->getTrack('search456'),
+            $this->getTrack('search789')
         ];
     }
 
@@ -91,12 +91,22 @@ class WebAPI extends spotifyWebAPI
         ];     
     }
 
+    public function deleteTrackFromPlaylist($playlistId, $trackId)
+    {
+
+    }
+
     public function replaceTracksOnPlaylist($playlistId, $tracksId) 
     {
         return (object) [
             'id' => $playlistId,
             'tracks' => $tracksId
         ];
+    }
+
+    public function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore)
+    {
+
     }
 
     public function getTrack($id)
@@ -124,6 +134,18 @@ class WebAPI extends spotifyWebAPI
             ],
             'uri' => 'spotify:track:78aaIdueQSjI00fWUMAqna',
         ];  
+    }
+
+    public function getTracks($ids)
+    {
+        $tracks = [];
+        foreach($ids as $id) {
+            $tracks[] = $this->getTrack($id);
+        }
+
+        return (object) [
+            'tracks' => $tracks
+        ];
     }
 
     public function getUserRecentTracks()

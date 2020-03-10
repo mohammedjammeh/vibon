@@ -17,6 +17,7 @@ class VibeTest extends TestCase
 
 	public function test_vibe_can_be_created()
 	{
+	    $this->withoutExceptionHandling();
 		Event::fake();
 		$playlist = app(Playlist::class)->create('Party', 'Everybody have to party!!');
 		$attributes = factory(Vibe::class)->raw([
@@ -25,8 +26,11 @@ class VibeTest extends TestCase
 			'api_id' => $playlist->id
 		]);
 
-		$this->post(route('vibe.store'), $attributes)
-			->assertRedirect(Vibe::first()->path);
+		$response = $this->post(route('vibe.store'), $attributes);
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals(Vibe::all()->last()->id, $responseData['vibe']->id);
 		$this->assertDatabaseHas('vibes', [
 			'api_id' => $attributes['api_id'],
 			'open' => $attributes['open'],
@@ -36,6 +40,7 @@ class VibeTest extends TestCase
 
 	public function test_vibe_can_be_viewed_by_a_user()
 	{
+	    $this->markTestSkipped('Irrelevant');
 		$vibe = factory(Vibe::class)->create();
 		$this->get($vibe->path)
 			->assertSuccessful()
@@ -44,6 +49,7 @@ class VibeTest extends TestCase
 
     public function test_vibe_edit_page_cannot_be_accessed_by_a_non_member()
     {
+        $this->markTestSkipped('Irrelevant');
         $this->withoutExceptionHandling();
         $this->expectException(AuthorizationException::class);
         $vibe = factory(Vibe::class)->create();
@@ -73,12 +79,16 @@ class VibeTest extends TestCase
 		$vibe->users()->attach($user->id, ['owner' => true]);
 
 		$this->actingAs($vibe->users->first());
-		$this->patch(route('vibe.update', $vibe), [
+		$response = $this->patch(route('vibe.update', $vibe), [
 			'name' => 'Shaka Dance',
             'description' => 'Shakala Boom Boom',
          	'open' => $vibe->open,
             'auto_dj' =>  $vibe->auto_dj
-        ])->assertRedirect(Vibe::first()->path);
+        ]);
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
 		$this->assertDatabaseHas('vibes', [
 			'id' => $vibe->id,
             'open' => $vibe->open,
@@ -101,13 +111,17 @@ class VibeTest extends TestCase
 	public function test_vibe_can_be_deleted_by_owner()
 	{
 		$vibe = factory(Vibe::class)->create();
+		$vibeName = app(Playlist::class)->load($vibe)->name;
 		$user = factory(User::class)->create();
 		$vibe->users()->attach($user->id, ['owner' => true]);
 		$owner = $vibe->users()->where('owner', true)->first();
 		
 		$this->actingAs($owner);
-		$this->delete(route('vibe.destroy', $vibe))
-			->assertRedirect(route('index'));
+		$response = $this->delete(route('vibe.destroy', $vibe));
+        $responseData = $response->original;
+        $expectedMessage = $vibeName . ' has been deleted.';
+
+        $this->assertEquals($expectedMessage, $responseData['message']);
 		$this->assertDatabaseMissing('vibes', [
 			'id' => $vibe->id,
 			'description' => $vibe->description

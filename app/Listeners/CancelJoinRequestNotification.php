@@ -30,6 +30,7 @@ class CancelJoinRequestNotification
         $vibe = Vibe::find($event->joinRequest->vibe_id);
 
 //         this should be changed to just delete the notification for the joinRequest.. Shouldn't depend on read or not
+//        makes sense because depending on ui/ux, the notification might have already been read and not ignored
 //        $vibe->owner->lastUnreadRequestNotificationFor($event->joinRequest)->delete();
 
         $vibe->owner->lastJoinRequestNotificationFor($event->joinRequest)->delete();
