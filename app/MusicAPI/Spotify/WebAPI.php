@@ -14,20 +14,19 @@ class WebAPI implements InterfaceAPI
     {
         $this->api = new SpotifyWebAPI();
         if(auth()->check()) {
-            $this->refreshUserAccessToken(auth()->user()->access_token);
+            $this->refreshUserAccessToken(auth()->user()->refresh_token);
             $this->setUserAccessToken(auth()->user()->access_token);
         }
     }
 
-    public function refreshUserAccessToken($accessToken)
+    public function refreshUserAccessToken($refreshToken)
     {
         if(Carbon::now()->subHour()->greaterThanOrEqualTo(auth()->user()->token_set_at)) {
-            app('SpotifySession')->refreshAccessToken($accessToken);
-            auth()->user()->update([
-                'access_token' => app('SpotifySession')->getAccessToken(),
-                'refresh_token' => app('SpotifySession')->getRefreshToken(),
-                'token_set_at' => date("Y-m-d H:i:s")
-            ]);
+            app('SpotifySession')->refreshAccessToken($refreshToken);
+            auth()->user()->access_token = app('SpotifySession')->getAccessToken();
+            auth()->user()->refresh_token = app('SpotifySession')->getRefreshToken();
+            auth()->user()->token_set_at = date("Y-m-d H:i:s");
+            auth()->user()->save();
         }
     }
 
