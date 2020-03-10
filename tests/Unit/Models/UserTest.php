@@ -17,6 +17,7 @@ class UserTest extends TestCase
 
     public function test_the_request_notifications_method_gets_a_users_unread_notifications_based_on_the_join_requests_made_to_the_vibe_he_owns()
     {
+        $this->markTestSkipped('Irrelevant');
         $vibe = factory(Vibe::class)->create();
         $vibeOwner = factory(User::class)->create();
         $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
@@ -36,6 +37,7 @@ class UserTest extends TestCase
 
     public function test_the_last_unread_request_notification_for_a_join_request_gets_the_last_unread_join_request_notification()
     {
+        $this->markTestSkipped('Irrelevant');
         $vibe = factory(Vibe::class)->create();
         $vibeOwner = factory(User::class)->create();
         $vibe->users()->attach($vibeOwner->id, ['owner' => true]);

@@ -22,9 +22,12 @@ class VibeSynchronisationTest extends TestCase
             'auto_dj' => true,
         ]);
 
-        $this->post(route('vibe.sync', ['vibe' => $vibe]),
-            ['playlist' => 'Playlist']);
+        $response = $this->post(route('vibe-sync.playlist', ['vibe' => $vibe]));
+        $responseData = $response->original;
+        $expectedMessage = $responseData['vibe']->name . ' has been synced using playlist tracks.';
 
+        $this->assertEquals($expectedMessage, $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
         $this->assertEquals($vibe->tracks->count(), $playlistTracks->count());
 
         $playlistTracksIDs = $playlistTracks->pluck('id');

@@ -24,7 +24,7 @@ class CallbackController extends Controller
         $user = $this->storeOrUpdateUserDetails($userAPI, User::SPOTIFY, $accessToken, $refreshToken);
         Auth::login($user, true);
         $this->storeTracks($user);
-        return redirect(route('home'));
+        return redirect(route('index'));
     }
 
     public function storeOrUpdateUserDetails($userAPI, $api, $accessToken, $refreshToken)

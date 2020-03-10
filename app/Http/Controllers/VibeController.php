@@ -29,7 +29,7 @@ class VibeController extends Controller
 
     public function create()
     {
-        return view('vibe.create');
+//        return view('vibe.create');
     }
 
     public function store(StoreVibe $request, Playlist $playlist)

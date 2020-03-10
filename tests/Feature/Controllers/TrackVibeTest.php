@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers;
 
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,8 +18,14 @@ class TrackVibeTest extends TestCase
     {
     	$track = factory(Track::class)->create();
     	$vibe = factory(Vibe::class)->create();
-    	$attributes = ['track-api-id' => $track->api_id];
-    	$this->post(route('track-vibe.store', $vibe), $attributes);
+    	$user = factory(User::class)->create();
+    	$vibe->users()->attach($user->id, ['owner' => true]);
+
+    	$response = $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
@@ -28,11 +35,17 @@ class TrackVibeTest extends TestCase
 
     public function test_new_track_can_be_added_to_a_vibe()
     {
-        $this->withoutExceptionHandling();
+        $newTrackApiId = '328WHEW92NWI21';
     	$vibe = factory(Vibe::class)->create();
-    	$attributes = ['track-api-id' => '328WHEW92NWI21'];
-    	$this->post(route('track-vibe.store', $vibe), $attributes);
-    	$track = Track::where('api_id', $attributes['track-api-id'])->first();
+        $user = factory(User::class)->create();
+        $vibe->users()->attach($user->id, ['owner' => true]);
+
+    	$response = $this->post(route('track-vibe.store', [$vibe, $newTrackApiId]));
+        $responseData = $response->original;
+        $track = Track::where('api_id', $newTrackApiId)->first();
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
@@ -44,12 +57,18 @@ class TrackVibeTest extends TestCase
     {
         $vibe = factory(Vibe::class)->create();
         $track = factory(Track::class)->create();
+        $user = factory(User::class)->create();
         $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+        $vibe->users()->attach($user->id, ['owner' => true]);
 
-        $this->delete(route('track-vibe.destroy', [
-            'vibe' => $vibe->id, 
+        $response = $this->delete(route('track-vibe.destroy', [
+            'vibe' => $vibe->id,
             'track' => $track->id
         ]));
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
         $this->assertDatabaseMissing('track_vibe', [
             'track' => $track->id,
             'vibe' => $vibe->id,

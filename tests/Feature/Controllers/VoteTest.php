@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers;
 
 use App\Track;
+use App\User;
 use App\Vibe;
 use App\Vote;
 use Tests\TestCase;
@@ -17,8 +18,14 @@ class VoteTest extends TestCase
     {
         $track = factory(Track::class)->create();
         $vibe = factory(Vibe::class)->create();
+        $vibeOwner = factory(User::class)->create();
+        $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
 
-        $this->post(route('vote.store', ['vibe' => $vibe, 'track' => $track]));
+        $response = $this->post(route('vote.store', ['vibe' => $vibe, 'track' => $track]));
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
         $this->assertDatabaseHas('votes', [
             'vibe_id' => $vibe->id,
             'track_id' => $track->id,
@@ -30,6 +37,8 @@ class VoteTest extends TestCase
     {
         $track = factory(Track::class)->create();
         $vibe = factory(Vibe::class)->create();
+        $vibeOwner = factory(User::class)->create();
+        $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
 
         $vote = factory(Vote::class)->create([
             'track_id' => $track->id,
@@ -37,7 +46,11 @@ class VoteTest extends TestCase
             'user_id' => $this->user->id
         ]);
 
-        $this->delete(route('vote.destroy', ['vibe' => $vibe, 'track' => $track]));
+        $response = $this->delete(route('vote.destroy', ['vibe' => $vibe, 'track' => $track]));
+        $responseData = $response->original;
+
+        $this->assertEquals('', $responseData['message']);
+        $this->assertEquals($vibe->id, $responseData['vibe']->id);
         $this->assertDatabaseMissing('votes', [
             'id' => $vote->id,
             'vibe_id' => $vibe->id,
