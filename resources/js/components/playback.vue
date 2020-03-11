@@ -1,5 +1,11 @@
 <template>
     <div v-if="this.playback.show" class="playback-buttons">
+        <div>
+            <img :src="playback.playingTrack.album.images[0].url" alt="">
+            <br><br>
+            <p v-text="playback.playingTrack.name"></p>
+        </div>
+
         <div v-if="playback.paused" class="playback-resume">
             <a @click="playOrResume">Play</a>
             <br><br>
