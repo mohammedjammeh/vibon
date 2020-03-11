@@ -69,71 +69,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var user = {
-    vibesIDs: [],
-
-    routes: {
-        'vibes': '/user/vibes',
-        'attributes': 'user/attributes'
-    },
-
-    getVibesIDs: function getVibesIDs() {
-        var _this = this;
-
-        return axios.get(this.routes.vibes).then(function (response) {
-            _this.vibesIDs = response.data;
-        }).catch(function (errors) {
-            return console.log(errors);
-        });
-    },
-    getAccessToken: function getAccessToken() {
-        var _this2 = this;
-
-        var now = new Date();
-        now.setHours(now.getHours() - 1);
-        var oneHourAgo = now.getTime();
-
-        return new Promise(function (resolve, reject) {
-            if (localStorage['token_set_at'] >= oneHourAgo) {
-                resolve(localStorage['access_token']);
-            } else {
-                return axios.get(_this2.routes.attributes).then(function (response) {
-                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
-                    localStorage['access_token'] = response.data.access_token;
-                    resolve(localStorage['access_token']);
-                }).catch(function (error) {
-                    reject(error.response.data.errors);
-                });
-            }
-        });
-    },
-    updateVibesIDs: function updateVibesIDs(vibe) {
-        if (!parseInt(vibe.auto_dj)) {
-            this.vibesIDs.push(vibe.id);
-        } else {
-            this.vibesIDs = this.vibesIDs.filter(function (id) {
-                return id !== vibe.id;
-            });
-        }
-    },
-    allVibesIDsExcept: function allVibesIDsExcept(id) {
-        return this.vibesIDs.filter(function (vibeID) {
-            return vibeID !== id;
-        });
-    }
-};
-
-window.user = user;
-/* harmony default export */ __webpack_exports__["default"] = (user);
-
-/***/ }),
-
-/***/ 2:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(2);
 
 
 var Vibes = {
@@ -145,6 +81,7 @@ var Vibes = {
 
     user: __WEBPACK_IMPORTED_MODULE_0__user__["default"],
     playingTracks: {},
+    playingID: '',
 
     routes: {
         'index': '/vibe',
@@ -495,12 +432,76 @@ var Vibes = {
 
 /***/ }),
 
+/***/ 2:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var user = {
+    vibesIDs: [],
+
+    routes: {
+        'vibes': '/user/vibes',
+        'attributes': 'user/attributes'
+    },
+
+    getVibesIDs: function getVibesIDs() {
+        var _this = this;
+
+        return axios.get(this.routes.vibes).then(function (response) {
+            _this.vibesIDs = response.data;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getAccessToken: function getAccessToken() {
+        var _this2 = this;
+
+        var now = new Date();
+        now.setHours(now.getHours() - 1);
+        var oneHourAgo = now.getTime();
+
+        return new Promise(function (resolve, reject) {
+            if (localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                return axios.get(_this2.routes.attributes).then(function (response) {
+                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                    localStorage['access_token'] = response.data.access_token;
+                    resolve(localStorage['access_token']);
+                }).catch(function (error) {
+                    reject(error.response.data.errors);
+                });
+            }
+        });
+    },
+    updateVibesIDs: function updateVibesIDs(vibe) {
+        if (!parseInt(vibe.auto_dj)) {
+            this.vibesIDs.push(vibe.id);
+        } else {
+            this.vibesIDs = this.vibesIDs.filter(function (id) {
+                return id !== vibe.id;
+            });
+        }
+    },
+    allVibesIDsExcept: function allVibesIDsExcept(id) {
+        return this.vibesIDs.filter(function (vibeID) {
+            return vibeID !== id;
+        });
+    }
+};
+
+window.user = user;
+/* harmony default export */ __webpack_exports__["default"] = (user);
+
+/***/ }),
+
 /***/ 4:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(5);
 
 
@@ -512,6 +513,7 @@ var playback = {
     player: {},
     show: false,
     paused: false,
+    playingTrack: {},
 
     playVibe: function playVibe(_ref) {
         var playlist_uri = _ref.playlist_uri,
@@ -566,7 +568,9 @@ var playback = {
             this.show = true;
             this.paused = state['paused'];
 
-            var trackID = state['track_window']['current_track']['linked_from']['id'] ? state['track_window']['current_track']['linked_from']['id'] : state['track_window']['current_track']['id'];
+            this.playingTrack = state['track_window']['current_track'];
+
+            var trackID = this.playingTrack['linked_from']['id'] ? this.playingTrack['linked_from']['id'] : this.playingTrack['id'];
 
             var vibeURI = state['context']['uri'];
 
@@ -591,6 +595,8 @@ var playback = {
                             _this.vibes.playingTracks[vibe.id] = track.id;
                         }
                     });
+
+                    _this.vibes.playingID = vibe.id;
                 }
             });
         }

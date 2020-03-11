@@ -10,7 +10,8 @@
                 <ul>
                     <li v-for="vibe in filteredAutoVibes">
                         <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            {{ vibe.name }}
+                            <span v-if="isPlaying(vibe)">{{ vibe.name }} (playing)</span>
+                            <span v-else>{{ vibe.name }}</span>
                         </router-link> <br>
                     </li>
                 </ul>
@@ -22,7 +23,8 @@
                 <ul>
                     <li v-for="vibe in filteredManualVibes">
                         <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            {{ vibe.name }}
+                            <span v-if="isPlaying(vibe)">{{ vibe.name }} (playing)</span>
+                            <span v-else>{{ vibe.name }}</span>
                         </router-link> <br>
                     </li>
                 </ul>
@@ -67,6 +69,10 @@
 
             isShowing: function (vibe) {
                 return vibe.id === this.vibes.showID ? 'showing' : '';
+            },
+
+            isPlaying: function (vibe) {
+                return vibe.id === this.vibes.playingID;
             }
         },
 

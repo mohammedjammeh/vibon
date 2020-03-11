@@ -8,6 +8,7 @@ const playback = {
     player: {},
     show: false,
     paused: false,
+    playingTrack: {},
 
     playVibe: ({
          playlist_uri,
@@ -66,9 +67,11 @@ const playback = {
             this.show = true;
             this.paused = state['paused'];
 
-            let trackID = state['track_window']['current_track']['linked_from']['id']
-                ? state['track_window']['current_track']['linked_from']['id']
-                : state['track_window']['current_track']['id'];
+            this.playingTrack = state['track_window']['current_track'];
+            
+            let trackID = this.playingTrack['linked_from']['id']
+                ? this.playingTrack['linked_from']['id']
+                : this.playingTrack['id'];
 
             let vibeURI = state['context']['uri'];
 
@@ -93,6 +96,8 @@ const playback = {
                             this.vibes.playingTracks[vibe.id] = track.id;
                         }
                     });
+
+                    this.vibes.playingID = vibe.id;
                 }
             });
         }

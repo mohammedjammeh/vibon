@@ -9,6 +9,7 @@ let Vibes = {
 
     user: User,
     playingTracks: {},
+    playingID: '',
 
     routes: {
         'index': '/vibe',
