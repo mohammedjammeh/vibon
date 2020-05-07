@@ -1,22 +1,22 @@
 version: '3'
 services:
     apache:
-        container_name: vibin_apache
+        container_name: vibon_apache
         image: webdevops/apache:ubuntu-16.04
         environment:
             WEB_DOCUMENT_ROOT: /var/www/public
-            WEB_ALIAS_DOMAIN: vibin.localhost
+            WEB_ALIAS_DOMAIN: vibon.localhost
             WEB_PHP_SOCKET: php-fpm:9000
         volumes: # Only shared dirs to apache (to be served)
             - ./public:/var/www/public:cached
             - ./storage:/var/www/storage:cached
         networks:
-            - vibin-network
+            - vibon-network
         ports:
             - "80:80"
             - "443:443"
     php-fpm:
-        container_name: vibin_php
+        container_name: vibon_php
         image: cyberduck/php-fpm-laravel:7.2
         volumes:
             - ./:/var/www/
@@ -27,41 +27,41 @@ services:
             - ~/.ssh:/root/.ssh:cached
             - ~/.composer/cache:/root/.composer/cache:delegated
         networks:
-            - vibin-network
+            - vibon-network
     db:
-        container_name: vibin_db
+        container_name: vibon_db
         image: mariadb:10.2
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: vibin
-            MYSQL_USER: vibin
+            MYSQL_DATABASE: vibon
+            MYSQL_USER: vibon
             MYSQL_PASSWORD: secret
         volumes:
             - db_data:/var/lib/mysql
         networks:
-            - vibin-network
+            - vibon-network
         ports:
             - "33060:3306"
     redis:
-        container_name: vibin_redis
+        container_name: vibon_redis
         image: redis:2.8.22
         networks:
-            - vibin-network
+            - vibon-network
         ports:
             - "6379:6379"
     selenium:
-        container_name: vibin_selenium
+        container_name: vibon_selenium
         image: selenium/standalone-chrome:3.11.0-antimony
         depends_on:
             - apache
         links:
-            - apache:vibin.localhost
+            - apache:vibon.localhost
         volumes:
             - /dev/shm:/dev/shm
         networks:
-            - vibin-network
+            - vibon-network
 networks:
-    vibin-network:
+    vibon-network:
         driver: "bridge"
 volumes:
     db_data:
