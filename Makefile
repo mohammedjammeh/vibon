@@ -1,4 +1,4 @@
-# vibin Local Environment Setup Scripts
+# vibon Local Environment Setup Scripts
 # Original idea from: https://gist.github.com/mpneuried/0594963ad38e68917ef189b4e6a269db
 
 # DOCKER TASKS
@@ -20,7 +20,7 @@ install: ## Builds the environment for the first and starts it
 	docker-compose exec php-fpm php artisan migrate:fresh
 	docker-compose exec php-fpm php artisan db:seed --no-interaction
 	docker-compose exec db mysql -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS test;'
-	docker-compose exec db mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON test.* TO 'vibin'@'%';"
+	docker-compose exec db mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON test.* TO 'vibon'@'%';"
 	docker-compose exec php-fpm php artisan migrate:fresh --database=test
 	docker-compose exec -d php-fpm php artisan horizon
 	npm install
@@ -36,7 +36,7 @@ syntax-check: ## Checks syntax of php files with PSR-2
 	docker-compose exec php-fpm vendor/bin/phpcs --standard=phpcs.xml --report=full
 
 crawl-local: ## Crawls local website for broken links
-	vendor/bin/http-status-check scan http://vibin.localhost --dont-crawl-external-links --output=crawl_errors.txt
+	vendor/bin/http-status-check scan http://vibon.localhost --dont-crawl-external-links --output=crawl_errors.txt
 
 # HELP
 # This will output the help for each task
