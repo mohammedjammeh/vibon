@@ -12,11 +12,11 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
-    {{--<!-- Fonts -->--}}
+    <!-- Fonts -->
     {{--<link rel="dns-prefetch" href="//fonts.gstatic.com">--}}
     {{--<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">--}}
 
-    {{--<!-- Styles -->--}}
+    <!-- Styles -->
     {{--<link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
 </head>
 <body>
@@ -91,41 +91,41 @@
 
     <script src="{{ asset('js/user.js') }}"></script>
     <script src="{{ asset('js/playback.js') }}"></script>
-    {{--<script src="https://sdk.scdn.co/spotify-player.js"></script>--}}
-    {{--<script type="text/javascript">--}}
-        {{--window.onSpotifyWebPlaybackSDKReady = () => {--}}
-            {{--let player = new Spotify.Player({--}}
-                {{--name: 'Vibon',--}}
-                {{--getOAuthToken: callback => {--}}
-                    {{--user.getAccessToken().then(response => {--}}
-                        {{--callback(response);--}}
-                    {{--});--}}
-                {{--}--}}
-            {{--});--}}
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script type="text/javascript">
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            let player = new Spotify.Player({
+                name: 'Vibon',
+                getOAuthToken: callback => {
+                    user.getAccessToken().then(response => {
+                        callback(response);
+                    });
+                }
+            });
 
-            {{--playback.player = player;--}}
+            playback.player = player;
 
-            {{--// Error handling--}}
-            {{--player.addListener('initialization_error', ({ message }) => { console.error(message); });--}}
-            {{--player.addListener('account_error', ({ message }) => { console.error(message); });--}}
-            {{--player.addListener('playback_error', ({ message }) => { console.error(message); });--}}
-            {{--player.addListener('authentication_error', ({ message }) => { console.error(message); });--}}
+            // Error handling
+            player.addListener('initialization_error', ({ message }) => { console.error(message); });
+            player.addListener('account_error', ({ message }) => { console.error(message); });
+            player.addListener('playback_error', ({ message }) => { console.error(message); });
+            player.addListener('authentication_error', ({ message }) => { console.error(message); });
 
 
-            {{--// Playback status updates--}}
-            {{--player.addListener('player_state_changed', state => {--}}
-                {{--playback.updateData(state);--}}
-            {{--});--}}
+            // Playback status updates
+            player.addListener('player_state_changed', state => {
+                playback.updateData(state);
+            });
 
-            {{--// Ready--}}
-            {{--player.addListener('ready', ({ device_id }) => {});--}}
+            // Ready
+            player.addListener('ready', ({ device_id }) => {});
 
-            {{--// Not Ready--}}
-            {{--player.addListener('not_ready', ({ device_id }) => {});--}}
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {});
 
-            {{--// Connect to the player!--}}
-            {{--player.connect();--}}
-        {{--};--}}
-    {{--</script>--}}
+            // Connect to the player!
+            player.connect();
+        };
+    </script>
 </body>
 </html>
