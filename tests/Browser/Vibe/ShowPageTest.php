@@ -320,51 +320,51 @@ class ShowPageTest extends DuskTestCase
         });
     }
 
-//    public function test_show_page_of_an_auto_vibe_displays_auto_tracks_and_not_regular_tracks()
-//    {
-//        $vibe = factory(Vibe::class)->create(['auto_dj' => true]);
-//        $user = factory(User::class)->create();
-//        $autoTracks = factory(Track::class, 2)->create();
-//        $autoTracks->map(function ($track) {
-//            $genres = factory(Genre::class, 2)->create();
-//            return $track->genres()->attach($genres->pluck('id'), []);
-//        });
-//        $vibe->tracks()->attach($autoTracks->pluck('id'), ['auto_related' => true]);
-//        $vibe->users()->attach($user->id, ['owner' => false]);
-//
-//        $this->browse(function (Browser $browser) use($vibe, $autoTracks, $user) {
-//            $autoTracks = $this->tracksAPI($autoTracks);
-//            $this->loadVibesAsPlaylists([$vibe])->first();
-//            $addTrackToVibeBtn = 'input[name="track-vibe-store"]';
-//            $removeTrackFromVibeBtn = 'input[name="track-vibe-destroy"]';
-//            $browser->loginAs($user)
-//                ->visit($vibe->path)
-//                ->assertSee($autoTracks->first()->name)
-//                ->assertSee($autoTracks->last()->name)
-//                ->assertMissing($addTrackToVibeBtn)
-//                ->assertMissing($removeTrackFromVibeBtn);
-//        });
-//    }
+    public function test_show_page_of_an_auto_vibe_displays_auto_tracks_and_not_regular_tracks()
+    {
+        $vibe = factory(Vibe::class)->create(['auto_dj' => true]);
+        $user = factory(User::class)->create();
+        $autoTracks = factory(Track::class, 2)->create();
+        $autoTracks->map(function ($track) {
+            $genres = factory(Genre::class, 2)->create();
+            return $track->genres()->attach($genres->pluck('id'), []);
+        });
+        $vibe->tracks()->attach($autoTracks->pluck('id'), ['auto_related' => true]);
+        $vibe->users()->attach($user->id, ['owner' => false]);
 
-//    public function test_show_page_of_vibe_that_is_not_auto_displays_regular_tracks_and_not_auto_tracks()
-//    {
-//        $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-//        $user = factory(User::class)->create();
-//        $tracks = factory(Track::class, 2)->create();
-//        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
-//        $vibe->users()->attach($user->id, ['owner' => false]);
-//
-//        $this->browse(function (Browser $browser) use($vibe, $tracks, $user) {
-//            $tracks = $this->tracksAPI($tracks);
-//            $this->loadVibesAsPlaylists([$vibe])->first();
-//            $removeTrackFromVibeBtn = 'input[name="track-vibe-destroy"]';
-//            $browser->loginAs($user)
-//                ->visit($vibe->path)
-//                ->assertSee($tracks->first()->name)
-//                ->assertSee($tracks->last()->name)
-//                ->assertVisible($removeTrackFromVibeBtn);
-//        });
-//    }
+        $this->browse(function (Browser $browser) use($vibe, $autoTracks, $user) {
+            $autoTracks = $this->tracksAPI($autoTracks);
+            $this->loadVibesAsPlaylists([$vibe])->first();
+            $addTrackToVibeBtn = 'input[name="track-vibe-store"]';
+            $removeTrackFromVibeBtn = 'input[name="track-vibe-destroy"]';
+            $browser->loginAs($user)
+                ->visit($vibe->path)
+                ->assertSee($autoTracks->first()->name)
+                ->assertSee($autoTracks->last()->name)
+                ->assertMissing($addTrackToVibeBtn)
+                ->assertMissing($removeTrackFromVibeBtn);
+        });
+    }
+
+    public function test_show_page_of_vibe_that_is_not_auto_displays_regular_tracks_and_not_auto_tracks()
+    {
+        $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
+        $user = factory(User::class)->create();
+        $tracks = factory(Track::class, 2)->create();
+        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
+        $vibe->users()->attach($user->id, ['owner' => false]);
+
+        $this->browse(function (Browser $browser) use($vibe, $tracks, $user) {
+            $tracks = $this->tracksAPI($tracks);
+            $this->loadVibesAsPlaylists([$vibe])->first();
+            $removeTrackFromVibeBtn = 'input[name="track-vibe-destroy"]';
+            $browser->loginAs($user)
+                ->visit($vibe->path)
+                ->assertSee($tracks->first()->name)
+                ->assertSee($tracks->last()->name)
+                ->assertVisible($removeTrackFromVibeBtn);
+        });
+    }
 
     protected function tracksAPI($tracks)
     {
