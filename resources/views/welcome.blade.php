@@ -64,7 +64,7 @@
         <div class="flex-center position-ref full-height">
 
             <div class="content">
-                <div class="title m-b-md">Vibon</div>
+                <div class="title m-b-md">Vibon man</div>
                     <div class="links">
                         <a href="{{ route('authorise') }}" class="spotifyBtn">Spotify Login</a>
                         <br>
