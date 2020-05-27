@@ -7,6 +7,11 @@ use App\MusicAPI\Tracks as TracksAPI;
 
 class SearchController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authenticated');
+    }
+
     public function search($input)
     {
         $tracks = app(Search::class)->tracks($input);

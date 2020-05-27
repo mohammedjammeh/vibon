@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Vibe;
 use App\MusicAPI\Search;
 use App\MusicAPI\Tracks;
 use App\MusicAPI\Playlist;
@@ -12,7 +11,7 @@ class HomeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('setAccessToken');
+        $this->middleware('authenticated');
     }
 
     /**
