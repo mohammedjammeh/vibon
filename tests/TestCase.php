@@ -16,6 +16,7 @@ abstract class TestCase extends BaseTestCase
     function setUp() 
     {
     	parent::setUp();
+    	$this->defaultHeaders = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
     	$this->user = factory(User::class)->create();
 		$this->actingAs($this->user);
 		app()->bind(InterfaceAPI::class, FakeAPI::class);

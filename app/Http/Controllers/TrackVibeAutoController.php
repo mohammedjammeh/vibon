@@ -11,11 +11,6 @@ class TrackVibeAutoController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function update(Vibe $vibe)
     {
 		AutoTracks::update($vibe);

@@ -12,11 +12,6 @@ class UserVibeController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function join(Vibe $vibe)
     {
         $vibe->users()->attach(auth()->user()->id, ['owner' => false]);

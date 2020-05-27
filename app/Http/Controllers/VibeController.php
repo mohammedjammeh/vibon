@@ -14,22 +14,12 @@ class VibeController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function index(Playlist $playlist)
     {
         return Vibe::all()->map(function($vibe) use($playlist) {
             $loadedVibe = app(Playlist::class)->load($vibe);
             return $this->showResponse($loadedVibe);
         });
-    }
-
-    public function create()
-    {
-//        return view('vibe.create');
     }
 
     public function store(StoreVibe $request, Playlist $playlist)
@@ -49,22 +39,6 @@ class VibeController extends Controller
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
-    }
-
-    public function show(Vibe $vibe, Playlist $playlist, TracksAPI $tracksAPI)
-    {
-//        this needs to be updated if it is to be used as the loadFor method now has the functionality which checks the tracks..
-//        $loadedTracks = $tracksAPI->loadFor($vibe);
-//        return view('vibe.show', [
-//            'vibe' => $playlist->load($vibe),
-//            'apiTracks' => $tracksAPI->check($loadedTracks)
-//        ]);
-    }
-
-    public function edit(Vibe $vibe, Playlist $playlist)
-    {
-//        $this->authorize('update', $vibe);
-//        return view('vibe.edit')->with('vibe', $playlist->load($vibe));
     }
 
     public function update(StoreVibe $request, Vibe $vibe, Playlist $playlist)

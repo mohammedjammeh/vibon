@@ -13,11 +13,6 @@ class VoteController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function store(Vibe $vibe, Track $track)
     {
         $rangeStart = $vibe->showTracks->where('id', $track->id)->keys()->first();
