@@ -7,7 +7,7 @@ set('application', 'vibon');
 set('repository', 'ssh://git@bitbucket.org/itsyourboymo/vibon.git');
 set('default_stage', 'production');
 set('git_tty', false);
-
+set('allow_anonymous_stats', false);
 
 // Shared files/dirs between deploys 
 add('shared_files', []);
@@ -15,7 +15,6 @@ add('shared_dirs', []);
 
 // Writable dirs by web server 
 add('writable_dirs', []);
-
 
 // Hosts
 host('vibon.co.uk')
@@ -29,26 +28,14 @@ task('pwd', function () {
     writeln("Current dir: $result");
 });
 
+// Before && After
+before('deploy:symlink', 'artisan:migrate');
+after('deploy:failed', 'deploy:unlock');
+after('deploy:symlink', 'php-fpm:restart');
 
 
-
-
-
-
-
-
-
-
-task('build', function () {
-    run('cd {{release_path}} && build');
+task('php-fpm:restart', function () {
+    run('sudo service php7.2-fpm restart');
 });
 
-// [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
 
-// Migrate database before symlink new release.
-
-before('deploy:symlink', 'artisan:migrate');
-
-
-set('allow_anonymous_stats', true);
