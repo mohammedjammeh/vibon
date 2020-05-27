@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Middleware\MusicAPI;
+namespace App\Http\Middleware;
 
 use Closure;
 use App\AutoDJ\User as AutoUser;
-use App\MusicAPI\User as UserAPI;
 use Carbon\Carbon;
 
-class SetAccessToken
+class checkIfAuthenticated
 {
     /**
      * Handle an incoming request.
