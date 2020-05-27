@@ -10,9 +10,9 @@ use App\Track;
 use App\MusicAPI\User as UserAPI;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Middleware\MusicAPI\checkIfAuthenticated as checkIfAuthenticatedMiddleware;
+use App\Http\Middleware\checkIfAuthenticated as checkIfAuthenticatedMiddleware;
 
-class SetAccessTokenTest extends TestCase
+class checkIfAuthenticatedTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 

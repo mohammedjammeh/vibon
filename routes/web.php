@@ -17,9 +17,9 @@ Whenever you update this, remember it also has to be updated in resources/js/cor
 
 Auth::routes();
 
-Route::get('/spotify', 'Auth\Music\CallbackController@spotifyAuth')->name('callback.spotify');
-Route::get('/authorise', 'Auth\Music\AuthoriseController@authorise')->name('authorise');
-Route::get('/welcome', 'Auth\Music\AuthoriseController@welcome')->name('welcome');
+Route::get('/spotify', 'Auth\MusicAPI\CallbackController@spotifyAuth')->name('callback.spotify');
+Route::get('/authorise', 'Auth\MusicAPI\AuthoriseController@authorise')->name('authorise');
+Route::get('/welcome', 'Auth\MusicAPI\AuthoriseController@welcome')->name('welcome');
 
 Route::get('/search/{input}', 'SearchController@search')->name('search');
 

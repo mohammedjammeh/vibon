@@ -60,7 +60,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'setAccessToken' => \App\Http\Middleware\Music\SetAccessToken::class,
+        'authenticated' => \App\Http\Middleware\checkIfAuthenticated::class,
     ];
 
     /**
