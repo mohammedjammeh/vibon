@@ -21,8 +21,8 @@ class HomeTest extends DuskTestCase
         $user = factory(User::class)->create();
         $this->browse(function (Browser $browser) use($user) {
             $browser->loginAs($user)
-                ->visit(route('home'))
-                ->assertUrlIs(route('home'))
+                ->visit(route('index'))
+                ->assertUrlIs(route('index'))
                 ->assertSeeLink('Start a vibe')
                 ->assertAuthenticatedAs($user);
         });
@@ -33,7 +33,7 @@ class HomeTest extends DuskTestCase
         $user = factory(User::class)->create();
         $this->browse(function (Browser $browser) use($user) {
             $browser->loginAs($user)
-                ->visit(route('home'))
+                ->visit(route('index'))
                 ->clickLink('Start a vibe')
                 ->assertUrlIs(route('vibe.create'))
                 ->assertPathIs('/vibe/create');
