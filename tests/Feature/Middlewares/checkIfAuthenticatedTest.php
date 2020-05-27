@@ -10,7 +10,7 @@ use App\Track;
 use App\MusicAPI\User as UserAPI;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Middleware\Music\SetAccessToken as SetAccessTokenMiddleware;
+use App\Http\Middleware\MusicAPI\checkIfAuthenticated as checkIfAuthenticatedMiddleware;
 
 class SetAccessTokenTest extends TestCase
 {
@@ -28,7 +28,7 @@ class SetAccessTokenTest extends TestCase
     {
         Auth::logout();
         $request = Request::create(route('index'), 'GET');
-        $response = app(SetAccessTokenMiddleware::class)->handle($request, function () {});
+        $response = app(checkIfAuthenticatedMiddleware::class)->handle($request, function () {});
         $this->assertEquals($response->getStatusCode(), 302);
     }
 
@@ -42,7 +42,7 @@ class SetAccessTokenTest extends TestCase
         ]);
 
         $request = Request::create(route('index'), 'GET');
-        app(SetAccessTokenMiddleware::class)->handle($request, function () {});
+        app(checkIfAuthenticatedMiddleware::class)->handle($request, function () {});
 
         $newTracks = $this->user->tracks->pluck('api_id');
         $this->assertNotContains($track->api_id, $newTracks);
