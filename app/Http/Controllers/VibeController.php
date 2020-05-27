@@ -16,7 +16,7 @@ class VibeController extends Controller
 
     public function __construct()
     {
-        $this->middleware('setAccessToken');
+        $this->middleware('authenticated');
     }
 
     public function index(Playlist $playlist)

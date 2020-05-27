@@ -13,6 +13,11 @@ class VibeSynchronisationController extends Controller
 {
     use VibeShowTrait;
 
+    public function __construct()
+    {
+        $this->middleware('authenticated');
+    }
+
     public function updatePlaylistTracks(Vibe $vibe)
     {
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
