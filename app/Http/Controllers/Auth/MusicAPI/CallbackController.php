@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth\Music;
+namespace App\Http\Controllers\Auth\MusicAPI;
 
 use App\User;
 use App\AutoDJ\User as AutoUser;
