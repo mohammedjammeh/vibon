@@ -34,8 +34,8 @@ class WelcomeTest extends DuskTestCase
         $this->browse(function (Browser $browser) use($user) {
             $browser->loginAs($user)
                 ->visit(route('welcome'))
-                ->assertUrlIs(route('home'))
-                ->assertPathIs('/home')
+                ->assertUrlIs(route('index'))
+                ->assertPathIs('/')
                 ->assertAuthenticatedAs($user);
         });
     }

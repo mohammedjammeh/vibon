@@ -35,6 +35,6 @@ class AuthoriseTest extends TestCase
         $this->user = factory(User::class)->create();
         $this->actingAs($this->user);
         $this->get(route('welcome'))
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('index'));
     }
 }
