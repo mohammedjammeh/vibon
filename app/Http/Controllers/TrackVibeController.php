@@ -12,11 +12,6 @@ class TrackVibeController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function store(Vibe $vibe, $trackApiId)
     {
         $track = Track::where('api_id', $trackApiId)->first();

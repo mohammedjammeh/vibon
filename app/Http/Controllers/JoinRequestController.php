@@ -14,11 +14,6 @@ class JoinRequestController extends Controller
 {
     use VibeShowTrait;
 
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function store(Vibe $vibe) 
     {   
         $joinRequest = JoinRequest::create([

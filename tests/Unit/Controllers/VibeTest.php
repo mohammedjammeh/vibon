@@ -22,14 +22,14 @@ class VibeTest extends TestCase
 
     public function test_vibe_requires_a_name_to_be_created()
     {
-        factory(Vibe::class)->raw(['name' => '']);
-        $this->post(route('vibe.store'))->assertSessionHasErrors('name');
+        $attributes = factory(Vibe::class)->raw(['name' => '']);
+        $this->post(route('vibe.store'), $attributes)->assertSessionHasErrors('name');
     }
 
     public function test_vibe_requires_a_description_to_be_created()
     {
-        factory(Vibe::class)->raw(['description' => '']);
-        $this->post(route('vibe.store'))->assertSessionHasErrors('description');
+        $attributes = factory(Vibe::class)->raw(['description' => '']);
+        $this->post(route('vibe.store'), $attributes)->assertSessionHasErrors('description');
     }
 
     public function test_vibe_created_event_is_triggered_when_a_vibe_is_created()

@@ -21,32 +21,35 @@ Route::get('/spotify', 'Auth\MusicAPI\CallbackController@spotifyAuth')->name('ca
 Route::get('/authorise', 'Auth\MusicAPI\AuthoriseController@authorise')->name('authorise');
 Route::get('/welcome', 'Auth\MusicAPI\AuthoriseController@welcome')->name('welcome');
 
-Route::get('/search/{input}', 'SearchController@search')->name('search');
+Route::middleware(['authenticated'])->group(function () {
+    Route::get('/', 'HomeController@index')->name('index');
+});
 
-Route::get('/', 'HomeController@index')->name('index');
-Route::get('/home', 'HomeController@index')->name('home');
-Route::apiResource('/track', 'TrackController');
-Route::resource('/vibe', 'VibeController');
+Route::middleware(['authenticated', 'ajax'])->group(function () {
+    Route::get('/search/{input}', 'SearchController@search')->name('search');
 
-Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
-Route::get('/user/attributes', 'UserController@attributes')->name('user.attributes');
+    Route::resource('/vibe', 'VibeController');
 
-Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
-Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
-Route::delete('/join-request/accept/{joinRequest}', 'JoinRequestController@accept')->name('join-request.accept');
-Route::delete('/join-request/reject/{joinRequest}', 'JoinRequestController@reject')->name('join-request.reject');
+    Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
+    Route::get('/user/attributes', 'UserController@attributes')->name('user.attributes');
 
-Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@join')->name('user-vibe.join');
-Route::delete('/user-vibe/vibe/{vibe}', 'UserVibeController@leave')->name('user-vibe.leave');
-Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@remove')->name('user-vibe.remove');
+    Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
+    Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
+    Route::delete('/join-request/accept/{joinRequest}', 'JoinRequestController@accept')->name('join-request.accept');
+    Route::delete('/join-request/reject/{joinRequest}', 'JoinRequestController@reject')->name('join-request.reject');
 
-Route::post('/track-vibe/vibe/{vibe}/track-api/{track}', 'TrackVibeController@store')->name('track-vibe.store');
-Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
+    Route::post('/user-vibe/vibe/{vibe}', 'UserVibeController@join')->name('user-vibe.join');
+    Route::delete('/user-vibe/vibe/{vibe}', 'UserVibeController@leave')->name('user-vibe.leave');
+    Route::delete('/user-vibe/vibe/{vibe}/user/{user}', 'UserVibeController@remove')->name('user-vibe.remove');
 
-Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
+    Route::post('/track-vibe/vibe/{vibe}/track-api/{track}', 'TrackVibeController@store')->name('track-vibe.store');
+    Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
 
-Route::post('sync/vibe/{vibe}', 'VibeSynchronisationController@updatePlaylistTracks')->name('vibe-sync.vibe');
-Route::post('sync/playlist/{vibe}', 'VibeSynchronisationController@updateVibeTracks')->name('vibe-sync.playlist');
+    Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
 
-Route::post('/vote/vibe/{vibe}/track/{track}', 'VoteController@store')->name('vote.store');
-Route::delete('/vote/vibe/{vibe}/track/{track}', 'VoteController@destroy')->name('vote.destroy');
+    Route::post('sync/vibe/{vibe}', 'VibeSynchronisationController@updatePlaylistTracks')->name('vibe-sync.vibe');
+    Route::post('sync/playlist/{vibe}', 'VibeSynchronisationController@updateVibeTracks')->name('vibe-sync.playlist');
+
+    Route::post('/vote/vibe/{vibe}/track/{track}', 'VoteController@store')->name('vote.store');
+    Route::delete('/vote/vibe/{vibe}/track/{track}', 'VoteController@destroy')->name('vote.destroy');
+});

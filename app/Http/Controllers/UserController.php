@@ -6,11 +6,6 @@ use App\MusicAPI\User;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('authenticated');
-    }
-
     public function vibes()
     {
         return auth()->user()->load('vibes')->vibes->where('auto_dj', false)->pluck('id');

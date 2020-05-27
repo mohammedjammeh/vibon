@@ -132,6 +132,10 @@ Feature\Controllers\Vote
  [x] The store method stores a vote for a vibes track
  [x] The destroy method deletes a vote which belongs to vibes track
 
+Feature\Middlewares\OnlyAjax
+ [x] The only ajax middleware ensures that none xml http requests cannot hit the controllers
+ [x] The only ajax middleware allows xml http requests to hit the controllers
+
 Feature\Middlewares\checkIfAuthenticated
  [x] Unauthorised user is redirected to welcome page by set access token middleware
  [x] User tracks are updated by set access token middleware if his first track was attached more than 24 hours ago
