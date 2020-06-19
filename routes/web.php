@@ -21,11 +21,12 @@ Route::get('/spotify', 'Auth\MusicAPI\CallbackController@spotifyAuth')->name('ca
 Route::get('/authorise', 'Auth\MusicAPI\AuthoriseController@authorise')->name('authorise');
 Route::get('/welcome', 'Auth\MusicAPI\AuthoriseController@welcome')->name('welcome');
 
-Route::middleware(['authenticated'])->group(function () {
+Route::middleware(['auth', 'check.user.tracks'])->group(function () {
     Route::get('/', 'HomeController@index')->name('index');
+    Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::middleware(['authenticated', 'ajax'])->group(function () {
+Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function () {
     Route::get('/search/{input}', 'SearchController@search')->name('search');
 
     Route::resource('/vibe', 'VibeController');

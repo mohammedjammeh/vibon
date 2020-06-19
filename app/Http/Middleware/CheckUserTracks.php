@@ -6,7 +6,7 @@ use Closure;
 use App\AutoDJ\User as AutoUser;
 use Carbon\Carbon;
 
-class checkIfAuthenticated
+class CheckUserTracks
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,6 @@ class checkIfAuthenticated
      */
     public function handle($request, Closure $next)
     {
-        if(!auth()->user()) {
-            return redirect(route('welcome'));
-        }
-
         $this->updateUserTracksForAutoVibes();
         return $next($request);
     }
