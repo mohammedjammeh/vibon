@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\AutoDJ;
 
+use App\Listeners\StoreAutoVibeTracks;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,10 +12,11 @@ use App\Track;
 use App\AutoDJ\Tracks as AutoTracks;
 use App\Events\VibeCreated;
 use App\MusicAPI\User as UserAPI;
+use App\Traits\VibeShowTrait;
 
 class TracksTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use WithFaker, RefreshDatabase, VibeShowTrait;
 
     public function test_auto_tracks_of_a_vibe_which_belongs_to_its_users_can_be_stored()
     {
@@ -46,8 +48,8 @@ class TracksTest extends TestCase
     	$userTrack = factory(Track::class)->create();
     	$user->tracks()->attach($userTrack->id, ['type' => UserAPI::TOP_TRACK]);
 
-        event(new VibeCreated($vibe));
     	AutoTracks::update($vibe);
+
     	$vibeAutoTracks = $vibe->tracks()->where('auto_related', true)->get()->pluck('api_id');
         $this->assertContains($userTrack->api_id, $vibeAutoTracks);
     	$this->assertNotContains($vibeTrack->api_id, $vibeAutoTracks);

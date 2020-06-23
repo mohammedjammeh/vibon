@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\VibeDeleted;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\MusicAPI\Playlist;
@@ -35,8 +36,15 @@ class VibeController extends Controller
             'auto_dj' => $request->input('auto_dj')
         ]);
         $vibe->users()->attach(Auth()->user()->id, ['owner' => true]);
-        event(new VibeCreated($vibe));
 
+        broadcast(new VibeCreated($vibe))->toOthers();
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        return $this->showResponse($loadedVibe);
+    }
+
+    public function show(Vibe $vibe)
+    {
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
     }
@@ -46,7 +54,8 @@ class VibeController extends Controller
         $this->authorize('delete', $vibe);
         $vibe->update(request(['open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
-        event(new VibeUpdated($vibe));
+
+        broadcast(new VibeUpdated($vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
@@ -56,10 +65,14 @@ class VibeController extends Controller
     {
         $this->authorize('delete', $vibe);
         $message = $playlist->load($vibe)->name . ' has been deleted.';
+
+        broadcast(new VibeDeleted($vibe, $message))->toOthers();
+
         $playlist->delete($vibe->api_id);
         $vibe->users()->detach();
         $vibe->tracks()->detach();
         $vibe->delete();
+
         return ['message' => $message];
     }
 }

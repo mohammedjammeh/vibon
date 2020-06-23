@@ -3,28 +3,31 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class VibeUpdated implements ShouldBroadcast
+class VibeDeleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $vibe;
+    public $message;
 
     /**
      * Create a new event instance.
      *
      * @param $vibe
+     * @param $message
      * @return void
      */
-    public function __construct($vibe)
+    public function __construct($vibe, $message)
     {
         $this->vibe = $vibe;
+        $this->message = $message;
     }
 
     /**
@@ -34,13 +37,14 @@ class VibeUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('vibe.updated');
+        return new Channel('vibe.deleted');
     }
 
     public function broadcastWith()
     {
         return [
-            'vibe' => $this->vibe->id
+            'vibe' => $this->vibe->id,
+            'message' => $this->message
         ];
     }
 }

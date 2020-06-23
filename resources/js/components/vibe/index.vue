@@ -78,11 +78,11 @@
 
         computed: {
             filteredAutoVibes: function() {
-                return this.vibes.all.filter(filteredVibe => parseInt(filteredVibe.auto_dj))
+                return this.vibes.all.filter(filteredVibe => filteredVibe.auto_dj)
             },
 
             filteredManualVibes: function () {
-                return this.vibes.all.filter(filteredVibe => !parseInt(filteredVibe.auto_dj));
+                return this.vibes.all.filter(filteredVibe => !filteredVibe.auto_dj);
             }
         }
     }

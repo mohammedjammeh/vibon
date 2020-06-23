@@ -37,7 +37,7 @@ const user = {
     },
 
     updateVibesIDs(vibe) {
-        if(!parseInt(vibe.auto_dj)) {
+        if(!vibe.auto_dj) {
             this.vibesIDs.push(vibe.id);
         }  else {
             this.vibesIDs = this.vibesIDs.filter(id => id !== vibe.id);
