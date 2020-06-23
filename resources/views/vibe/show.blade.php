@@ -28,7 +28,7 @@
 
         @can('delete', $vibe)
             @if($vibe->auto_dj) 
-                <form method="POST" action="{{ route('track-vibe-auto.update', ['vibe' => $vibe->id]) }}">
+                <form method="POST" action="{{ route('auto-vibe.refresh', ['vibe' => $vibe->id]) }}">
                     @csrf
                     <input type="submit" name="vibe-tracks-update" value="Refresh">
                 </form>

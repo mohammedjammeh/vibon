@@ -25,7 +25,7 @@ let Vibes = {
         },
 
         'autoRefresh': function (vibeID) {
-            return '/track-vibe-auto/vibe/' + vibeID;
+            return '/auto-vibe/' + vibeID;
         },
         'syncVibe': function (vibeID) {
             return 'sync/vibe/' + vibeID;
