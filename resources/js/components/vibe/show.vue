@@ -75,7 +75,7 @@
                 </form>
                 <br>
 
-                <form method="POST" :action="this.vibes.routes.autoRefresh(this.id)" @submit.prevent="onAutoRefreshSubmit" v-if="parseInt(this.vibes.show.auto_dj)">
+                <form method="POST" :action="this.vibes.routes.autoRefresh(this.id)" @submit.prevent="onAutoRefreshSubmit" v-if="this.vibes.show.auto_dj">
                     <input type="submit" name="vibe-tracks-update" value="Refresh">
                 </form>
                 <br>
@@ -269,8 +269,8 @@
 
             turnOnEditMode() {
                 this.editForm.name = this.vibes.show.name;
-                this.editForm.open = this.vibes.show.open;
-                this.editForm.auto_dj = this.vibes.show.auto_dj;
+                this.editForm.open = + this.vibes.show.open;
+                this.editForm.auto_dj = + this.vibes.show.auto_dj;
                 this.editForm.description = this.vibes.show.description;
                 this.editMode = true;
             },

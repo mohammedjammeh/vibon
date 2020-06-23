@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Controllers;
 
+use App\Events\VibeDeleted;
+use App\Listeners\StoreAutoVibeTracks;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,7 +56,10 @@ class VibeTest extends TestCase
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($user->id, ['owner' => true]);
 
-        event(new VibeCreated($vibe));
+        $vibeCreatedEvent = new VibeCreated($vibe);
+        $vibeCreatedListener = new StoreAutoVibeTracks();
+        $vibeCreatedListener->handle($vibeCreatedEvent);
+
         $vibeAutoTracks = $vibe->tracks()->where('auto_related', true)->get()->pluck('api_id');
         $vibeLoad = $vibe->load('users.tracks');
         $vibeUsersTracks = $vibeLoad['tracks']->pluck('api_id');
@@ -98,5 +103,17 @@ class VibeTest extends TestCase
             'auto_dj' =>  $vibe->auto_dj
         ]);
         Event::assertDispatched(VibeUpdated::class);
+    }
+
+    public function test_vibe_deleted_event_is_triggered_when_a_vibe_is_deleted()
+    {
+        Event::fake();
+        $vibe = factory(Vibe::class)->create();
+        $user = factory(User::class)->create();
+        $vibe->users()->attach($user->id, ['owner' => true]);
+
+        $this->actingAs($vibe->users->first());
+        $this->delete(route('vibe.destroy', $vibe));
+        Event::assertDispatched(VibeDeleted::class);
     }
 }

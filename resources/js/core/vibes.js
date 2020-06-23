@@ -14,6 +14,9 @@ let Vibes = {
     routes: {
         'index': '/vibe',
         'create': '/vibe',
+        'show': function (vibeID) {
+            return '/vibe/' + vibeID;
+        },
         'update': function (vibeID) {
             return '/vibe/' + vibeID;
         },
@@ -97,6 +100,18 @@ let Vibes = {
                 this.user.updateVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
+    },
+
+    get(vibeID) {
+        return new Promise((resolve, reject) => {
+            return axios.get(this.routes.show(vibeID))
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error.response.data.errors);
+                });
+        });
     },
 
     display(vibeID) {

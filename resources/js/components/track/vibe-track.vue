@@ -25,7 +25,7 @@
 
             <div>
                 <form method="POST" :action="vibes.routes.removeTrack(vibe.id, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(vibe.id, track.vibon_id)">
-                    <input v-if="parseInt(vibe.auto_dj)" type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibe.id)" style="background:red;" disabled>
+                    <input v-if="vibe.auto_dj" type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibe.id)" style="background:red;" disabled>
                     <input v-else type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibe.id)" style="background:red;">
                 </form>
                 <br>

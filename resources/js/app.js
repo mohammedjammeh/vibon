@@ -1,4 +1,5 @@
 import './bootstrap';
+import './listeners';
 import router from './routes';
 import vibes from './components/vibe/index';
 import createVibe from './components/vibe/create';

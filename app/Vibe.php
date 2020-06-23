@@ -10,6 +10,11 @@ class Vibe extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'open' => 'boolean',
+        'auto_dj' => 'boolean'
+    ];
+
     public function users() 
     {
         return $this->belongsToMany(User::class)

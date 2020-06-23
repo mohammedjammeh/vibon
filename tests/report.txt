@@ -30,6 +30,7 @@ Unit\Controllers\Vibe
  [ ] Vibe show view gets required data
  [ ] Vibe is shown with the right view
  [x] Vibe updated event is triggered when a vibe is updated
+ [x] Vibe deleted event is triggered when a vibe is deleted
 
 Unit\Models\Genre
  [x] The with tracks auto related scope gets the genres with tracks that are auto related to a vibe  and the tracks count
@@ -135,10 +136,10 @@ Feature\Controllers\Vote
 Feature\Middlewares\AuthenticationCheck
  [x] Unauthenticated user is redirected to welcome page by authenticate middleware
 
+Feature\Middlewares\CheckUserTracks
+ [x] User tracks are checked and updated by the middleware if his first track was created more than 24 hours ago
+
 Feature\Middlewares\OnlyAjax
  [x] The only ajax middleware ensures that none xml http requests cannot hit the controllers
  [x] The only ajax middleware allows xml http requests to hit the controllers
-
-Feature\Middlewares\checkUserTracks
- [x] User tracks are checked and updated by the middleware if his first track was created more than 24 hours ago
 
