@@ -278,6 +278,10 @@ let Vibes = {
         return Object.keys(this.show).length > 0;
     },
 
+    getVibeName(vibeID) {
+        return this.all.find(vibe => vibe.id === vibeID).name;
+    },
+
     updateShowData() {
         if(this.showID !== '') {
             this.all.forEach(vibe => {
@@ -301,15 +305,19 @@ let Vibes = {
             if(vibe.id === response.vibe.id) {
                 this.show = response.vibe;
                 this.message = response.message;
-                setTimeout(() => this.message = '', 10000);
+                setTimeout(() => this.message = '', 20000);
                 return response.vibe;
             }
             return vibe;
         });
     },
 
-    getVibeName(vibeID) {
-        return this.all.find(vibe => vibe.id === vibeID).name;
+    updateVibeDataForUpdatedVibe(updatedVibe) {
+        this.all = this.all.map((vibe) => {
+            return vibe.id === updatedVibe.id
+                ? updatedVibe
+                : vibe;
+        });
     },
 
     updateTracksVibesDataForRemovedTrack(vibe, trackID, response) {

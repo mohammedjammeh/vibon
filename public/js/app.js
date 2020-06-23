@@ -378,70 +378,7 @@ module.exports = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var user = {
-    vibesIDs: [],
-
-    routes: {
-        'vibes': '/user/vibes',
-        'attributes': 'user/attributes'
-    },
-
-    getVibesIDs: function getVibesIDs() {
-        var _this = this;
-
-        return axios.get(this.routes.vibes).then(function (response) {
-            _this.vibesIDs = response.data;
-        }).catch(function (errors) {
-            return console.log(errors);
-        });
-    },
-    getAccessToken: function getAccessToken() {
-        var _this2 = this;
-
-        var now = new Date();
-        now.setHours(now.getHours() - 1);
-        var oneHourAgo = now.getTime();
-
-        return new Promise(function (resolve, reject) {
-            if (localStorage['token_set_at'] >= oneHourAgo) {
-                resolve(localStorage['access_token']);
-            } else {
-                return axios.get(_this2.routes.attributes).then(function (response) {
-                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
-                    localStorage['access_token'] = response.data.access_token;
-                    resolve(localStorage['access_token']);
-                }).catch(function (error) {
-                    reject(error.response.data.errors);
-                });
-            }
-        });
-    },
-    updateVibesIDs: function updateVibesIDs(vibe) {
-        if (!vibe.auto_dj) {
-            this.vibesIDs.push(vibe.id);
-        } else {
-            this.vibesIDs = this.vibesIDs.filter(function (id) {
-                return id !== vibe.id;
-            });
-        }
-    },
-    allVibesIDsExcept: function allVibesIDsExcept(id) {
-        return this.vibesIDs.filter(function (vibeID) {
-            return vibeID !== id;
-        });
-    }
-};
-
-window.user = user;
-/* harmony default export */ __webpack_exports__["default"] = (user);
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(2);
 
 
 var Vibes = {
@@ -469,7 +406,7 @@ var Vibes = {
         },
 
         'autoRefresh': function autoRefresh(vibeID) {
-            return '/track-vibe-auto/vibe/' + vibeID;
+            return '/auto-vibe/' + vibeID;
         },
         'syncVibe': function syncVibe(vibeID) {
             return 'sync/vibe/' + vibeID;
@@ -753,6 +690,11 @@ var Vibes = {
     readyToShow: function readyToShow() {
         return Object.keys(this.show).length > 0;
     },
+    getVibeName: function getVibeName(vibeID) {
+        return this.all.find(function (vibe) {
+            return vibe.id === vibeID;
+        }).name;
+    },
     updateShowData: function updateShowData() {
         var _this21 = this;
 
@@ -780,16 +722,16 @@ var Vibes = {
                 _this22.message = response.message;
                 setTimeout(function () {
                     return _this22.message = '';
-                }, 10000);
+                }, 20000);
                 return response.vibe;
             }
             return vibe;
         });
     },
-    getVibeName: function getVibeName(vibeID) {
-        return this.all.find(function (vibe) {
-            return vibe.id === vibeID;
-        }).name;
+    updateVibeDataForUpdatedVibe: function updateVibeDataForUpdatedVibe(updatedVibe) {
+        this.all = this.all.map(function (vibe) {
+            return vibe.id === updatedVibe.id ? updatedVibe : vibe;
+        });
     },
     updateTracksVibesDataForRemovedTrack: function updateTracksVibesDataForRemovedTrack(vibe, trackID, response) {
         if (!vibe.auto_jd) {
@@ -815,6 +757,69 @@ var Vibes = {
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (Vibes);
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var user = {
+    vibesIDs: [],
+
+    routes: {
+        'vibes': '/user/vibes',
+        'attributes': 'user/attributes'
+    },
+
+    getVibesIDs: function getVibesIDs() {
+        var _this = this;
+
+        return axios.get(this.routes.vibes).then(function (response) {
+            _this.vibesIDs = response.data;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getAccessToken: function getAccessToken() {
+        var _this2 = this;
+
+        var now = new Date();
+        now.setHours(now.getHours() - 1);
+        var oneHourAgo = now.getTime();
+
+        return new Promise(function (resolve, reject) {
+            if (localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                return axios.get(_this2.routes.attributes).then(function (response) {
+                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                    localStorage['access_token'] = response.data.access_token;
+                    resolve(localStorage['access_token']);
+                }).catch(function (error) {
+                    reject(error.response.data.errors);
+                });
+            }
+        });
+    },
+    updateVibesIDs: function updateVibesIDs(vibe) {
+        if (!vibe.auto_dj) {
+            this.vibesIDs.push(vibe.id);
+        } else {
+            this.vibesIDs = this.vibesIDs.filter(function (id) {
+                return id !== vibe.id;
+            });
+        }
+    },
+    allVibesIDsExcept: function allVibesIDsExcept(id) {
+        return this.vibesIDs.filter(function (vibeID) {
+            return vibeID !== id;
+        });
+    }
+};
+
+window.user = user;
+/* harmony default export */ __webpack_exports__["default"] = (user);
 
 /***/ }),
 /* 3 */
@@ -931,7 +936,7 @@ module.exports = function normalizeComponent (
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(5);
 
 
@@ -58965,8 +58970,24 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__ = __webpack_require__(1);
 
+
+var actions = {
+    updateVibe: function updateVibe(data) {
+        __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].get(data.vibe).then(function (response) {
+            __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].updateVibeDataForUpdatedVibe(response.vibe);
+            __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].updateShowData();
+        });
+
+        if (__WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].showID === data.vibe) {
+            __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].message = data.message;
+            setTimeout(function () {
+                return __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].message = '';
+            }, 20000);
+        }
+    }
+};
 
 // Vibe
 Echo.channel('vibe.created').listen('VibeCreated', function (data) {
@@ -58976,22 +58997,22 @@ Echo.channel('vibe.created').listen('VibeCreated', function (data) {
 });
 
 Echo.channel('vibe.updated').listen('VibeUpdated', function (data) {
-    __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].get(data.vibe).then(function (response) {
-        __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all = __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all.map(function (vibe) {
-            return vibe.id === response.vibe.id ? response.vibe : vibe;
-        });
-        __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].updateShowData();
-    });
+    actions.updateVibe(data);
 });
 
 Echo.channel('vibe.deleted').listen('VibeDeleted', function (data) {
+    __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all = __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all.filter(function (vibe) {
+        return vibe.id !== data.vibe;
+    });
     if (__WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].showID === data.vibe) {
         __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].show = {};
         __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].deletedMessage = data.message;
     }
-    __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all = __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__["a" /* default */].all.filter(function (vibe) {
-        return vibe.id !== data.vibe;
-    });
+});
+
+// Auto Vibe
+Echo.channel('auto.vibe.refreshed').listen('AutoVibeRefreshed', function (data) {
+    actions.updateVibe(data);
 });
 
 /***/ }),
@@ -59152,8 +59173,8 @@ module.exports = function listToStyles (parentId, list) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_user_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_user_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_playback_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__classes_Form_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__track_vibe_track_vue__ = __webpack_require__(59);
@@ -59585,9 +59606,9 @@ exports.push([module.i, "\n.playing[data-v-1d4d16fa] {\n    background: green;\n
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_user_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_user_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_playback_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_vibes_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_vibes_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__classes_Form_js__ = __webpack_require__(6);
 //
 //
@@ -60742,8 +60763,8 @@ module.exports = Component.exports
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_search__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_vibes__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_user__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_vibes__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_user__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__core_playback_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__classes_Form__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__track_search_track_vue__ = __webpack_require__(67);
@@ -60897,9 +60918,9 @@ exports.push([module.i, "\n.playing[data-v-5c6717b5] {\n    background: green;\n
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_user_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_user_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_playback_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_vibes_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__core_vibes_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__core_search_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__classes_Form_js__ = __webpack_require__(6);
 //
@@ -61231,8 +61252,8 @@ exports.push([module.i, "\n.showing[data-v-10e983c4] {\n    color: brown;\n}\n",
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_user__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_vibes__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_user__ = __webpack_require__(2);
 //
 //
 //
@@ -61484,7 +61505,7 @@ module.exports = Component.exports
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__classes_Form_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_vibes_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__core_vibes_js__ = __webpack_require__(1);
 //
 //
 //
