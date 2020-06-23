@@ -28,7 +28,7 @@ class TrackVibeAutoTest extends TestCase
 		$vibeTrack = factory(Track::class)->create();
 		$vibe->tracks()->attach($vibeTrack->id, ['auto_related' => true]);
 
-		$this->post(route('track-vibe-auto.update', $vibe));
+		$this->post(route('auto-vibe.refresh', $vibe));
 		$vibeTracks = $vibe->tracks->pluck('api_id')->toArray();
 		$this->assertNotContains($vibeTrack->api_id, $vibeTracks);
 		$this->assertContains($userTrack->api_id, $vibeTracks);

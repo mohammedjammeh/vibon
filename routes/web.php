@@ -46,7 +46,7 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
     Route::post('/track-vibe/vibe/{vibe}/track-api/{track}', 'TrackVibeController@store')->name('track-vibe.store');
     Route::delete('/track-vibe/vibe/{vibe}/track/{track}', 'TrackVibeController@destroy')->name('track-vibe.destroy');
 
-    Route::post('/track-vibe-auto/vibe/{vibe}', 'TrackVibeAutoController@update')->name('track-vibe-auto.update');
+    Route::post('/auto-vibe/{vibe}', 'AutoVibeController@refresh')->name('auto-vibe.refresh');
 
     Route::post('sync/vibe/{vibe}', 'VibeSynchronisationController@updatePlaylistTracks')->name('vibe-sync.vibe');
     Route::post('sync/playlist/{vibe}', 'VibeSynchronisationController@updateVibeTracks')->name('vibe-sync.playlist');
