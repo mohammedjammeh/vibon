@@ -26,6 +26,10 @@ Unit\Controllers\JoinRequest
  [x] Join request user gets notified after being accepted
  [x] Join request user gets notified after being rejected
 
+Unit\Controllers\TrackVibe
+ [x] That the track vibe stored event is called when a track is added to a vibe
+ [x] That the track vibe destroyed event is called when a track is removed from a vibe
+
 Unit\Controllers\Vibe
  [x] Vibe requires a name to be created
  [x] Vibe requires a description to be created
@@ -34,6 +38,10 @@ Unit\Controllers\Vibe
  [ ] Vibe show view gets required data
  [ ] Vibe is shown with the right view
  [x] Vibe updated event is triggered when a vibe is updated
+
+Unit\Controllers\Vote
+ [x] That the track voted up event gets called when a track is voted up
+ [x] That the track voted down event gets called when a track is voted down
 
 Unit\Models\Genre
  [x] The with tracks auto related scope gets the genres with tracks that are auto related to a vibe  and the tracks count

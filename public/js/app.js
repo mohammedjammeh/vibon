@@ -59024,6 +59024,15 @@ Echo.channel('track.vibe.destroyed').listen('TrackVibeDestroyed', function (data
     actions.updateVibe(data);
 });
 
+//Vote
+Echo.channel('track.voted.up').listen('TrackVotedUp', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('track.voted.down').listen('TrackVotedDown', function (data) {
+    actions.updateVibe(data);
+});
+
 /***/ }),
 /* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
