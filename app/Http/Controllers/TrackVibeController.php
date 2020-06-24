@@ -6,6 +6,8 @@ use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Track;
 use App\MusicAPI\Playlist;
+use App\Events\TrackVibeStored;
+use App\Events\TrackVibeDestroyed;
 use App\AutoDJ\Genre as AutoGenre;
 
 class TrackVibeController extends Controller
@@ -21,6 +23,8 @@ class TrackVibeController extends Controller
         }
         $track->vibes()->attach($vibe->id, ['auto_related' => false]);
         $this->storeOnPlaylist($vibe, $track);
+
+        broadcast(new TrackVibeStored($vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
@@ -41,6 +45,8 @@ class TrackVibeController extends Controller
             ->detach();
 
         $this->destroyOnPlaylist($vibe, $track);
+
+        broadcast(new TrackVibeDestroyed($vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
