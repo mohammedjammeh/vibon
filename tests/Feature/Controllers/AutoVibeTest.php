@@ -5,14 +5,12 @@ namespace Tests\Feature\Controllers;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
 use App\User;
 use App\Vibe;
 use App\Track;
-use App\AutoDJ\Tracks;
 use App\MusicAPI\User as UserAPI;
 
-class TrackVibeAutoTest extends TestCase
+class AutoVibeTest extends TestCase
 {
 	use WithFaker, RefreshDatabase;
 
@@ -28,6 +26,7 @@ class TrackVibeAutoTest extends TestCase
 		$vibeTrack = factory(Track::class)->create();
 		$vibe->tracks()->attach($vibeTrack->id, ['auto_related' => true]);
 
+		$this->actingAs($user);
 		$this->post(route('auto-vibe.refresh', $vibe));
 		$vibeTracks = $vibe->tracks->pluck('api_id')->toArray();
 		$this->assertNotContains($vibeTrack->api_id, $vibeTracks);

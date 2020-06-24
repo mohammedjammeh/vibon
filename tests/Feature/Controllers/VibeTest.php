@@ -5,6 +5,7 @@ namespace Tests\Feature\Controllers;
 use App\Vibe;
 use App\User;
 use App\MusicAPI\Playlist;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -100,7 +101,7 @@ class VibeTest extends TestCase
     {
         $vibe = factory(Vibe::class)->create();
         $this->delete(route('vibe.destroy', $vibe))
-            ->assertStatus(403);
+            ->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseHas('vibes', [
             'id' => $vibe->id,
             'open' => $vibe->open,

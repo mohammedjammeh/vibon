@@ -11,6 +11,10 @@ Unit\AutoDJ\User
  [x] Authenticated user recent tracks from the api that have been played more than once are stored
  [x] Authenticated user tracks from api can be updated
 
+Unit\Controllers\AutoVibe
+ [x] That the auto vibe refreshed event is triggered when a vibe is refreshed
+ [x] That an auto vibe cannot be refreshed by a user who is not an owner of the vibe
+
 Unit\Controllers\JoinRequest
  [x] User can send a request to join a vibe
  [x] Vibe owner gets the notification from join request
@@ -30,7 +34,6 @@ Unit\Controllers\Vibe
  [ ] Vibe show view gets required data
  [ ] Vibe is shown with the right view
  [x] Vibe updated event is triggered when a vibe is updated
- [x] Vibe deleted event is triggered when a vibe is deleted
 
 Unit\Models\Genre
  [x] The with tracks auto related scope gets the genres with tracks that are auto related to a vibe  and the tracks count
@@ -83,6 +86,9 @@ Feature\Controllers\Authorise
  [x] Unauthenticated user who tries to access the welcome page can access the welcome page
  [x] Authenticated user who tries to access the welcome page is redirected to home
 
+Feature\Controllers\AutoVibe
+ [x] Auto tracks of a vibe can be updated
+
 Feature\Controllers\Callback
  [x] Spotify callback stores a new users details and authenticates him
  [x] Spotify callback updates a previously authenticated users details instead of adding him as new
@@ -103,9 +109,6 @@ Feature\Controllers\JoinRequest
 Feature\Controllers\Search
  [x] User can search for tracks and receives a response with the tracks updated vibon info
  [ ] User is redirected back if search is empty
-
-Feature\Controllers\TrackVibeAuto
- [x] Auto tracks of a vibe can be updated
 
 Feature\Controllers\TrackVibe
  [x] Track can be added to a vibe

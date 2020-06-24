@@ -14,6 +14,8 @@ class AutoVibeController extends Controller
 
     public function refresh(Vibe $vibe)
     {
+        $this->authorize('delete', $vibe);
+
 		AutoTracks::update($vibe);
 		AutoTracks::updateAPI($vibe);
 

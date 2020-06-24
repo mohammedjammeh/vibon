@@ -105,15 +105,5 @@ class VibeTest extends TestCase
         Event::assertDispatched(VibeUpdated::class);
     }
 
-    public function test_vibe_deleted_event_is_triggered_when_a_vibe_is_deleted()
-    {
-        Event::fake();
-        $vibe = factory(Vibe::class)->create();
-        $user = factory(User::class)->create();
-        $vibe->users()->attach($user->id, ['owner' => true]);
 
-        $this->actingAs($vibe->users->first());
-        $this->delete(route('vibe.destroy', $vibe));
-        Event::assertDispatched(VibeDeleted::class);
-    }
 }
