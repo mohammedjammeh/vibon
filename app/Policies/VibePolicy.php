@@ -10,13 +10,6 @@ class VibePolicy
 {
     use HandlesAuthorization;
 
-    private function policyCheck($user, $vibe, $userVibe) 
-    {
-        if ($userVibe) {
-            return (int)$userVibe->pivot->user_id === $user->id && (int)$userVibe->pivot->vibe_id === $vibe->id;
-        }
-    }
-
     /**
      * Determine whether the user can update the vibe.
      *
@@ -30,7 +23,7 @@ class VibePolicy
         return $this->policyCheck($user, $vibe, $userVibe);
     }
 
-        /**
+    /**
      * Determine whether the user can delete the vibe.
      *
      * @param  \App\User  $user
@@ -43,4 +36,11 @@ class VibePolicy
         return $this->policyCheck($user, $vibe, $userVibe);
     }
 
+
+    protected function policyCheck($user, $vibe, $userVibe)
+    {
+        if ($userVibe) {
+            return (int)$userVibe->pivot->user_id === $user->id && (int)$userVibe->pivot->vibe_id === $vibe->id;
+        }
+    }
 }
