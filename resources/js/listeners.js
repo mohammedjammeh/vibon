@@ -56,3 +56,15 @@ Echo.channel('track.vibe.destroyed')
     .listen('TrackVibeDestroyed', (data) => {
         actions.updateVibe(data);
     });
+
+
+//Vote
+Echo.channel('track.voted.up')
+    .listen('TrackVotedUp', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('track.voted.down')
+    .listen('TrackVotedDown', (data) => {
+        actions.updateVibe(data);
+    });
