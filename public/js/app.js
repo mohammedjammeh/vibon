@@ -59015,6 +59015,15 @@ Echo.channel('auto.vibe.refreshed').listen('AutoVibeRefreshed', function (data) 
     actions.updateVibe(data);
 });
 
+// Track Vibe
+Echo.channel('track.vibe.stored').listen('TrackVibeStored', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('track.vibe.destroyed').listen('TrackVibeDestroyed', function (data) {
+    actions.updateVibe(data);
+});
+
 /***/ }),
 /* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {

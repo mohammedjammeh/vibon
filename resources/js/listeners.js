@@ -44,3 +44,15 @@ Echo.channel('auto.vibe.refreshed')
     .listen('AutoVibeRefreshed', (data) => {
         actions.updateVibe(data);
     });
+
+
+// Track Vibe
+Echo.channel('track.vibe.stored')
+    .listen('TrackVibeStored', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('track.vibe.destroyed')
+    .listen('TrackVibeDestroyed', (data) => {
+        actions.updateVibe(data);
+    });
