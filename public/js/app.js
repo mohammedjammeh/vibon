@@ -59029,7 +59029,12 @@ Echo.channel('track.voted.up').listen('TrackVotedUp', function (data) {
     actions.updateVibe(data);
 });
 
+//Vibe Synchronisation
 Echo.channel('track.voted.down').listen('TrackVotedDown', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('playlist.synchronised.with.vibe.tracks').listen('PlaylistSynchronisedWithVibeTracks', function (data) {
     actions.updateVibe(data);
 });
 

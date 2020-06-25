@@ -30,6 +30,10 @@ Unit\Controllers\TrackVibe
  [x] That the track vibe stored event is called when a track is added to a vibe
  [x] That the track vibe destroyed event is called when a track is removed from a vibe
 
+Unit\Controllers\VibeSynchronisation
+ [x] That the vibe synchronised with playlist tracks event is triggered when user synchronises vibe with playlist tracks
+ [x] That the playlist synchronised with vibe tracks event is triggered when user synchronises playlist with vibe tracks
+
 Unit\Controllers\Vibe
  [x] Vibe requires a name to be created
  [x] Vibe requires a description to be created

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PlaylistSynchronisedWithVibeTracks;
+use App\Events\VibeSynchronisedWithPlaylistTracks;
 use App\MusicAPI\Playlist;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
@@ -20,6 +22,9 @@ class VibeSynchronisationController extends Controller
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using vibe tracks.';
+
+        broadcast(new PlaylistSynchronisedWithVibeTracks($vibe, $message))->toOthers();
+
         return $this->showResponse($loadedVibe, $message);
     }
 
@@ -39,10 +44,13 @@ class VibeSynchronisationController extends Controller
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using playlist tracks.';
+
+        broadcast(new VibeSynchronisedWithPlaylistTracks($vibe, $message))->toOthers();
+
         return $this->showResponse($loadedVibe, $message);
     }
 
-    public function storeUnstoredPlaylistTracks($playlistTracks)
+    protected function storeUnstoredPlaylistTracks($playlistTracks)
     {
         $playlistTracksNotOnVibe = $playlistTracks->whereNotIn('id', Track::pluck('api_id'));
         $playlistTracksNotOnVibe->each(function ($track) {

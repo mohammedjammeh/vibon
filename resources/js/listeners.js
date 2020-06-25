@@ -64,7 +64,13 @@ Echo.channel('track.voted.up')
         actions.updateVibe(data);
     });
 
+//Vibe Synchronisation
 Echo.channel('track.voted.down')
     .listen('TrackVotedDown', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('playlist.synchronised.with.vibe.tracks')
+    .listen('PlaylistSynchronisedWithVibeTracks', (data) => {
         actions.updateVibe(data);
     });
