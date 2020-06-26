@@ -3,14 +3,14 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class JoinRequestCancelled implements ShouldBroadcast
+class JoinRequestRejected implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -34,7 +34,7 @@ class JoinRequestCancelled implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('join.request.cancelled');
+        return new Channel('join.request.rejected');
     }
 
     public function broadcastWith()

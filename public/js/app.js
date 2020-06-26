@@ -59038,6 +59038,23 @@ Echo.channel('playlist.synchronised.with.vibe.tracks').listen('PlaylistSynchroni
     actions.updateVibe(data);
 });
 
+// Join Requests
+Echo.channel('join.request.sent').listen('JoinRequestSent', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('join.request.cancelled').listen('JoinRequestCancelled', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('join.request.accepted').listen('JoinRequestAccepted', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('join.request.rejected').listen('JoinRequestRejected', function (data) {
+    actions.updateVibe(data);
+});
+
 /***/ }),
 /* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class JoinRequestCancelled implements ShouldBroadcast
+class JoinRequestAccepted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -34,7 +34,7 @@ class JoinRequestCancelled implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('join.request.cancelled');
+        return new Channel('join.request.accepted');
     }
 
     public function broadcastWith()

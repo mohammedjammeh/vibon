@@ -15,6 +15,7 @@ const actions = {
     }
 };
 
+
 // Vibe
 Echo.channel('vibe.created')
     .listen('VibeCreated', (data) => {
@@ -72,5 +73,27 @@ Echo.channel('track.voted.down')
 
 Echo.channel('playlist.synchronised.with.vibe.tracks')
     .listen('PlaylistSynchronisedWithVibeTracks', (data) => {
+        actions.updateVibe(data);
+    });
+
+
+// Join Requests
+Echo.channel('join.request.sent')
+    .listen('JoinRequestSent', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('join.request.cancelled')
+    .listen('JoinRequestCancelled', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('join.request.accepted')
+    .listen('JoinRequestAccepted', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('join.request.rejected')
+    .listen('JoinRequestRejected', (data) => {
         actions.updateVibe(data);
     });
