@@ -17,12 +17,15 @@ Unit\Controllers\AutoVibe
 
 Unit\Controllers\JoinRequest
  [x] User can send a request to join a vibe
+ [x] Sending a join request will trigger the join request event
  [x] Vibe owner gets the notification from join request
  [x] User can cancel the request to join a vibe
+ [x] Cancelling a join request will trigger the join request cancel event
  [x] Vibe owner will not get a notification after join request has been cancelled
- [x] Sending a join request will trigger the join request event
  [x] Vibe owner can accept a join request
+ [x] Accepting a join request triggers the join request accepted event
  [x] Vibe owner can reject a join request
+ [x] Rejecting a join request triggers the join request rejected event
  [x] Join request user gets notified after being accepted
  [x] Join request user gets notified after being rejected
 

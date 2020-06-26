@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
+use App\Events\JoinRequestAccepted;
+use App\Events\JoinRequestRejected;
+use App\Listeners\SendJoinRequestAcceptedNotification;
+use App\Listeners\SendJoinRequestRejectedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -16,8 +19,6 @@ use App\Events\JoinRequestSent;
 use App\Listeners\SendJoinRequestNotification;
 use App\Events\JoinRequestCancelled;
 use App\Listeners\CancelJoinRequestNotification;
-use App\Events\JoinRequestResponded;
-use App\Listeners\SendJoinRequestRespondedNotification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -45,8 +46,11 @@ class EventServiceProvider extends ServiceProvider
         JoinRequestCancelled::class => [
             CancelJoinRequestNotification::class,
         ],
-        JoinRequestResponded::class => [
-            SendJoinRequestRespondedNotification::class,
+        JoinRequestAccepted::class => [
+            SendJoinRequestAcceptedNotification::class,
+        ],
+        JoinRequestRejected::class => [
+            SendJoinRequestRejectedNotification::class,
         ],
     ];
 
