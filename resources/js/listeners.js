@@ -97,3 +97,19 @@ Echo.channel('join.request.rejected')
     .listen('JoinRequestRejected', (data) => {
         actions.updateVibe(data);
     });
+
+// User Vibe
+Echo.channel('user.joined.vibe')
+    .listen('UserJoinedVibe', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('user.left.vibe')
+    .listen('UserLeftVibe', (data) => {
+        actions.updateVibe(data);
+    });
+
+Echo.channel('user.removed.from.vibe')
+    .listen('UserRemovedFromVibe', (data) => {
+        actions.updateVibe(data);
+    });

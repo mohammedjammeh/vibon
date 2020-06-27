@@ -59055,6 +59055,19 @@ Echo.channel('join.request.rejected').listen('JoinRequestRejected', function (da
     actions.updateVibe(data);
 });
 
+// User Vibe
+Echo.channel('user.joined.vibe').listen('UserJoinedVibe', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('user.left.vibe').listen('UserLeftVibe', function (data) {
+    actions.updateVibe(data);
+});
+
+Echo.channel('user.removed.from.vibe').listen('UserRemovedFromVibe', function (data) {
+    actions.updateVibe(data);
+});
+
 /***/ }),
 /* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
