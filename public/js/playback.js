@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 89);
+/******/ 	return __webpack_require__(__webpack_require__.s = 92);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -69,7 +69,83 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(2);
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var user = {
+    vibesIDs: [],
+    notifications: [],
+
+    routes: {
+        'vibes': '/user/vibes',
+        'attributes': 'user/attributes',
+        'notifications': 'user/notifications'
+    },
+
+    getVibesIDs: function getVibesIDs() {
+        var _this = this;
+
+        return axios.get(this.routes.vibes).then(function (response) {
+            _this.vibesIDs = response.data;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getAccessToken: function getAccessToken() {
+        var _this2 = this;
+
+        var now = new Date();
+        now.setHours(now.getHours() - 1);
+        var oneHourAgo = now.getTime();
+
+        return new Promise(function (resolve, reject) {
+            if (localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                return axios.get(_this2.routes.attributes).then(function (response) {
+                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                    localStorage['access_token'] = response.data.access_token;
+                    resolve(localStorage['access_token']);
+                }).catch(function (error) {
+                    reject(error.response.data.errors);
+                });
+            }
+        });
+    },
+    getNotifications: function getNotifications() {
+        var _this3 = this;
+
+        return axios.get(this.routes.notifications).then(function (response) {
+            _this3.notifications = response.data;
+            console.log(response.data);
+        }).catch(function (errors) {
+            console.log(errors);
+        });
+    },
+    updateVibesIDs: function updateVibesIDs(vibe) {
+        if (!vibe.auto_dj) {
+            this.vibesIDs.push(vibe.id);
+        } else {
+            this.vibesIDs = this.vibesIDs.filter(function (id) {
+                return id !== vibe.id;
+            });
+        }
+    },
+    allVibesIDsExcept: function allVibesIDsExcept(id) {
+        return this.vibesIDs.filter(function (vibeID) {
+            return vibeID !== id;
+        });
+    }
+};
+
+window.user = user;
+/* harmony default export */ __webpack_exports__["default"] = (user);
+
+/***/ }),
+
+/***/ 2:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user__ = __webpack_require__(1);
 
 
 var Vibes = {
@@ -382,9 +458,11 @@ var Vibes = {
         return Object.keys(this.show).length > 0;
     },
     getVibeName: function getVibeName(vibeID) {
-        return this.all.find(function (vibe) {
-            return vibe.id === vibeID;
-        }).name;
+        if (this.all.length) {
+            return this.all.find(function (vibe) {
+                return vibe.id === vibeID;
+            }).name;
+        }
     },
     updateShowData: function updateShowData() {
         var _this21 = this;
@@ -451,76 +529,12 @@ var Vibes = {
 
 /***/ }),
 
-/***/ 2:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var user = {
-    vibesIDs: [],
-
-    routes: {
-        'vibes': '/user/vibes',
-        'attributes': 'user/attributes'
-    },
-
-    getVibesIDs: function getVibesIDs() {
-        var _this = this;
-
-        return axios.get(this.routes.vibes).then(function (response) {
-            _this.vibesIDs = response.data;
-        }).catch(function (errors) {
-            return console.log(errors);
-        });
-    },
-    getAccessToken: function getAccessToken() {
-        var _this2 = this;
-
-        var now = new Date();
-        now.setHours(now.getHours() - 1);
-        var oneHourAgo = now.getTime();
-
-        return new Promise(function (resolve, reject) {
-            if (localStorage['token_set_at'] >= oneHourAgo) {
-                resolve(localStorage['access_token']);
-            } else {
-                return axios.get(_this2.routes.attributes).then(function (response) {
-                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
-                    localStorage['access_token'] = response.data.access_token;
-                    resolve(localStorage['access_token']);
-                }).catch(function (error) {
-                    reject(error.response.data.errors);
-                });
-            }
-        });
-    },
-    updateVibesIDs: function updateVibesIDs(vibe) {
-        if (!vibe.auto_dj) {
-            this.vibesIDs.push(vibe.id);
-        } else {
-            this.vibesIDs = this.vibesIDs.filter(function (id) {
-                return id !== vibe.id;
-            });
-        }
-    },
-    allVibesIDsExcept: function allVibesIDsExcept(id) {
-        return this.vibesIDs.filter(function (vibeID) {
-            return vibeID !== id;
-        });
-    }
-};
-
-window.user = user;
-/* harmony default export */ __webpack_exports__["default"] = (user);
-
-/***/ }),
-
 /***/ 4:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__vibes__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__search__ = __webpack_require__(5);
 
 
@@ -671,7 +685,7 @@ var Search = {
 
 /***/ }),
 
-/***/ 89:
+/***/ 92:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(4);

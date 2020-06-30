@@ -4,8 +4,14 @@ namespace App\Providers;
 
 use App\Events\JoinRequestAccepted;
 use App\Events\JoinRequestRejected;
+use App\Events\UserJoinedVibe;
+use App\Events\UserLeftVibe;
+use App\Events\UserRemovedFromVibe;
 use App\Listeners\SendJoinRequestAcceptedNotification;
 use App\Listeners\SendJoinRequestRejectedNotification;
+use App\Listeners\SendRemovedFromVibeNotification;
+use App\Listeners\SendUserJoinedVibeNotification;
+use App\Listeners\SendUserLeftVibeNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -34,12 +40,14 @@ class EventServiceProvider extends ServiceProvider
         UserCreated::class => [
             SendUserCreatedNotification::class,
         ],
+
         VibeCreated::class => [
             StoreAutoVibeTracks::class,
         ],
         VibeUpdated::class => [
             UpdateAutoVibeTracks::class,
         ],
+
         JoinRequestSent::class => [
             SendJoinRequestNotification::class,
         ],
@@ -51,6 +59,16 @@ class EventServiceProvider extends ServiceProvider
         ],
         JoinRequestRejected::class => [
             SendJoinRequestRejectedNotification::class,
+        ],
+
+        UserRemovedFromVibe::class => [
+            SendRemovedFromVibeNotification::class,
+        ],
+        UserLeftVibe::class => [
+          SendUserLeftVibeNotification::class,
+        ],
+        UserJoinedVibe::class => [
+            SendUserJoinedVibeNotification::class,
         ],
     ];
 

@@ -60,22 +60,24 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 88);
+/******/ 	return __webpack_require__(__webpack_require__.s = 91);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 2:
+/***/ 1:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var user = {
     vibesIDs: [],
+    notifications: [],
 
     routes: {
         'vibes': '/user/vibes',
-        'attributes': 'user/attributes'
+        'attributes': 'user/attributes',
+        'notifications': 'user/notifications'
     },
 
     getVibesIDs: function getVibesIDs() {
@@ -108,6 +110,16 @@ var user = {
             }
         });
     },
+    getNotifications: function getNotifications() {
+        var _this3 = this;
+
+        return axios.get(this.routes.notifications).then(function (response) {
+            _this3.notifications = response.data;
+            console.log(response.data);
+        }).catch(function (errors) {
+            console.log(errors);
+        });
+    },
     updateVibesIDs: function updateVibesIDs(vibe) {
         if (!vibe.auto_dj) {
             this.vibesIDs.push(vibe.id);
@@ -129,10 +141,10 @@ window.user = user;
 
 /***/ }),
 
-/***/ 88:
+/***/ 91:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(2);
+module.exports = __webpack_require__(1);
 
 
 /***/ })

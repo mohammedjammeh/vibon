@@ -19,8 +19,7 @@ class UserVibeController extends Controller
     {
         $vibe->users()->attach(auth()->user()->id, ['owner' => false]);
 
-        broadcast(new UserJoinedVibe($vibe))->toOthers();
-        // notify vibe owner
+        broadcast(new UserJoinedVibe(auth()->user(), $vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = 'Welcome to ' .  $loadedVibe->name . '.';
@@ -32,8 +31,7 @@ class UserVibeController extends Controller
         $user = auth()->user();
         $vibe->users()->detach($user->id);
 
-        broadcast(new UserLeftVibe($vibe))->toOthers();
-        // notify vibe owner
+        broadcast(new UserLeftVibe($user, $vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = 'You are no longer part of ' . $loadedVibe->name . '.';
@@ -42,11 +40,9 @@ class UserVibeController extends Controller
 
     public function remove(Vibe $vibe, User $user)
     {
-        $user->notify(new RemovedFromAVibe($vibe->id));
     	$vibe->users()->detach($user->id);
 
-        broadcast(new UserRemovedFromVibe($vibe))->toOthers();
-        // notify vibe owner
+        broadcast(new UserRemovedFromVibe($user, $vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $user->username . ' is no longer a member of ' . $loadedVibe->name . '.';

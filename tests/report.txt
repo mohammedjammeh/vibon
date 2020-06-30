@@ -33,6 +33,14 @@ Unit\Controllers\TrackVibe
  [x] That the track vibe stored event is called when a track is added to a vibe
  [x] That the track vibe destroyed event is called when a track is removed from a vibe
 
+Unit\Controllers\UserVibe
+ [x] That the user joined vibe event is called when user joins vibe
+ [x] That the vibe owner is notified when user joins vibe
+ [x] That the user left vibe event is called when user leaves vibe
+ [x] That the vibe owner is notified when user leaves vibe
+ [x] That the user removed from vibe event is called when user is removed from a vibe
+ [x] That the user is notified when he is removed from a vibe
+
 Unit\Controllers\VibeSynchronisation
  [x] That the vibe synchronised with playlist tracks event is triggered when user synchronises vibe with playlist tracks
  [x] That the playlist synchronised with vibe tracks event is triggered when user synchronises playlist with vibe tracks

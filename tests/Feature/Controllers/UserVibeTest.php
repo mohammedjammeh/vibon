@@ -17,6 +17,8 @@ class UserVibeTest extends TestCase
 	public function test_user_can_join_a_vibe()
 	{
 		$vibe = factory(Vibe::class)->create();
+        $owner = factory(User::class)->create();
+        $vibe->users()->attach($owner->id, ['owner' => true]);
 
 		$response = $this->post(route('user-vibe.join', $vibe->id));
         $responseData = $response->original;
@@ -34,6 +36,8 @@ class UserVibeTest extends TestCase
     public function test_user_can_leave_a_vibe()
     {
         $vibe = factory(Vibe::class)->create();
+        $owner = factory(User::class)->create();
+        $vibe->users()->attach($owner->id, ['owner' => true]);
         $vibe->users()->attach($this->user->id, ['owner' => false]);
 
         $response = $this->delete(route('user-vibe.leave', $vibe));
