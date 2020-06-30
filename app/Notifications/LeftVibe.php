@@ -7,24 +7,24 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class RequestToJoinAVibe extends Notification
+class LeftVibe extends Notification
 {
     use Queueable;
 
-    public $requester_id;
-    public $vibe_id;
+    public $user;
+    public $vibe;
 
     /**
      * Create a new notification instance.
      *
-     * @param $requester_id
-     * @param $vibe_id
+     * @param $user
+     * @param $vibe
      * @return void
      */
-    public function __construct($requester_id, $vibe_id)
+    public function __construct($user, $vibe)
     {
-        $this->requester_id = $requester_id;
-        $this->vibe_id = $vibe_id;
+        $this->user = $user;
+        $this->vibe = $vibe;
     }
 
     /**
@@ -47,8 +47,8 @@ class RequestToJoinAVibe extends Notification
     public function toArray($notifiable)
     {
         return [
-            'vibe_id' => $this->vibe_id,
-            'requester_id' => $this->requester_id
+            'vibe_id' => $this->vibe,
+            'user_id' => $this->user
         ];
     }
 }

@@ -14,16 +14,19 @@ class UserJoinedVibe implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $user;
     public $vibe;
 
     /**
      * Create a new event instance.
      *
+     * @param $user
      * @param $vibe
      * @return void
      */
-    public function __construct($vibe)
+    public function __construct($user, $vibe)
     {
+        $this->user = $user;
         $this->vibe = $vibe;
     }
 

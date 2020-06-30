@@ -5,6 +5,7 @@ import vibes from './components/vibe/index';
 import createVibe from './components/vibe/create';
 import searchForm from './components/search/form';
 import playback from './components/playback';
+import userNotifications from './components/user/notifications';
 
 new Vue({
     el: '#app',
@@ -12,7 +13,8 @@ new Vue({
         'vibes': vibes,
         'create-vibe': createVibe,
         'search-form': searchForm,
-        'playback': playback
+        'playback': playback,
+        'user-notifications': userNotifications
     },
     data: {},
     router: router

@@ -279,7 +279,9 @@ let Vibes = {
     },
 
     getVibeName(vibeID) {
-        return this.all.find(vibe => vibe.id === vibeID).name;
+        if (this.all.length) {
+            return this.all.find(vibe => vibe.id === vibeID).name;
+        }
     },
 
     updateShowData() {
