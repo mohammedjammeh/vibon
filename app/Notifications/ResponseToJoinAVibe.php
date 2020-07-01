@@ -2,14 +2,17 @@
 
 namespace App\Notifications;
 
+use App\Traits\NotificationShowTrait;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class ResponseToJoinAVibe extends Notification
 {
-    use Queueable;
+    use Queueable, NotificationShowTrait;
 
     public $vibe_id;
     public $response;
@@ -17,6 +20,8 @@ class ResponseToJoinAVibe extends Notification
     /**
      * Create a new notification instance.
      *
+     * @param $vibe_id
+     * @param $response
      * @return void
      */
     public function __construct($vibe_id, $response)
@@ -33,7 +38,7 @@ class ResponseToJoinAVibe extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -48,5 +53,21 @@ class ResponseToJoinAVibe extends Notification
             'vibe_id' => $this->vibe_id,
             'response' => $this->response
         ];
+    }
+
+    /**
+     * Broadcast notification to front-end user.
+     *
+     * @param $notifiable
+     * @return BroadcastMessage
+     */
+    public function toBroadcast($notifiable)
+    {
+        $notification = DatabaseNotification::find($this->id);
+        $notification->data = $this->updateData($notification);
+
+        return new BroadcastMessage([
+            'data' => $notification,
+        ]);
     }
 }

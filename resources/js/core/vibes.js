@@ -344,6 +344,10 @@ let Vibes = {
             });
         }
     },
+
+    isEmpty() {
+        return Object.keys(this.all).length === 0;
+    }
 };
 
 export default Vibes;

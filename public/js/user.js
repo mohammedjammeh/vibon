@@ -65,12 +65,13 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 1:
+/***/ 2:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var user = {
+    id: '',
     vibesIDs: [],
     notifications: [],
 
@@ -80,17 +81,26 @@ var user = {
         'notifications': 'user/notifications'
     },
 
-    getVibesIDs: function getVibesIDs() {
+    getID: function getID() {
         var _this = this;
 
+        return axios.get(this.routes.attributes).then(function (response) {
+            _this.id = response.data.id;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getVibesIDs: function getVibesIDs() {
+        var _this2 = this;
+
         return axios.get(this.routes.vibes).then(function (response) {
-            _this.vibesIDs = response.data;
+            _this2.vibesIDs = response.data;
         }).catch(function (errors) {
             return console.log(errors);
         });
     },
     getAccessToken: function getAccessToken() {
-        var _this2 = this;
+        var _this3 = this;
 
         var now = new Date();
         now.setHours(now.getHours() - 1);
@@ -100,7 +110,7 @@ var user = {
             if (localStorage['token_set_at'] >= oneHourAgo) {
                 resolve(localStorage['access_token']);
             } else {
-                return axios.get(_this2.routes.attributes).then(function (response) {
+                return axios.get(_this3.routes.attributes).then(function (response) {
                     localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
                     localStorage['access_token'] = response.data.access_token;
                     resolve(localStorage['access_token']);
@@ -111,11 +121,10 @@ var user = {
         });
     },
     getNotifications: function getNotifications() {
-        var _this3 = this;
+        var _this4 = this;
 
         return axios.get(this.routes.notifications).then(function (response) {
-            _this3.notifications = response.data;
-            console.log(response.data);
+            _this4.notifications = response.data;
         }).catch(function (errors) {
             console.log(errors);
         });
@@ -144,7 +153,7 @@ window.user = user;
 /***/ 91:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1);
+module.exports = __webpack_require__(2);
 
 
 /***/ })

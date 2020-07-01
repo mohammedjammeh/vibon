@@ -1,4 +1,5 @@
 import vibes from './core/vibes.js';
+import user from './core/user.js';
 
 const actions = {
     updateVibe(data) {
@@ -113,3 +114,7 @@ Echo.channel('user.removed.from.vibe')
     .listen('UserRemovedFromVibe', (data) => {
         actions.updateVibe(data);
     });
+
+
+
+

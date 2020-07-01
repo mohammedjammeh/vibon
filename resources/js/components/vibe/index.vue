@@ -2,7 +2,7 @@
     <div>
         <p v-if="this.loading">loading..</p>
 
-        <p v-else-if="this.emptyVibes()">Rahh &#128562; No vibes around you, you gotta start one!</p>
+        <p v-else-if="this.vibes.isEmpty()">Rahh &#128562; No vibes around you, you gotta start one!</p>
 
         <div v-else>
             <div>
@@ -55,10 +55,6 @@
         },
 
         methods: {
-            emptyVibes() {
-                return Object.keys(this.vibes.all).length === 0;
-            },
-
             autoVibes() {
                 return this.vibes.all.filter(vibe => vibe.auto_dj === 1);
             },
