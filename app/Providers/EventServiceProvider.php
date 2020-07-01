@@ -61,14 +61,14 @@ class EventServiceProvider extends ServiceProvider
             SendJoinRequestRejectedNotification::class,
         ],
 
-        UserRemovedFromVibe::class => [
-            SendRemovedFromVibeNotification::class,
+        UserJoinedVibe::class => [
+            SendUserJoinedVibeNotification::class,
         ],
         UserLeftVibe::class => [
           SendUserLeftVibeNotification::class,
         ],
-        UserJoinedVibe::class => [
-            SendUserJoinedVibeNotification::class,
+        UserRemovedFromVibe::class => [
+            SendRemovedFromVibeNotification::class,
         ],
     ];
 

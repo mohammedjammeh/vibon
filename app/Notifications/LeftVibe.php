@@ -2,14 +2,17 @@
 
 namespace App\Notifications;
 
+use App\Traits\NotificationShowTrait;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
 class LeftVibe extends Notification
 {
-    use Queueable;
+    use Queueable, NotificationShowTrait;
 
     public $user;
     public $vibe;
@@ -35,7 +38,7 @@ class LeftVibe extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -50,5 +53,21 @@ class LeftVibe extends Notification
             'vibe_id' => $this->vibe,
             'user_id' => $this->user
         ];
+    }
+
+    /**
+     * Broadcast notification to front-end user.
+     *
+     * @param $notifiable
+     * @return BroadcastMessage
+     */
+    public function toBroadcast($notifiable)
+    {
+        $notification = DatabaseNotification::find($this->id);
+        $notification->data = $this->updateData($notification);
+
+        return new BroadcastMessage([
+            'data' => $notification,
+        ]);
     }
 }

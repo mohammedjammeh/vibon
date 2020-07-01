@@ -1,4 +1,5 @@
 const user = {
+    id: '',
     vibesIDs: [],
     notifications: [],
 
@@ -6,6 +7,14 @@ const user = {
         'vibes': '/user/vibes',
         'attributes': 'user/attributes',
         'notifications': 'user/notifications'
+    },
+
+    getID() {
+        return axios.get(this.routes.attributes)
+            .then(response => {
+                this.id = response.data.id;
+            })
+            .catch(errors => console.log(errors));
     },
 
     getVibesIDs() {
@@ -42,7 +51,6 @@ const user = {
         return axios.get(this.routes.notifications)
             .then(response => {
                 this.notifications = response.data;
-                console.log(response.data);
             })
             .catch(errors => { console.log(errors)});
     },
