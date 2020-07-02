@@ -14,7 +14,7 @@ trait NotificationShowTrait
         $notificationData = $notification->data;
 
         if($notification->type === RequestToJoinAVibe::class) {
-            $notificationData['requester_username'] = User::find($notification->data['requester_id'])->username;
+            $notificationData['user_username'] = User::find($notification->data['requester_id'])->username;
         }
         if ($notification->type === LeftVibe::class || $notification->type === JoinedVibe::class) {
             $notificationData['user_username'] = User::find($notification->data['user_id'])->username;

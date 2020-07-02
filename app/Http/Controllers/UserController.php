@@ -22,11 +22,10 @@ class UserController extends Controller
 
     public function notifications()
     {
-        $notifications =  auth()->user()->notifications;
+        $notifications =  auth()->user()->notifications->sortByDesc('created_at');
         foreach ($notifications as $notification) {
             $notification->data = $this->updateData($notification);
         }
-
         return $notifications;
     }
 }
