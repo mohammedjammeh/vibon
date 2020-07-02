@@ -54,7 +54,7 @@ class JoinRequestTest extends TestCase
             'notifiable_id' => $vibeOwnerNotification->notifiable_id
         ]);
         $this->assertEquals($vibeOwnerNotification->data['vibe_id'], $vibe->id);
-        $this->assertEquals($vibeOwnerNotification->data['requester_id'], $this->user->id);
+        $this->assertEquals($vibeOwnerNotification->data['user_id'], $this->user->id);
     }
 
     public function test_user_can_cancel_the_request_to_join_a_vibe()
@@ -220,7 +220,6 @@ class JoinRequestTest extends TestCase
             'notifiable_id' => $joinRequest->user->id
         ]);
         $this->assertEquals($joinRequesterResponseNotification->data['vibe_id'], $vibe->id);
-        $this->assertEquals($joinRequesterResponseNotification->data['response'], true);
     }
 
     public function test_join_request_user_gets_notified_after_being_rejected()
@@ -245,6 +244,5 @@ class JoinRequestTest extends TestCase
             'notifiable_id' => $joinRequest->user->id
         ]);
         $this->assertEquals($joinRequesterResponseNotification->data['vibe_id'], $vibe->id);
-        $this->assertEquals($joinRequesterResponseNotification->data['response'], false);
     }
 }

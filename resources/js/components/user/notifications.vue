@@ -6,13 +6,11 @@
                 <div v-if="isRequestToJoinVibe(notification)">
                     <p>You have a join request from '{{ notification.data['user_username'] }}'.</p>
                 </div>
-                <div v-else-if="isResponseToJoinVibe(notification)">
-                    <p v-if="notification.data['response']">
-                        Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been accepted.
-                    </p>
-                    <p v-else>
-                        Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been rejected.
-                    </p>
+                <div v-else-if="isRequestToJoinVibeAccepted(notification)">
+                    <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been accepted.</p>
+                </div>
+                <div v-else-if="isRequestToJoinVibeRejected(notification)">
+                    <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been rejected.</p>
                 </div>
                 <div v-else-if="userLeftVibe(notification)">
                     <p>'{{ notification.data.user_username }}' has left '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
@@ -58,8 +56,12 @@
                 return notification.type === 'App\\Notifications\\RequestToJoinAVibe';
             },
 
-            isResponseToJoinVibe(notification) {
-                return notification.type === 'App\\Notifications\\ResponseToJoinAVibe';
+            isRequestToJoinVibeAccepted(notification) {
+                return notification.type === 'App\\Notifications\\RequestToJoinVibeAccepted';
+            },
+
+            isRequestToJoinVibeRejected(notification) {
+                return notification.type === 'App\\Notifications\\RequestToJoinVibeRejected';
             },
 
             isRemovedFromVibe(notification) {

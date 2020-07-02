@@ -9,7 +9,7 @@ use App\Vibe;
 use App\User;
 use App\JoinRequest;
 use App\MusicAPI\User as UserAPI;
-use App\Notifications\ResponseToJoinAVibe;
+use App\Notifications\RequestToJoinVibeAccepted;
 use App\Notifications\RemovedFromAVibe;
 
 class HomeTest extends DuskTestCase
@@ -48,7 +48,7 @@ class HomeTest extends DuskTestCase
             'vibe_id' => $vibe->id,
             'user_id' => $user->id
         ]);
-        $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, true));
+        $joinRequest->user->notify(new RequestToJoinVibeAccepted($joinRequest->vibe->id, true));
 
         $this->loadVibesAsPlaylists(collect([$vibe]))->first();
         $this->browse(function (Browser $browser) use($user, $vibe) {
@@ -66,7 +66,7 @@ class HomeTest extends DuskTestCase
             'vibe_id' => $vibe->id,
             'user_id' => $user->id
         ]);
-        $joinRequest->user->notify(new ResponseToJoinAVibe($joinRequest->vibe->id, false));
+        $joinRequest->user->notify(new RequestToJoinVibeAccepted($joinRequest->vibe->id, false));
 
         $this->loadVibesAsPlaylists(collect([$vibe]))->first();
         $this->browse(function (Browser $browser) use($user, $vibe) {
