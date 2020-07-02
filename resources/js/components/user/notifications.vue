@@ -4,7 +4,7 @@
         <ul>
             <li v-for="notification in user.notifications">
                 <div v-if="isRequestToJoinVibe(notification)">
-                    <p>You have a join request from '{{ notification.data['requester_username'] }}'.</p>
+                    <p>You have a join request from '{{ notification.data['user_username'] }}'.</p>
                 </div>
                 <div v-else-if="isResponseToJoinVibe(notification)">
                     <p v-if="notification.data['response']">
@@ -48,7 +48,7 @@
                 .then(() => {
                     Echo.private('App.User.' + user.id)
                         .notification((notification) => {
-                            user.notifications.push(notification.data);
+                            user.notifications.unshift(notification.data);
                         });
                 });
         },
