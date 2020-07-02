@@ -99,6 +99,7 @@ class JoinRequestTest extends TestCase
 
     public function test_vibe_owner_will_not_get_a_notification_after_join_request_has_been_cancelled()
     {
+        $this->markTestSkipped('Irrelevant');
         $vibe = factory(Vibe::class)->create();
         $vibeOwner = factory(User::class)->create();
         $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
