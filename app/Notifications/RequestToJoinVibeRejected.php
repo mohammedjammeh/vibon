@@ -10,24 +10,21 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class ResponseToJoinAVibe extends Notification
+class RequestToJoinVibeRejected extends Notification
 {
     use Queueable, NotificationShowTrait;
 
     public $vibe_id;
-    public $response;
 
     /**
      * Create a new notification instance.
      *
      * @param $vibe_id
-     * @param $response
      * @return void
      */
-    public function __construct($vibe_id, $response)
+    public function __construct($vibe_id)
     {
         $this->vibe_id = $vibe_id;
-        $this->response = $response;
     }
 
     /**
@@ -51,7 +48,6 @@ class ResponseToJoinAVibe extends Notification
     {
         return [
             'vibe_id' => $this->vibe_id,
-            'response' => $this->response
         ];
     }
 

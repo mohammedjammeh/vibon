@@ -55,7 +55,7 @@ class User extends Authenticatable
 //    public function lastUnreadRequestNotificationFor($joinRequest)
 //    {
 //        return $this->unreadNotifications
-//            ->where('data.requester_id', $joinRequest->user_id)
+//            ->where('data.user_id', $joinRequest->user_id)
 //            ->where('data.vibe_id', $joinRequest->vibe_id)
 //            ->last();
 //    }
@@ -63,7 +63,7 @@ class User extends Authenticatable
     public function lastJoinRequestNotificationFor($joinRequest)
     {
         return $this->notifications
-            ->where('data.requester_id', $joinRequest->user_id)
+            ->where('data.user_id', $joinRequest->user_id)
             ->where('data.vibe_id', $joinRequest->vibe_id)
             ->last();
     }

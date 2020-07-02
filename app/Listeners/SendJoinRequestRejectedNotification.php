@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\JoinRequestRejected;
-use App\Notifications\ResponseToJoinAVibe;
+use App\Notifications\RequestToJoinVibeRejected;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -29,6 +29,6 @@ class SendJoinRequestRejectedNotification
     {
         $user = $event->joinRequest->user;
         $vibe = $event->joinRequest->vibe;
-        $user->notify(new ResponseToJoinAVibe($vibe->id, false));
+        $user->notify(new RequestToJoinVibeRejected($vibe->id));
     }
 }

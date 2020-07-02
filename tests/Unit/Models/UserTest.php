@@ -30,7 +30,7 @@ class UserTest extends TestCase
         $notification = $vibeOwner->requestNotifications()->first();
         $this->assertEquals($notification->notifiable_id, $vibeOwner->id);
         $this->assertEquals($notification->data['vibe_id'], $vibe->id);
-        $this->assertEquals($notification->data['requester_id'], $this->user->id);
+        $this->assertEquals($notification->data['user_id'], $this->user->id);
         $this->assertEquals($notification->read_at, null);
         $this->assertEquals($notification->type, RequestToJoinAVibe::class);
     }
@@ -50,7 +50,7 @@ class UserTest extends TestCase
         $notification = $vibeOwner->lastUnreadRequestNotificationFor($joinRequest);
         $this->assertEquals($notification->notifiable_id, $vibeOwner->id);
         $this->assertEquals($notification->data['vibe_id'], $vibe->id);
-        $this->assertEquals($notification->data['requester_id'], $this->user->id);
+        $this->assertEquals($notification->data['user_id'], $this->user->id);
         $this->assertEquals($notification->read_at, null);
         $this->assertEquals($notification->type, RequestToJoinAVibe::class);
     }

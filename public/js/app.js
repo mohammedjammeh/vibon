@@ -62372,8 +62372,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 
 
@@ -62405,8 +62403,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         isRequestToJoinVibe: function isRequestToJoinVibe(notification) {
             return notification.type === 'App\\Notifications\\RequestToJoinAVibe';
         },
-        isResponseToJoinVibe: function isResponseToJoinVibe(notification) {
-            return notification.type === 'App\\Notifications\\ResponseToJoinAVibe';
+        isRequestToJoinVibeAccepted: function isRequestToJoinVibeAccepted(notification) {
+            return notification.type === 'App\\Notifications\\RequestToJoinVibeAccepted';
+        },
+        isRequestToJoinVibeRejected: function isRequestToJoinVibeRejected(notification) {
+            return notification.type === 'App\\Notifications\\RequestToJoinVibeRejected';
         },
         isRemovedFromVibe: function isRemovedFromVibe(notification) {
             return notification.type === 'App\\Notifications\\RemovedFromAVibe';
@@ -62445,31 +62446,29 @@ var render = function() {
                       )
                     ])
                   ])
-                : _vm.isResponseToJoinVibe(notification)
+                : _vm.isRequestToJoinVibeAccepted(notification)
                 ? _c("div", [
-                    notification.data["response"]
-                      ? _c("p", [
-                          _vm._v(
-                            "\n                    Your request to join '" +
-                              _vm._s(
-                                _vm.vibes.getVibeName(
-                                  notification.data["vibe_id"]
-                                )
-                              ) +
-                              "' has been accepted.\n                "
-                          )
-                        ])
-                      : _c("p", [
-                          _vm._v(
-                            "\n                    Your request to join '" +
-                              _vm._s(
-                                _vm.vibes.getVibeName(
-                                  notification.data["vibe_id"]
-                                )
-                              ) +
-                              "' has been rejected.\n                "
-                          )
-                        ])
+                    _c("p", [
+                      _vm._v(
+                        "Your request to join '" +
+                          _vm._s(
+                            _vm.vibes.getVibeName(notification.data["vibe_id"])
+                          ) +
+                          "' has been accepted."
+                      )
+                    ])
+                  ])
+                : _vm.isRequestToJoinVibeRejected(notification)
+                ? _c("div", [
+                    _c("p", [
+                      _vm._v(
+                        "Your request to join '" +
+                          _vm._s(
+                            _vm.vibes.getVibeName(notification.data["vibe_id"])
+                          ) +
+                          "' has been rejected."
+                      )
+                    ])
                   ])
                 : _vm.userLeftVibe(notification)
                 ? _c("div", [
