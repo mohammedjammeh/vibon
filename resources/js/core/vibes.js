@@ -6,6 +6,7 @@ let Vibes = {
     showID: '',
     message: '',
     deletedMessage: '',
+    loading: true,
 
     user: User,
     playingTracks: {},
@@ -85,6 +86,7 @@ let Vibes = {
                     }
                     this.updatePlayingTracksData();
                     this.updateShowData();
+                    this.loading = false;
                     resolve(vibesData);
                 })
                 .catch(error => {
