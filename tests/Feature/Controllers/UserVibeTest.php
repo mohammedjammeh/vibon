@@ -57,14 +57,17 @@ class UserVibeTest extends TestCase
 	{
 		$vibe = factory(Vibe::class)->create();
 		$user = factory(User::class)->create();
+        $owner = factory(User::class)->create();
     	$vibe->users()->attach($user->id, ['owner' => false]);
+        $vibe->users()->attach($owner->id, ['owner' => true]);
 
+        $this->actingAs($owner);
 		$response = $this->delete(route('user-vibe.remove', [
 			'vibe' => $vibe->id,
 			'user' => $user->id
 		]));
         $responseData = $response->original;
-        $expectedMessage = $user->username . ' is no longer a member of ' .  $responseData['vibe']->name . '.';
+        $expectedMessage = $user->display_name . ' is no longer a member of ' .  $responseData['vibe']->name . '.';
 
         $this->assertEquals($expectedMessage, $responseData['message']);
         $this->assertEquals($vibe->id, $responseData['vibe']->id);

@@ -81,7 +81,7 @@ class ShowPageTest extends DuskTestCase
                 ->assertVisible($deleteVibeBtn)
                 ->assertVisible($acceptJoinRequestBtn)
                 ->assertVisible($rectJoinRequestBtn)
-                ->assertSee($joinRequest->user->username);
+                ->assertSee($joinRequest->user->display_name);
 
             $browser->loginAs($member)
                 ->visit($vibe->path)
@@ -89,7 +89,7 @@ class ShowPageTest extends DuskTestCase
                 ->assertMissing($deleteVibeBtn)
                 ->assertMissing($acceptJoinRequestBtn)
                 ->assertMissing($rectJoinRequestBtn)
-                ->assertDontSee($joinRequest->user->username);
+                ->assertDontSee($joinRequest->user->display_name);
         });
     }
 
@@ -124,7 +124,7 @@ class ShowPageTest extends DuskTestCase
             $browser->loginAs($owner)
                 ->visit($vibe->path)
                 ->press('Accept')
-                ->assertSee($joinRequest->user->username)
+                ->assertSee($joinRequest->user->display_name)
                 ->assertVisible('input[name="vibe-member-remove"]');
         });
     }
@@ -142,7 +142,7 @@ class ShowPageTest extends DuskTestCase
             $browser->loginAs($owner)
                 ->visit($vibe->path)
                 ->press('Reject')
-                ->assertDontSee($joinRequest->user->username)
+                ->assertDontSee($joinRequest->user->display_name)
                 ->assertMissing('input[name="vibe-member-remove"]');
         });
     }
@@ -241,7 +241,7 @@ class ShowPageTest extends DuskTestCase
 
             $browser->loginAs($user)
                 ->visit($vibe->path)
-                ->assertSee($user->username)
+                ->assertSee($user->display_name)
                 ->assertVisible('input[name="vibe-leave"]');
         });
     }
@@ -278,8 +278,8 @@ class ShowPageTest extends DuskTestCase
             $this->loadVibesAsPlaylists([$vibe])->first();
             $browser->loginAs($users->first())
                 ->visit($vibe->path)
-                ->assertSee($users->first()->username)
-                ->assertSee($users->last()->username);
+                ->assertSee($users->first()->display_name)
+                ->assertSee($users->last()->display_name);
         });
     }
 
@@ -296,10 +296,10 @@ class ShowPageTest extends DuskTestCase
             $removeMemberBtn = 'input[name="vibe-member-remove"]';
             $browser->loginAs($owner)
                 ->visit($vibe->path)
-                ->assertSee($member->username)
+                ->assertSee($member->display_name)
                 ->assertVisible($removeMemberBtn)
                 ->press($removeMemberBtn)
-                ->assertDontSee($member->username);
+                ->assertDontSee($member->display_name);
         });
     }
 
@@ -315,7 +315,7 @@ class ShowPageTest extends DuskTestCase
 
             $browser->loginAs($members->first())
                 ->visit($vibe->path)
-                ->assertSee($members->last()->username)
+                ->assertSee($members->last()->display_name)
                 ->assertMissing($removeMemberBtn);
         });
     }

@@ -36,7 +36,7 @@ class CallbackTest extends TestCase
 
     public function test_spotify_callback_updates_a_previously_authenticated_users_details_instead_of_adding_him_as_new()
     {
-        $user = factory(User::class)->create(['username' => app(UserAPI::class)->details()->id]);
+        $user = factory(User::class)->create(['api_id' => app(UserAPI::class)->details()->id]);
         $this->assertEmpty($user->tracks);
         $this->get(route('callback.spotify') . '?code=123');
         $this->assertNotEmpty(User::first()->tracks);

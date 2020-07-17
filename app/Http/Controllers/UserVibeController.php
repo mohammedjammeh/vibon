@@ -8,7 +8,6 @@ use App\Events\UserRemovedFromVibe;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\User;
-use App\Notifications\RemovedFromAVibe;
 use App\MusicAPI\Playlist;
 
 class UserVibeController extends Controller
@@ -40,12 +39,13 @@ class UserVibeController extends Controller
 
     public function remove(Vibe $vibe, User $user)
     {
+        $this->authorize('delete', $vibe);
     	$vibe->users()->detach($user->id);
 
         broadcast(new UserRemovedFromVibe($user, $vibe))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
-        $message = $user->username . ' is no longer a member of ' . $loadedVibe->name . '.';
+        $message = $user->display_name . ' is no longer a member of ' . $loadedVibe->name . '.';
         return $this->showResponse($loadedVibe, $message);
     }
 }

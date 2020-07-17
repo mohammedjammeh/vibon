@@ -30,9 +30,11 @@ class CallbackController extends Controller
     public function storeOrUpdateUserDetails($userAPI, $api, $accessToken, $refreshToken)
     {
         $user = User::firstOrNew([
-            'username' => $userAPI->details()->id
+            'api_id' => $userAPI->details()->id
         ]);
-        $user->username = $userAPI->details()->id;
+
+        $user->api_id = $userAPI->details()->id;
+        $user->display_name = $userAPI->details()->display_name;
         $user->email = $userAPI->details()->email;
         $user->api = $api;
         $user->access_token = $accessToken;

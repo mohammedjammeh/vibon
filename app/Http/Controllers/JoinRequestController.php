@@ -50,7 +50,7 @@ class JoinRequestController extends Controller
         $joinRequest->vibe->users()->attach($joinRequest->user->id, ['owner' => false]);
 
         $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
-        $message = "You have accepted  {$joinRequest->user->username}'s request to join {$loadedVibe->name}.";
+        $message = "You have accepted  {$joinRequest->user->display_name}'s request to join {$loadedVibe->name}.";
         return $this->showResponse($loadedVibe, $message);
     }
 
@@ -63,7 +63,7 @@ class JoinRequestController extends Controller
         $joinRequest->delete();
 
         $loadedVibe = app(Playlist::class)->load($joinRequest->vibe);
-        $message = "You have rejected {$joinRequest->user->username}'s request to join {$loadedVibe->name}.";
+        $message = "You have rejected {$joinRequest->user->display_name}'s request to join {$loadedVibe->name}.";
         return $this->showResponse($loadedVibe, $message);
     }
 }

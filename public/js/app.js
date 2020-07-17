@@ -60485,7 +60485,9 @@ var render = function() {
                           return _c("div", [
                             _c("p", {
                               domProps: {
-                                textContent: _vm._s(joinRequest.user.username)
+                                textContent: _vm._s(
+                                  joinRequest.user.display_name
+                                )
                               }
                             }),
                             _vm._v(" "),
@@ -60691,7 +60693,7 @@ var render = function() {
               _vm._l(this.vibes.show.users, function(member) {
                 return _c("div", [
                   _c("p", {
-                    domProps: { textContent: _vm._s(member.username) }
+                    domProps: { textContent: _vm._s(member.display_name) }
                   }),
                   _vm._v(" "),
                   !member.pivot.owner
@@ -62441,7 +62443,7 @@ var render = function() {
                     _c("p", [
                       _vm._v(
                         "You have a join request from '" +
-                          _vm._s(notification.data["user_username"]) +
+                          _vm._s(notification.data["user_display_name"]) +
                           "'."
                       )
                     ])
@@ -62475,7 +62477,7 @@ var render = function() {
                     _c("p", [
                       _vm._v(
                         "'" +
-                          _vm._s(notification.data.user_username) +
+                          _vm._s(notification.data.user_display_name) +
                           "' has left '" +
                           _vm._s(
                             _vm.vibes.getVibeName(notification.data["vibe_id"])
@@ -62489,7 +62491,7 @@ var render = function() {
                     _c("p", [
                       _vm._v(
                         "'" +
-                          _vm._s(notification.data.user_username) +
+                          _vm._s(notification.data.user_display_name) +
                           "' has joined '" +
                           _vm._s(
                             _vm.vibes.getVibeName(notification.data["vibe_id"])
