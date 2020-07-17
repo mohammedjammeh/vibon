@@ -4,7 +4,7 @@
         <ul>
             <li v-for="notification in user.notifications">
                 <div v-if="isRequestToJoinVibe(notification)">
-                    <p>You have a join request from '{{ notification.data['user_username'] }}'.</p>
+                    <p>You have a join request from '{{ notification.data['user_display_name'] }}'.</p>
                 </div>
                 <div v-else-if="isRequestToJoinVibeAccepted(notification)">
                     <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been accepted.</p>
@@ -13,10 +13,10 @@
                     <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been rejected.</p>
                 </div>
                 <div v-else-if="userLeftVibe(notification)">
-                    <p>'{{ notification.data.user_username }}' has left '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
+                    <p>'{{ notification.data.user_display_name }}' has left '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
                 </div>
                 <div v-else-if="userJoinedVibe(notification)">
-                    <p>'{{ notification.data.user_username }}' has joined '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
+                    <p>'{{ notification.data.user_display_name }}' has joined '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
                 </div>
                 <div v-else-if="isRemovedFromVibe(notification)">
                     <p>You have been removed from the '{{ vibes.getVibeName(notification.data['vibe_id']) }}' vibe.</p>

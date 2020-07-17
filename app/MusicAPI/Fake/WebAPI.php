@@ -15,6 +15,7 @@ class WebAPI extends spotifyWebAPI
     public function getUser() {
         return (object) [
             'id' => '123iD',
+            'display_name' => 'Fake Stunner',
             'email' => 'faker@yahoo.com'
         ];
     }

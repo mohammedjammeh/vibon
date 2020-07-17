@@ -113,7 +113,7 @@ class VibeTest extends TestCase
         $vibe->users()->attach($user->id, ['owner' => true]);
 
         $this->assertEquals($vibe->owner->id, $user->id);
-        $this->assertEquals($vibe->owner->username, $user->username);
+        $this->assertEquals($vibe->owner->api_id, $user->api_id);
     }
 
     public function test_the_get_path_attribute_method_gets_the_path_of_a_vibe()

@@ -98,7 +98,7 @@
                 <div v-if="this.vibeHasJoinRequests()">
                     <h4>Requests</h4>
                     <div v-for="joinRequest in this.vibes.show.requests">
-                        <p v-text="joinRequest.user.username"></p>
+                        <p v-text="joinRequest.user.display_name"></p>
                         <form method="POST" :action="vibes.routes.acceptJoinRequest(joinRequest.id)" @submit.prevent="onAcceptJoinRequestSubmit(joinRequest.id)">
                             <input type="submit" name="accept" value="Accept">
                         </form>
@@ -141,7 +141,7 @@
             <div>
                 <h4>Members</h4>
                 <div v-for="member in this.vibes.show.users">
-                    <p v-text="member.username"></p>
+                    <p v-text="member.display_name"></p>
 
                     <div v-if="!member.pivot.owner">
                         <div v-if="vibes.show.destroyable">

@@ -82,7 +82,7 @@
             @if(count($vibe->joinRequests) > 0)
                 <h3>Requests</h3>
                 @foreach($vibe->joinRequests as $joinRequest)
-                    <p>{{ $joinRequest->user->username }}</p>
+                    <p>{{ $joinRequest->user->display_name }}</p>
                     <form method="POST" action="{{ route('join-request.respond', ['joinRequest' => $joinRequest]) }}">
                         @csrf
                         @method('DELETE')
@@ -125,7 +125,7 @@
 
         <h3>Members</h3>
         @foreach($vibe->users as $member)
-            <p>{{ $member->username }}</p>
+            <p>{{ $member->display_name }}</p>
             @if(!$member->pivot->owner)
                 @can('delete', $vibe)
                     <form method="POST" action="{{ route('user-vibe.destroy', ['vibe' => $member->pivot->vibe_id, 'user' => $member->id]) }}">
