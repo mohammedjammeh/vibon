@@ -99,6 +99,27 @@ class UserVibeTest extends TestCase
         Event::assertDispatched(UserRemovedFromVibe::class);
     }
 
+    public function test_that_a_user_who_is_not_an_owner_of_a_vibe_can_remove_a_user_from_a_vibe()
+    {
+        $vibe = factory(Vibe::class)->create();
+        $user = factory(User::class)->create();
+        $nonOwner = factory(User::class)->create();
+        $vibe->users()->attach($user->id, ['owner' => false]);
+        $vibe->users()->attach($nonOwner->id, ['owner' => false]);
+
+        $this->actingAs($nonOwner);
+        $this->delete(route('user-vibe.remove', [
+            'vibe' => $vibe->id,
+            'user' => $user->id
+        ]));
+
+        $this->assertDatabaseHas('user_vibe', [
+            'vibe_id' => $vibe->id,
+            'user_id' => $user->id,
+            'owner' => false
+        ]);
+    }
+
     public function test_that_the_user_is_notified_when_he_is_removed_from_a_vibe()
     {
         Notification::fake();

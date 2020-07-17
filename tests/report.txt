@@ -39,6 +39,7 @@ Unit\Controllers\UserVibe
  [x] That the user left vibe event is called when user leaves vibe
  [x] That the vibe owner is notified when user leaves vibe
  [x] That the user removed from vibe event is called when user is removed from a vibe
+ [x] That a user who is not an owner of a vibe can remove a user from a vibe
  [x] That the user is notified when he is removed from a vibe
 
 Unit\Controllers\VibeSynchronisation
