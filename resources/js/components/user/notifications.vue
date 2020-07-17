@@ -1,7 +1,14 @@
 <template>
-    <div v-if="this.loading || this.vibes.isEmpty()">loading..</div>
+    <div v-if="user.notificationsLoading">
+        <p>loading..</p>
+    </div>
+
+    <div v-else-if="user.notficationsIsEmpty()">
+        <p>No notifications yet..</p>
+    </div>
+
     <div v-else>
-        <ul>
+        <ul v-if="!this.vibes.isEmpty()">
             <li v-for="notification in user.notifications">
                 <div v-if="isRequestToJoinVibe(notification)">
                     <p>You have a join request from '{{ notification.data['user_display_name'] }}'.</p>
@@ -34,14 +41,12 @@
         data() {
             return {
                 user: user,
-                vibes: vibes,
-                loading: true
+                vibes: vibes
             }
         },
 
         created() {
-            user.getNotifications().then(() => this.loading = false);
-
+            user.getNotifications();
             user.getID()
                 .then(() => {
                     Echo.private('App.User.' + user.id)

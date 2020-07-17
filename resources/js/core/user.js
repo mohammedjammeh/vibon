@@ -2,6 +2,7 @@ const user = {
     id: '',
     vibesIDs: [],
     notifications: [],
+    notificationsLoading: true,
 
     routes: {
         'vibes': '/user/vibes',
@@ -51,8 +52,13 @@ const user = {
         return axios.get(this.routes.notifications)
             .then(response => {
                 this.notifications = response.data;
+                this.notificationsLoading = false;
             })
             .catch(errors => { console.log(errors)});
+    },
+
+    notficationsIsEmpty() {
+        return Object.keys(this.notifications).length === 0;
     },
 
     updateVibesIDs(vibe) {

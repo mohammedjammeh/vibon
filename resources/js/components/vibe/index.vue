@@ -1,8 +1,12 @@
 <template>
     <div>
-        <p v-if="this.loading">loading..</p>
+        <div v-if="this.vibes.loading">
+            <p>loading..</p>
+        </div>
 
-        <p v-else-if="this.vibes.isEmpty()">Rahh &#128562; No vibes around you, you gotta start one!</p>
+        <div v-else-if="this.vibes.isEmpty()">
+            <p>Rahh &#128562; No vibes around you, you gotta start one!</p>
+        </div>
 
         <div v-else>
             <div>
@@ -43,14 +47,11 @@
             return {
                 vibes: vibes,
                 user: user,
-                loading: true
             }
         },
 
         created() {
-            this.vibes.getAll()
-                .then(() => this.loading = false);
-
+            this.vibes.getAll();
             this.user.getVibesIDs();
         },
 
