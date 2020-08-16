@@ -1,5 +1,5 @@
 <template>
-    <div :class="isPlaying()">
+    <div :class="isPlaying">
         <a @click="playTrack()">
             <img :src="track.album.images[0].url">
         </a>
@@ -96,8 +96,10 @@
 
             onDownvoteTrackSubmit(trackID) {
                 this.vibes.downvoteTrack(this.downvoteTrackForm, this.vibe.id, trackID);
-            },
+            }
+        },
 
+        computed : {
             isPlaying() {
                 if(this.vibes.playingTracks[this.vibe.id] === this.track.id) {
                     return 'playback-play-track playing';
@@ -105,7 +107,7 @@
 
                 return 'playback-play-track';
             }
-        },
+        }
     }
 </script>
 

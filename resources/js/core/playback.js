@@ -90,7 +90,7 @@ const playback = {
     updateVibePlayingTracks(trackID, vibeURI) {
         if(Object.keys(this.vibes.all).length > 0) {
             this.vibes.all.map((vibe) => {
-                if(vibe.uri === vibeURI) {
+                if(this.format(vibe.uri) === this.format(vibeURI)) {
                     vibe.api_tracks.forEach(track => {
                         if(track.id === trackID) {
                             this.vibes.playingTracks[vibe.id] = track.id;
@@ -101,6 +101,11 @@ const playback = {
                 }
             });
         }
+    },
+
+    format(vibeURI) {
+        let splitted = vibeURI.split(':');
+        return splitted[splitted.length - 1];
     },
 
     playOrResume() {
