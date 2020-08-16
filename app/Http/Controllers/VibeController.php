@@ -55,11 +55,10 @@ class VibeController extends Controller
         $vibe->update(request(['open', 'auto_dj']));
         $playlist->update($vibe->api_id, $request->input('name'), $request->input('description'));
 
-        $loadedVibe = app(Playlist::class)->load($vibe);
-        $message = $message = $loadedVibe->name . ' has been updated.';
-
+        $message = $request->input('name') . ' has been updated.';
         broadcast(new VibeUpdated($vibe, $message))->toOthers();
 
+        $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
     }
 
