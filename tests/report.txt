@@ -29,6 +29,9 @@ Unit\Controllers\JoinRequest
  [x] Join request user gets notified after being accepted
  [x] Join request user gets notified after being rejected
 
+Unit\Controllers\Playback
+ [x] The broadcast method broadcasts play back data
+
 Unit\Controllers\TrackVibe
  [x] That the track vibe stored event is called when a track is added to a vibe
  [x] That the track vibe destroyed event is called when a track is removed from a vibe

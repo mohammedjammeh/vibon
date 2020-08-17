@@ -54,4 +54,6 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
 
     Route::post('/vote/vibe/{vibe}/track/{track}', 'VoteController@store')->name('vote.store');
     Route::delete('/vote/vibe/{vibe}/track/{track}', 'VoteController@destroy')->name('vote.destroy');
+
+    Route::post('/playback/broadcast', 'PlaybackController@broadcast')->name('playback.broadcast.vibe.track');
 });
