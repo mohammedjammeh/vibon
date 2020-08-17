@@ -1,5 +1,6 @@
 import vibes from './core/vibes.js';
 import user from './core/user.js';
+import playback from './core/playback.js';
 
 const actions = {
     updateVibe(data) {
@@ -9,10 +10,18 @@ const actions = {
                 vibes.updateShowData();
             });
 
-        if (vibes.showID === data.vibe) {
-            vibes.message = data.message;
-            setTimeout(() => vibes.message = '', 20000);
+        if (this.showingVibeIs(data.vibe)) {
+            this.updateMessage(data.message);
         }
+    },
+
+    showingVibeIs(vibe) {
+        return vibes.showID === vibe;
+    },
+
+    updateMessage(message) {
+        vibes.message = message;
+        setTimeout(() => vibes.message = '', 20000);
     }
 };
 
@@ -89,7 +98,7 @@ Echo.channel('join.request.cancelled')
         actions.updateVibe(data);
     });
 
-Echo.channel('join.request.accepted')
+Echo.channel( 'join.request.accepted')
     .listen('JoinRequestAccepted', (data) => {
         actions.updateVibe(data);
     });
@@ -114,6 +123,14 @@ Echo.channel('user.removed.from.vibe')
     .listen('UserRemovedFromVibe', (data) => {
         actions.updateVibe(data);
     });
+
+
+// Playback
+Echo.channel('playback.updated')
+    .listen('PlaybackUpdated', (data) => {
+        playback.updateVibePlayingTrack(data.vibeId, data.trackId)
+    });
+
 
 
 
