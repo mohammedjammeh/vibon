@@ -1,101 +1,53 @@
 <template>
     <div :class="isPlaying">
-        <a @click="playTrack()">
-            <img :src="track.album.images[0].url">
-        </a>
-        <br><br>
-
-        <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
+        <play :track="track" :vibe="vibe"></play>
 
         <div>
-            <div>
-                <div v-for="userVibeID in user.allVibesIDsExcept(vibe.id)" v-if="track.vibes.includes(userVibeID)">
-                    <form method="POST" :action="vibes.routes.removeTrack(userVibeID, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(userVibeID, track.vibon_id)">
-                        <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)" style="background:red;">
-                    </form>
-                    <br>
-                </div>
-                <div v-else>
-                    <form method="POST" :action="vibes.routes.addTrack(userVibeID, track.id)" @submit.prevent="onAddTrackSubmit(userVibeID, track.id)">
-                        <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)">
-                    </form>
-                    <br>
-                </div>
+            <h4>Manual Vibes</h4>
+            <div v-for="userVibeID in user.manualVibesIDs">
+                <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" v-if="track.vibes.includes(userVibeID)"></remove-button>
+                <add-button :userVibeID="userVibeID" :trackID="track.id" v-else></add-button>
             </div>
 
-            <div>
-                <form method="POST" :action="vibes.routes.removeTrack(vibe.id, track.vibon_id)" @submit.prevent="onRemoveTrackSubmit(vibe.id, track.vibon_id)">
-                    <input v-if="vibe.auto_dj" type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibe.id)" style="background:red;" disabled>
-                    <input v-else type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibe.id)" style="background:red;">
-                </form>
-                <br>
+            <h4>Auto Vibes</h4>
+            <div v-for="userVibeID in user.autoVibesIDs">
+                <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" v-if="track.vibes.includes(userVibeID)"></remove-button>
+                <add-button :userVibeID="userVibeID" :trackID="track.id" v-else></add-button>
             </div>
         </div>
 
-
         <div v-if="!vibe.auto_dj">
-            <div v-if="track.is_voted_by_user">
-                <form method="POST" :action="vibes.routes.downvoteTrack(vibe.id, track.vibon_id)" @submit.prevent="onDownvoteTrackSubmit(track.vibon_id)">
-                    <input type="submit" name="vote-store" value="Unvote" style="background:red;">
-                    {{ track.votes_count }}
-                </form>
-                <br>
-            </div>
-            <div v-else>
-                <form method="POST" :action="vibes.routes.upvoteTrack(vibe.id, track.vibon_id)" @submit.prevent="onUpvoteTrackSubmit(track.vibon_id)">
-                    <input type="submit" name="vote-store" value="Vote">
-                    {{ track.votes_count }}
-                </form>
-                <br>
-            </div>
+            <downvote-button  :vibe="vibe" :track="track" v-if="track.is_voted_by_user"></downvote-button>
+            <upvote-button :vibe="vibe" :track="track" v-else></upvote-button>
         </div>
     </div>
 </template>
 
 <script>
     import user from '../../core/user.js';
-    import playback from '../../core/playback.js';
     import vibes from '../../core/vibes.js';
-    import Form from '../../classes/Form.js';
+    import play from './vibe/partials/play';
+    import addButton from './vibe/buttons/add';
+    import removeButton from './vibe/buttons/remove';
+    import upvoteButton from './vibe/buttons/upvote';
+    import downvoteButton from './vibe/buttons/downvote';
+
 
     export default {
         props: ['track', 'vibe'],
 
-        data() {
-            return {
-                playback: playback,
-                user: user,
-                vibes: vibes,
-                removeTrackForm: new Form({}),
-                addTrackForm: new Form({}),
-                upvoteTrackForm: new Form({}),
-                downvoteTrackForm: new Form({})
-            }
+        components: {
+            'play' : play,
+            'add-button': addButton,
+            'remove-button': removeButton,
+            'upvote-button': upvoteButton,
+            'downvote-button': downvoteButton
         },
 
-        methods: {
-            playTrack() {
-                this.playback.playVibe({
-                    playerInstance: this.playback.player,
-                    playlist_uri: this.vibe.uri,
-                    track_uri: this.track.uri
-                });
-            },
-
-            onRemoveTrackSubmit(vibeID, trackVibonID) {
-                this.vibes.removeTrack(this.removeTrackForm, vibeID, trackVibonID);
-            },
-
-            onAddTrackSubmit(vibeID, trackID) {
-                this.vibes.addTrack(this.addTrackForm, vibeID, trackID);
-            },
-
-            onUpvoteTrackSubmit(trackID) {
-                this.vibes.upvoteTrack(this.upvoteTrackForm, this.vibe.id, trackID);
-            },
-
-            onDownvoteTrackSubmit(trackID) {
-                this.vibes.downvoteTrack(this.downvoteTrackForm, this.vibe.id, trackID);
+        data() {
+            return {
+                user: user,
+                vibes: vibes
             }
         },
 
