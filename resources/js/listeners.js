@@ -8,6 +8,7 @@ const actions = {
             .then((response) => {
                 vibes.updateVibeDataForUpdatedVibe(response.vibe);
                 vibes.updateShowData();
+                vibes.sortVibesOrder();
             });
 
         if (this.showingVibeIs(data.vibe)) {

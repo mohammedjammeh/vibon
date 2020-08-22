@@ -99,7 +99,8 @@ let Vibes = {
         return form.post(this.routes.create)
             .then(response => {
                 this.all.push(response.vibe);
-                this.user.updateVibesIDs(response.vibe);
+                this.sortVibesOrder();
+                this.user.addVibeToVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -139,6 +140,8 @@ let Vibes = {
                     }
                     return vibe;
                 });
+
+                this.sortVibesOrder();
             })
             .catch(errors => console.log(errors));
     },
@@ -147,7 +150,7 @@ let Vibes = {
         form.delete(this.routes.delete(vibeID))
             .then(response => {
                 this.all = this.all.filter(vibe => vibe.id !== vibeID);
-                this.user.vibesIDs = this.user.vibesIDs.filter(id => id !== vibeID);
+                this.user.removeVibeFromVibesIDs(vibeID);
                 this.show = {};
                 this.deletedMessage = response.message;
             })
@@ -214,7 +217,8 @@ let Vibes = {
         form.post(this.routes.joinVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                this.user.updateVibesIDs(response.vibe);
+                this.sortVibesOrder();
+                this.user.addVibeToVibesIDs(response.vibe);
             })
             .catch(errors => console.log(errors));
     },
@@ -223,7 +227,7 @@ let Vibes = {
         form.delete(this.routes.leaveVibe(vibeID))
             .then(response => {
                 this.updateData(response);
-                this.user.vibesIDs = this.user.vibesIDs.filter(id => id !== vibeID);
+                this.user.removeVibeFromVibesIDs(vibeID);
             })
             .catch(errors => console.log(errors));
     },
@@ -345,6 +349,17 @@ let Vibes = {
                 }
             });
         }
+    },
+
+    sortVibesOrder() {
+        let vibesNames = this.all.map((vibe) => vibe.name);
+        vibesNames.sort();
+        this.all = vibesNames.map((name) => {
+            let filteredVibes = this.all.filter(vibe => vibe.name === name);
+            return filteredVibes[0];
+        });
+
+        this.user.sortVibesIDsOrder(this.all);
     },
 
     isEmpty() {
