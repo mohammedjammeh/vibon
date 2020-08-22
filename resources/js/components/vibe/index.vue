@@ -51,8 +51,11 @@
         },
 
         created() {
-            this.vibes.getAll();
             this.user.getVibesIDs();
+
+            this.vibes.getAll().then(() => {
+                this.vibes.sortVibesOrder();
+            });
         },
 
         methods: {

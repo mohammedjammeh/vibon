@@ -133,7 +133,6 @@ const playback = {
         this.vibePlayingTrackBroadcastData['vibe_id'] = vibeID;
         this.vibePlayingTrackBroadcastData['track_id'] = trackID;
         this.vibePlayingTrackBroadcastData['is_track_paused'] = this.paused;
-        console.log('wow');
         axios.post(this.routes.broadcast, this.vibePlayingTrackBroadcastData)
             .then(response => {})
             .catch(error => {

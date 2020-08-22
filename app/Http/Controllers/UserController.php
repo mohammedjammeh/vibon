@@ -7,11 +7,16 @@ use App\MusicAPI\User as UserAPI;
 
 class UserController extends Controller
 {
+    // Refactor and add tests for this, check test coverage too
     use NotificationShowTrait;
 
     public function vibes()
     {
-        return auth()->user()->load('vibes')->vibes->where('auto_dj', false)->pluck('id');
+        $vibes = auth()->user()->load('vibes')->vibes;
+        return [
+            'auto' => $vibes->where('auto_dj', true)->pluck('id'),
+            'manual' => $vibes->where('auto_dj', false)->pluck('id')
+        ];
     }
 
     public function attributes()

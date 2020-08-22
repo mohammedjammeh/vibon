@@ -3,7 +3,7 @@
         <p>loading..</p>
     </div>
 
-    <div v-else-if="user.notficationsIsEmpty()">
+    <div v-else-if="user.notificationsIsEmpty()">
         <p>No notifications yet..</p>
     </div>
 
