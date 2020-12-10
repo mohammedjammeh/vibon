@@ -2,12 +2,15 @@
 
 namespace App;
 
+use App\Traits\NotificationShowTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\AutoDJ\Genre as AutoGenre;
 
 class Vibe extends Model
 {
+    use NotificationShowTrait;
+
     protected $guarded = [];
 
     protected $casts = [
@@ -83,5 +86,14 @@ class Vibe extends Model
             ->orderBy('votes_count', 'desc')
             ->orderBy('pivot_created_at', 'asc')
             ->get();
+    }
+
+    public function notifications()
+    {
+        $notifications =  auth()->user()->notificationsFor($this);
+        foreach ($notifications as $notification) {
+            $notification->data = $this->updateData($notification);
+        }
+        return $notifications;
     }
 }

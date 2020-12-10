@@ -22,5 +22,6 @@ trait VibeShowTrait
         $loadedVibe->currentUserIsAMember = $loadedVibe->hasMember(auth()->user());
         $loadedVibe->hasJoinRequestFromUser = $loadedVibe->hasJoinRequestFrom(auth()->user());
         $loadedVibe->joinRequestFromUser = $loadedVibe->joinRequestFrom(auth()->user());
+        $loadedVibe->notifications = $loadedVibe->notifications();
     }
 }

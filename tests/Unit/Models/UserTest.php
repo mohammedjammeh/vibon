@@ -36,4 +36,15 @@ class UserTest extends TestCase
             $this->assertContains($member->id, $usersIDs);
         }
     }
+
+    public function test_the_notifications_for_method_returns_user_notifications_for_a_specific_vibe()
+    {
+        $vibe = factory(Vibe::class)->create();
+        $user = factory(User::class)->create();
+        $vibe->users()->attach($user->id, ['owner' => true]);
+
+        $this->post(route('join-request.store', $vibe));
+
+        $this->assertEquals($user->notificationsFor($vibe)->first()->id, $user->notifications->first()->id);
+    }
 }

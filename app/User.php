@@ -47,25 +47,11 @@ class User extends Authenticatable
         return $this->hasMany(Vote::class);
     }
 
-//    public function requestNotifications()
-//    {
-//        return $this->unreadNotifications->where('type', RequestToJoinAVibe::class);
-//    }
-
-//    public function lastUnreadRequestNotificationFor($joinRequest)
-//    {
-//        return $this->unreadNotifications
-//            ->where('data.user_id', $joinRequest->user_id)
-//            ->where('data.vibe_id', $joinRequest->vibe_id)
-//            ->last();
-//    }
-
-    public function lastJoinRequestNotificationFor($joinRequest)
+    public function notificationsFor($vibe)
     {
-        return $this->notifications
-            ->where('data.user_id', $joinRequest->user_id)
-            ->where('data.vibe_id', $joinRequest->vibe_id)
-            ->last();
+       return $this->notifications
+           ->where('data.vibe_id', $vibe->id)
+           ->sortByDesc('created_at');
     }
 
     public function isAuthorisedWith($api) 

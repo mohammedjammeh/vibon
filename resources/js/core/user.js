@@ -2,13 +2,10 @@ const user = {
     id: '',
     autoVibesIDs: [],
     manualVibesIDs: [],
-    notifications: [],
-    notificationsLoading: true,
 
     routes: {
         'vibes': '/user/vibes',
         'attributes': 'user/attributes',
-        'notifications': 'user/notifications'
     },
 
     getID() {
@@ -48,19 +45,6 @@ const user = {
                     });
             }
         });
-    },
-
-    getNotifications() {
-        return axios.get(this.routes.notifications)
-            .then(response => {
-                this.notifications = response.data;
-                this.notificationsLoading = false;
-            })
-            .catch(errors => { console.log(errors)});
-    },
-
-    notificationsIsEmpty() {
-        return Object.keys(this.notifications).length === 0;
     },
 
     addVibeToVibesIDs(vibe) {

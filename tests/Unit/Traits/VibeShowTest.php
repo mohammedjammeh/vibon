@@ -27,6 +27,7 @@ class VibeShowTest extends TestCase
         $this->assertTrue($vibeShow['vibe']->currentUserIsAMember);
         $this->assertFalse($vibeShow['vibe']->hasJoinRequestFromUser);
         $this->assertNull($vibeShow['vibe']->joinRequestFromUser);
+        $this->assertEmpty($vibeShow['vibe']->notifications());
         $this->assertEquals($vibeShow['message'], $message);
     }
 
@@ -43,5 +44,6 @@ class VibeShowTest extends TestCase
         $this->assertTrue($loadedVibe->currentUserIsAMember);
         $this->assertFalse($loadedVibe->hasJoinRequestFromUser);
         $this->assertNull($loadedVibe->joinRequestFromUser);
+        $this->assertEmpty($loadedVibe->notifications());
     }
 }
