@@ -97,24 +97,6 @@ class JoinRequestTest extends TestCase
         Event::assertDispatched(JoinRequestCancelled::class);
     }
 
-    public function test_vibe_owner_will_not_get_a_notification_after_join_request_has_been_cancelled()
-    {
-        $this->markTestSkipped('Irrelevant');
-        $vibe = factory(Vibe::class)->create();
-        $vibeOwner = factory(User::class)->create();
-        $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
-        $joinRequest = factory(JoinRequest::class)->create([
-            'vibe_id' => $vibe->id,
-            'user_id' => $this->user->id
-        ]);
-        event(new JoinRequestSent($joinRequest));
-
-        $this->delete(route('join-request.destroy', [
-            'joinRequest' => $joinRequest
-        ]));
-        $this->assertEmpty($vibe->owner->notifications);
-    }
-
     public function test_vibe_owner_can_accept_a_join_request()
     {
         $vibe = factory(Vibe::class)->create();

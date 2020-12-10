@@ -77,43 +77,6 @@ class JoinRequestTest extends TestCase
         ]));
     }
 
-	public function test_vibe_owner_can_respond_to_a_join_request_from_a_user() 
-	{
-	    $this->markTestSkipped('Irrelevant');
-		$vibe = factory(Vibe::class)->create();
-        $vibeOwner = factory(User::class)->create();
-        $vibe->users()->attach($vibeOwner->id, ['owner' => true]);
-        $joinRequest = factory(JoinRequest::class)->create([
-            'vibe_id' => $vibe->id,
-            'user_id' => $this->user->id
-        ]);
-        event(new JoinRequestSent($joinRequest));
-
-        $this->actingAs($vibeOwner);
-		$this->delete(route('join-request.accept', [
-			'joinRequest' => $joinRequest, 
-		]));
-
-		$this->assertDatabaseMissing('join_requests', [ 
-			'vibe_id' => $vibe->id,
-			'user_id' => $joinRequest->user->id
-		]);
-
-//		$vibeOwnerNotificationFromJoinRequestUser = $vibe->owner->notifications
-//			->where('data.user_id', $joinRequest->user->id)
-//            ->where('data.vibe_id', $vibe->id)
-//            ->last();
-//     	$this->assertNotNull($vibeOwnerNotificationFromJoinRequestUser->read_at);
-
-		$joinRequesterResponseNotification = $joinRequest->user->notifications->first();
-		$this->assertDatabaseHas('notifications', [
-			'type' => $joinRequesterResponseNotification->type,
-			'notifiable_id' => $joinRequest->user->id
-		]);
-		$this->assertEquals($joinRequesterResponseNotification->data['vibe_id'], $vibe->id);
-//		$this->assertEquals($joinRequesterResponseNotification->data['response'], $response);
-	}
-
     public function test_vibe_owner_can_accept_a_join_request_from_a_user()
     {
         $vibe = factory(Vibe::class)->create();
