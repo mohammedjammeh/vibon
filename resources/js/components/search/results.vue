@@ -33,7 +33,6 @@
                 playback: playback,
                 search: search,
                 input: this.$route.params.input,
-                // tracks: {},
                 removeTrackForm: new Form({}),
                 addTrackForm: new Form({}),
             }

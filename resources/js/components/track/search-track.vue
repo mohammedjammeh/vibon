@@ -1,6 +1,6 @@
 <template>
     <div :class="isPlaying">
-        <play :track="track" :vibe="vibe" :searchTracks="searchTracks"></play>
+        <play :track="track" :searchTracks="searchTracks"></play>
 
         <div>
             <h4>Manual Vibes</h4>
