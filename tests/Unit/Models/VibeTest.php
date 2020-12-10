@@ -121,4 +121,17 @@ class VibeTest extends TestCase
         $vibe = factory(Vibe::class)->create();
         $this->assertEquals($vibe->path, route('vibe.show', $vibe));
     }
+
+    public function test_the_notifications_method_returns_updated_current_user_notifications_for_a_vibe()
+    {
+        $vibe = factory(Vibe::class)->create();
+        $user = factory(User::class)->create();
+        $vibe->users()->attach($user->id, ['owner' => true]);
+
+        $this->post(route('join-request.store', $vibe));
+
+        $this->actingAs($user);
+        $vibeNotification = $vibe->notifications()->first();
+        $this->assertEquals($this->user->display_name, $vibeNotification->data['user_display_name']);
+    }
 }

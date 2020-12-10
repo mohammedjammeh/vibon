@@ -1,35 +1,33 @@
 <template>
-    <div v-if="user.notificationsLoading">
-        <p>loading..</p>
-    </div>
+    <div>
+        <div v-if="this.notificationsIsEmpty()">
+            <p>No notifications yet..</p>
+        </div>
 
-    <div v-else-if="user.notificationsIsEmpty()">
-        <p>No notifications yet..</p>
-    </div>
-
-    <div v-else>
-        <ul v-if="!this.vibes.isEmpty()">
-            <li v-for="notification in user.notifications">
-                <div v-if="isRequestToJoinVibe(notification)">
-                    <p>You have a join request from '{{ notification.data['user_display_name'] }}'.</p>
-                </div>
-                <div v-else-if="isRequestToJoinVibeAccepted(notification)">
-                    <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been accepted.</p>
-                </div>
-                <div v-else-if="isRequestToJoinVibeRejected(notification)">
-                    <p>Your request to join '{{ vibes.getVibeName(notification.data['vibe_id'])}}' has been rejected.</p>
-                </div>
-                <div v-else-if="userLeftVibe(notification)">
-                    <p>'{{ notification.data.user_display_name }}' has left '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
-                </div>
-                <div v-else-if="userJoinedVibe(notification)">
-                    <p>'{{ notification.data.user_display_name }}' has joined '{{ vibes.getVibeName(notification.data['vibe_id'])}}'.</p>
-                </div>
-                <div v-else-if="isRemovedFromVibe(notification)">
-                    <p>You have been removed from the '{{ vibes.getVibeName(notification.data['vibe_id']) }}' vibe.</p>
-                </div>
-            </li>
-        </ul>
+        <div v-else>
+            <ul>
+                <li v-for="notification in this.notifications">
+                    <div v-if="isRequestToJoinVibe(notification)">
+                        <p>You have a join request from '{{ notification.data['user_display_name'] }}'.</p>
+                    </div>
+                    <div v-else-if="isRequestToJoinVibeAccepted(notification)">
+                        <p>Your request to join has been accepted.</p>
+                    </div>
+                    <div v-else-if="isRequestToJoinVibeRejected(notification)">
+                        <p>Your request to join has been rejected.</p>
+                    </div>
+                    <div v-else-if="userLeftVibe(notification)">
+                        <p>'{{ notification.data.user_display_name }}' has left.</p>
+                    </div>
+                    <div v-else-if="userJoinedVibe(notification)">
+                        <p>'{{ notification.data.user_display_name }}' has joined.</p>
+                    </div>
+                    <div v-else-if="isRemovedFromVibe(notification)">
+                        <p>You have been removed from this vibe by the owner.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -38,6 +36,8 @@
     import vibes from '../../core/vibes.js';
 
     export default {
+        props: ['notifications'],
+
         data() {
             return {
                 user: user,
@@ -46,12 +46,11 @@
         },
 
         created() {
-            user.getNotifications();
             user.getID()
                 .then(() => {
                     Echo.private('App.User.' + user.id)
                         .notification((notification) => {
-                            user.notifications.unshift(notification.data);
+                            this.notifications.unshift(notification.data);
                         });
                 });
         },
@@ -79,6 +78,13 @@
 
             userJoinedVibe(notification) {
                 return notification.type === 'App\\Notifications\\JoinedVibe';
+            },
+
+            notificationsIsEmpty() {
+                if(this.notifications == null) {
+                    return false;
+                }
+                return Object.keys(this.notifications).length === 0;
             },
         }
     }

@@ -64,8 +64,8 @@
         <main class="py-4">
             <div class="container">
                 <div>
-                    <user-notifications></user-notifications>
-                    <br><br>
+                    {{--<user-notifications></user-notifications>--}}
+                    {{--<br><br>--}}
 
                     <create-vibe></create-vibe>
                     <br><br>

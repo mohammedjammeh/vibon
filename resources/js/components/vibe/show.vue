@@ -3,6 +3,7 @@
         <div v-if="this.vibes.readyToShow()">
             <div v-if="this.vibes.message !== '' ">
                 <p v-text="this.vibes.message"></p>
+                <br>
             </div>
 
             <div v-if="!this.editMode">
@@ -16,6 +17,9 @@
                 <p v-else>Manual DJ</p>
             </div>
             <br>
+
+            <user-notifications :notifications="this.vibes.show.notifications"></user-notifications>
+            <br><br>
 
             <div v-if="this.vibes.show.destroyable">
                 <div v-if="this.editMode">
@@ -112,7 +116,7 @@
                 </div>
             </div>
 
-            <div v-if="!this.vibes.show.destroyable">
+            <div v-else>
                 <div v-if="this.vibes.show.currentUserIsAMember">
                     <form method="POST" :action="vibes.routes.leaveVibe(this.id)" @submit.prevent="onLeaveVibeSubmit">
                         <input type="submit" name="vibe-leave" value="Leave Vibe">
@@ -180,10 +184,12 @@
     import playback from '../../core/playback.js';
     import Form from '../../classes/Form.js';
     import track from '../track/vibe-track.vue';
+    import notifications from '../user/notifications.vue';
 
     export default {
         components: {
-            'vibe-track': track
+            'vibe-track': track,
+            'user-notifications': notifications,
         },
 
         data() {

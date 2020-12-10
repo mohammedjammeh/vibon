@@ -33,7 +33,6 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
 
     Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
     Route::get('/user/attributes', 'UserController@attributes')->name('user.attributes');
-    Route::get('/user/notifications', 'UserController@notifications')->name('user.notifications');
 
     Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');
     Route::delete('/join-request/delete/{joinRequest}', 'JoinRequestController@destroy')->name('join-request.destroy');
