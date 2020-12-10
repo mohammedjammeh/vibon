@@ -28,7 +28,6 @@ class SendJoinRequestNotification
      */
     public function handle(JoinRequestSent $event)
     {
-        $joinRequest = $event->joinRequest;
-        $joinRequest->vibe->owner->notify(new RequestToJoinAVibe($joinRequest->user_id, $joinRequest->vibe->id));
+        //
     }
 }

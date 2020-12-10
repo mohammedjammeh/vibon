@@ -15,7 +15,7 @@ class JoinRequestTest extends TestCase
 {
 	use WithFaker, RefreshDatabase;
 
-	public function test_user_can_send_a_request_to_join_a_vibe_and_vibe_owner_will_have_the_notification()
+	public function test_user_can_send_a_request_to_join_a_vibe()
 	{
 		$vibe = factory(Vibe::class)->create();
 		$vibeOwner = factory(User::class)->create();
@@ -26,13 +26,6 @@ class JoinRequestTest extends TestCase
 			'vibe_id' => $vibe->id,
 			'user_id' => $this->user->id
 		]);
-		$vibeOwnerNotification = $vibe->owner->notifications->first();
-		$this->assertDatabaseHas('notifications', [
-			'type' => $vibeOwnerNotification->type,
-			'notifiable_id' => $vibeOwnerNotification->notifiable_id
-		]);
-		$this->assertEquals($vibeOwnerNotification->data['vibe_id'], $vibe->id);
-		$this->assertEquals($vibeOwnerNotification->data['user_id'], $this->user->id);
 	}
 
 	public function test_user_can_cancel_the_request_to_join_a_vibe()
