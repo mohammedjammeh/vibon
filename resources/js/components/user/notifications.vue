@@ -7,10 +7,7 @@
         <div v-else>
             <ul>
                 <li v-for="notification in this.notifications">
-                    <div v-if="isRequestToJoinVibe(notification)">
-                        <p>You have a join request from '{{ notification.data['user_display_name'] }}'.</p>
-                    </div>
-                    <div v-else-if="isRequestToJoinVibeAccepted(notification)">
+                    <div v-if="isRequestToJoinVibeAccepted(notification)">
                         <p>Your request to join has been accepted.</p>
                     </div>
                     <div v-else-if="isRequestToJoinVibeRejected(notification)">
