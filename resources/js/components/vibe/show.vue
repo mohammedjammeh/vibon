@@ -97,7 +97,7 @@
                         <input type="submit" name="playlist" value="Playlist">
                     </form>
                 </div>
-                <br>
+                <br><br>
 
                 <div v-if="this.vibeHasJoinRequests()">
                     <h4>Requests</h4>
@@ -139,8 +139,8 @@
                         </form>
                     </div>
                 </div>
-                <br><br>
             </div>
+            <br><br>
 
             <div>
                 <h4>Members</h4>
@@ -161,6 +161,7 @@
                     </div>
                 </div>
             </div>
+            <br><br>
 
             <div v-if="this.vibeHasTracks()">
                 <h4>Tracks</h4>

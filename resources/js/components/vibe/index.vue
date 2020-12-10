@@ -14,8 +14,14 @@
                 <ul>
                     <li v-for="vibe in filteredAutoVibes">
                         <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            <span v-if="isPlaying(vibe)">{{ vibe.name }} (playing)</span>
-                            <span v-else>{{ vibe.name }}</span>
+                            <span v-if="isPlaying(vibe)">
+                                {{ vibe.name }} - playing
+                                {{ requestsCount(vibe) }}
+                            </span>
+                            <span v-else>
+                                {{ vibe.name }}
+                                {{ requestsCount(vibe) }}
+                            </span>
                         </router-link> <br>
                     </li>
                 </ul>
@@ -27,8 +33,14 @@
                 <ul>
                     <li v-for="vibe in filteredManualVibes">
                         <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            <span v-if="isPlaying(vibe)">{{ vibe.name }} (playing)</span>
-                            <span v-else>{{ vibe.name }}</span>
+                            <span v-if="isPlaying(vibe)">
+                                {{ vibe.name }} - playing
+                                {{ requestsCount(vibe) }}
+                            </span>
+                            <span v-else>
+                                {{ vibe.name }}
+                                {{ requestsCount(vibe) }}
+                            </span>
                         </router-link> <br>
                     </li>
                 </ul>
@@ -73,6 +85,12 @@
 
             isPlaying: function (vibe) {
                 return vibe.id === this.vibes.playingID;
+            },
+
+            requestsCount: function (vibe) {
+                if(vibe.join_requests.length > 0) {
+                    return '(' + vibe.join_requests.length + ')';
+                }
             }
         },
 
