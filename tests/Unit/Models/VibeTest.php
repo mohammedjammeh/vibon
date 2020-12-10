@@ -128,7 +128,7 @@ class VibeTest extends TestCase
         $user = factory(User::class)->create();
         $vibe->users()->attach($user->id, ['owner' => true]);
 
-        $this->post(route('join-request.store', $vibe));
+        $this->post(route('user-vibe.join', $vibe));
 
         $this->actingAs($user);
         $vibeNotification = $vibe->notifications()->first();
