@@ -69,25 +69,6 @@ class VibeTest extends TestCase
         }
     }
 
-    public function test_vibe_show_view_gets_required_data()
-    {
-        $this->markTestSkipped('Irrelevant');
-        $vibe = factory(Vibe::class)->create();
-        $tracks = $vibe->showTracks;
-        $loadedTracks = app(Tracks::class)->load($tracks);
-        $this->get($vibe->path)->assertViewHasAll([
-            'vibe' => app(Playlist::class)->load($vibe),
-            'apiTracks' => app(Tracks::class)->check($loadedTracks)
-        ]);
-    }
-
-    public function test_vibe_is_shown_with_the_right_view()
-    {
-        $this->markTestSkipped('Irrelevant');
-        $vibe = factory(Vibe::class)->create();
-        $this->get($vibe->path)->assertViewIs('vibe.show');
-    }
-
     public function test_vibe_updated_event_is_triggered_when_a_vibe_is_updated()
     {
         Event::fake();
@@ -104,6 +85,4 @@ class VibeTest extends TestCase
         ]);
         Event::assertDispatched(VibeUpdated::class);
     }
-
-
 }

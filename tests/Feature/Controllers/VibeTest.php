@@ -39,24 +39,6 @@ class VibeTest extends TestCase
 		]);
 	}
 
-	public function test_vibe_can_be_viewed_by_a_user()
-	{
-	    $this->markTestSkipped('Irrelevant');
-		$vibe = factory(Vibe::class)->create();
-		$this->get($vibe->path)
-			->assertSuccessful()
-			->assertSee($vibe->description);
-	}
-
-    public function test_vibe_edit_page_cannot_be_accessed_by_a_non_member()
-    {
-        $this->markTestSkipped('Irrelevant');
-        $this->withoutExceptionHandling();
-        $this->expectException(AuthorizationException::class);
-        $vibe = factory(Vibe::class)->create();
-        $this->get(route('vibe.edit', [$vibe]));
-    }
-
     public function test_vibe_cannot_be_updated_by_a_non_member()
     {
         $vibe = factory(Vibe::class)->create();

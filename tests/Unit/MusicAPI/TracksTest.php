@@ -25,22 +25,4 @@ class TracksTest extends TestCase
             $this->assertObjectHasAttribute('artists', $trackAPI);
         });
     }
-
-    public function test_the_tracks_check_method_adds_all_the_vibes_of_the_authenticated_user_to_a_track_which_that_track_belongs_to_and_also_adds_that_tracks_vibon_id()
-    {
-        $this->markTestSkipped('Irrelevant');
-        $user = $this->user;
-        $vibe = factory(Vibe::class)->create();
-        $tracks = factory(Track::class, 2)->create();
-        $user->vibes()->attach($vibe->id, ['owner' => false]);
-        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => 0]);
-
-        $tracksAPI = app(Tracks::class)->load($tracks);
-        $tracksChecked = app(Tracks::class)->check($tracksAPI);
-        $tracksChecked->each(function ($trackChecked) use($vibe, $tracks) {
-            $this->assertContains($vibe->id, $trackChecked->vibes);
-            $track = $tracks->where('api_id', $trackChecked->id)->first();
-            $this->assertEquals($track->id, $trackChecked->vibon_id);
-        });
-    }
 }

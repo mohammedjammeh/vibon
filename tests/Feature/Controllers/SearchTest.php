@@ -39,11 +39,4 @@ class SearchTest extends TestCase
             $this->assertContains($track->id, $expectedTracksApiIds);
         }
     }
-
-    public  function test_user_is_redirected_back_if_search_is_empty()
-    {
-        $this->markTestSkipped('Might be Relevant');
-        $response = $this->get(route('search'));
-        $response->assertRedirect(route('index'));
-    }
 }

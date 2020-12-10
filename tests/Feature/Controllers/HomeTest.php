@@ -26,16 +26,4 @@ class HomeTest extends TestCase
     {
         $this->get(route('index'))->assertViewIs('home');
     }
-
-    public function test_home_view_gets_required_data()
-    {
-        $this->markTestSkipped('Irrelevant');
-//        $trackSuggestions = app(Search::class)->tracks('Reggae Banton');
-        $trackSuggestions = app(UserAPI::class)->trackSuggestions();
-        factory(Vibe::class, 2)->create();
-        $this->get(route('index'))->assertViewHasAll([
-            'apiTracks' => app(Tracks::class)->check($trackSuggestions),
-            'vibes' => app(Playlist::class)->loadMany(Vibe::all())
-        ]);
-    }
 }
