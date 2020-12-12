@@ -9,41 +9,30 @@
         </div>
 
         <div v-else>
-            <div>
-                <h5>Auto Vibes</h5>
-                <ul>
-                    <li v-for="vibe in filteredAutoVibes">
-                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            <span v-if="isPlaying(vibe)">
-                                {{ vibe.name }} - playing
-                                {{ requestsCount(vibe) }}
-                            </span>
-                            <span v-else>
-                                {{ vibe.name }}
-                                {{ requestsCount(vibe) }}
-                            </span>
-                        </router-link> <br>
-                    </li>
-                </ul>
+            <h4>My Vibes</h4>
+            <div class="my-vibes">
+                <div class="auto">
+                    <h5>Auto</h5>
+                    <index-list :vibes="ownerAutoVibes"></index-list>
+                </div>
+                <div class="manual">
+                    <h5>Manual</h5>
+                    <index-list :vibes="ownerManualVibes"></index-list>
+                </div>
             </div>
-            <br>
 
-            <div>
-                <h5>Manual Vibes</h5>
-                <ul>
-                    <li v-for="vibe in filteredManualVibes">
-                        <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                            <span v-if="isPlaying(vibe)">
-                                {{ vibe.name }} - playing
-                                {{ requestsCount(vibe) }}
-                            </span>
-                            <span v-else>
-                                {{ vibe.name }}
-                                {{ requestsCount(vibe) }}
-                            </span>
-                        </router-link> <br>
-                    </li>
-                </ul>
+            <br><br>
+
+            <h4>Other Vibes</h4>
+            <div class="other-vibes">
+                <div class="auto">
+                    <h5>Auto</h5>
+                    <index-list :vibes="otherAutoVibes"></index-list>
+                </div>
+                <div class="manual">
+                    <h5>Manual</h5>
+                    <index-list :vibes="otherManualVibes"></index-list>
+                </div>
             </div>
         </div>
 
@@ -53,8 +42,13 @@
 <script>
     import vibes from '../../core/vibes';
     import user from '../../core/user';
+    import indexList from '../partials/index-list';
 
     export default {
+        components: {
+            'index-list': indexList,
+        },
+
         data() {
             return {
                 vibes: vibes,
@@ -70,44 +64,35 @@
             });
         },
 
-        methods: {
-            autoVibes() {
-                return this.vibes.all.filter(vibe => vibe.auto_dj === 1);
-            },
-
-            manualVibes() {
-                return this.vibes.all.filter(vibe => vibe.auto_dj === 0);
-            },
-
-            isShowing: function (vibe) {
-                return vibe.id === this.vibes.showID ? 'showing' : '';
-            },
-
-            isPlaying: function (vibe) {
-                return vibe.id === this.vibes.playingID;
-            },
-
-            requestsCount: function (vibe) {
-                if(vibe.join_requests.length > 0) {
-                    return '(' + vibe.join_requests.length + ')';
-                }
-            }
-        },
-
         computed: {
-            filteredAutoVibes: function() {
-                return this.vibes.all.filter(filteredVibe => filteredVibe.auto_dj)
+            ownerAutoVibes: function() {
+                return this.vibes.all.filter(vibe => vibe.auto_dj && vibe.destroyable)
             },
 
-            filteredManualVibes: function () {
-                return this.vibes.all.filter(filteredVibe => !filteredVibe.auto_dj);
-            }
+            ownerManualVibes: function () {
+                return this.vibes.all.filter(vibe => !vibe.auto_dj && vibe.destroyable);
+            },
+
+            otherAutoVibes: function() {
+                return this.vibes.all.filter(vibe => vibe.auto_dj  && !vibe.destroyable)
+            },
+
+            otherManualVibes: function () {
+                return this.vibes.all.filter(vibe => !vibe.auto_dj  && !vibe.destroyable);
+            },
         }
     }
 </script>
 
 <style scoped>
-    .showing {
-        color: brown;
+    .my-vibes,
+    .other-vibes {
+        overflow: auto;
+    }
+
+    .auto,
+    .manual {
+        width: 25%;
+        float: left;
     }
 </style>

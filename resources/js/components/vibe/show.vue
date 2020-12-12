@@ -156,7 +156,7 @@
                         <br>
                     </div>
                     <div v-else>
-                        <p>Admin</p>
+                        <p>Owner</p>
                         <br>
                     </div>
                 </div>
