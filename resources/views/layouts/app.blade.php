@@ -62,19 +62,20 @@
         </nav>
 
         <main class="py-4">
-            <div class="container">
-                <div>
+            <div class="container top-container">
+                <div class="vibes-and-playback">
                     <create-vibe></create-vibe>
                     <br><br>
 
                     <vibes></vibes>
                     <br><br>
 
-                    <router-view :key="$route.fullPath"></router-view>
-                    <br><br>
-
                     <playback></playback>
-                    <br><br>
+                    <br>
+                </div>
+
+                <div class="route-viewer">
+                    <router-view :key="$route.fullPath"></router-view>
                 </div>
             </div>
         </main>

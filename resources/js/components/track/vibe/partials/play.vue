@@ -2,10 +2,10 @@
     <div>
         <a @click="playTrack()">
             <img :src="track.album.images[0].url">
-        </a>)
+        </a>
         <br><br>
 
-        <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
+        <h5 v-text="track.name" style="white-space: nowrap; overflow: hidden;"></h5>
     </div>
 </template>
 
@@ -32,3 +32,9 @@
         }
     }
 </script>
+
+<style>
+    img {
+        max-width: 100%;
+    }
+</style>

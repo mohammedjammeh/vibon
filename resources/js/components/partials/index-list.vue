@@ -1,6 +1,6 @@
 <template>
     <ul>
-        <li v-for="vibe in vibes">
+        <li v-for="vibe in filteredVibes">
             <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
                 <span v-if="isPlaying(vibe)">
                     {{ vibe.name }} - playing
@@ -17,8 +17,16 @@
 </template>
 
 <script>
+    import vibes from '../../core/vibes';
+
     export default {
-        props: ['vibes'],
+        props: ['filteredVibes'],
+
+        data() {
+            return {
+            vibes: vibes
+        }
+    },
 
         methods: {
             isShowing: function (vibe) {
@@ -40,11 +48,10 @@
 
 <style scoped>
     .showing {
-        color: brown;
+        color: #800000;
     }
 
     ul {
-        /*list-style-position: inside;*/
         padding: 0;
         margin: 0;
         list-style-type: none;
