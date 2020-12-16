@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h4>Notifications</h4>
         <div v-if="this.notificationsIsEmpty()">
             <p>No notifications yet..</p>
         </div>
@@ -86,3 +87,11 @@
         }
     }
 </script>
+
+<style scoped>
+    ul {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+</style>

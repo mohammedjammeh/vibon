@@ -3,18 +3,20 @@
         <play :track="track" :vibe="vibe"></play>
 
         <div>
-            <h4>Manual Vibes</h4>
+            <p>Manual</p>
             <div v-for="userVibeID in user.manualVibesIDs">
                 <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" v-if="track.vibes.includes(userVibeID)"></remove-button>
                 <add-button :userVibeID="userVibeID" :trackID="track.id" v-else></add-button>
             </div>
 
-            <h4>Auto Vibes</h4>
+            <p>Auto</p>
             <div v-for="userVibeID in user.autoVibesIDs">
                 <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" v-if="track.vibes.includes(userVibeID)"></remove-button>
                 <add-button :userVibeID="userVibeID" :trackID="track.id" v-else></add-button>
             </div>
         </div>
+
+        <br>
 
         <div v-if="!vibe.auto_dj">
             <downvote-button  :vibe="vibe" :track="track" v-if="track.is_voted_by_user"></downvote-button>

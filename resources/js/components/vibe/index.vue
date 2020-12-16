@@ -9,29 +9,43 @@
         </div>
 
         <div v-else>
-            <h4>My Vibes</h4>
+            <h5>My vibes:</h5>
             <div class="my-vibes">
                 <div class="auto">
-                    <h5>Auto</h5>
-                    <index-list :vibes="ownerAutoVibes"></index-list>
+                    <p>Auto</p>
+                    <index-list :filtered-vibes="ownerAutoVibes"></index-list>
                 </div>
                 <div class="manual">
-                    <h5>Manual</h5>
-                    <index-list :vibes="ownerManualVibes"></index-list>
+                    <p>Manual</p>
+                    <index-list :filtered-vibes="ownerManualVibes"></index-list>
                 </div>
             </div>
 
-            <br><br>
+            <hr>
 
-            <h4>Other Vibes</h4>
-            <div class="other-vibes">
+            <h5>Member of:</h5>
+            <div class="my-vibes">
                 <div class="auto">
-                    <h5>Auto</h5>
-                    <index-list :vibes="otherAutoVibes"></index-list>
+                    <p>Auto</p>
+                    <index-list :filtered-vibes="memberOfAutoVibes"></index-list>
                 </div>
                 <div class="manual">
-                    <h5>Manual</h5>
-                    <index-list :vibes="otherManualVibes"></index-list>
+                    <p>Manual</p>
+                    <index-list :filtered-vibes="memberOfManualVibes"></index-list>
+                </div>
+            </div>
+
+            <hr>
+
+            <h5>Others to join:</h5>
+            <div class="other-vibes">
+                <div class="auto">
+                    <p>Auto</p>
+                    <index-list :filtered-vibes="otherAutoVibes"></index-list>
+                </div>
+                <div class="manual">
+                    <p>Manual</p>
+                    <index-list :filtered-vibes="otherManualVibes"></index-list>
                 </div>
             </div>
         </div>
@@ -73,12 +87,20 @@
                 return this.vibes.all.filter(vibe => !vibe.auto_dj && vibe.destroyable);
             },
 
+            memberOfAutoVibes: function() {
+                return this.vibes.all.filter(vibe => vibe.auto_dj && !vibe.destroyable && vibe.currentUserIsAMember)
+            },
+
+            memberOfManualVibes: function () {
+                return this.vibes.all.filter(vibe => !vibe.auto_dj && !vibe.destroyable && vibe.currentUserIsAMember);
+            },
+
             otherAutoVibes: function() {
-                return this.vibes.all.filter(vibe => vibe.auto_dj  && !vibe.destroyable)
+                return this.vibes.all.filter(vibe => vibe.auto_dj  && !vibe.currentUserIsAMember)
             },
 
             otherManualVibes: function () {
-                return this.vibes.all.filter(vibe => !vibe.auto_dj  && !vibe.destroyable);
+                return this.vibes.all.filter(vibe => !vibe.auto_dj  && !vibe.currentUserIsAMember);
             },
         }
     }
@@ -92,7 +114,13 @@
 
     .auto,
     .manual {
-        width: 25%;
+        width: 50%;
         float: left;
+    }
+
+    .auto p,
+    .manual p {
+        margin-bottom: 3px;
+        font-weight: bold;
     }
 </style>
