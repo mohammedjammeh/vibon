@@ -6,7 +6,6 @@ use App\Events\VibeDeleted;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\MusicAPI\Playlist;
-use App\MusicAPI\Tracks as TracksAPI;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\Http\Requests\StoreVibe;
