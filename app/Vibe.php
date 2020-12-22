@@ -31,9 +31,14 @@ class Vibe extends Model
         return $this->belongsToMany(Track::class)->withPivot('auto_related')->withTimestamps();
     }
 
-    public function joinRequests() 
+    public function joinRequests()
     {
         return $this->hasMany(JoinRequest::class)->with('user');
+    }
+
+    public function pendingTracks()
+    {
+        return $this->hasMany(PendingVibeTrack::class);
     }
 
     public function votes()
