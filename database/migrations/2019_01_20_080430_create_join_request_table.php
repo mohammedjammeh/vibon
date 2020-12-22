@@ -15,8 +15,13 @@ class CreateJoinRequestTable extends Migration
     {
         Schema::create('join_requests', function (Blueprint $table) {
             $table->increments('id');
+
             $table->unsignedInteger('vibe_id');
             $table->unsignedInteger('user_id');
+
+            $table->foreign('vibe_id')->references('id')->on('vibes')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
