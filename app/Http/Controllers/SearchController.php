@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\MusicAPI\Search;
-use App\MusicAPI\Tracks as TracksAPI;
+use App\Traits\VibeShowTrait;
 
 class SearchController extends Controller
 {
+    use VibeShowTrait;
+
     public function search($input)
     {
         $tracks = app(Search::class)->tracks($input);
-        return  app(TracksAPI::class)->updateTracksVibonInfo($tracks);
+        return  $this->updateTracksVibonInfo($tracks);
     }
 }

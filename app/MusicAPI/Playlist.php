@@ -33,16 +33,12 @@ class Playlist
 
     public function addTracks($vibe, $tracksId)
     {
-        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->addTracksToPlaylist($vibe->api_id, $tracksId);
-        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
     public function deleteTrack($vibe, $trackId)
     {
-        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->deleteTrackFromPlaylist($vibe->api_id, $trackId);
-        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
     public function replaceTracks($vibe, $tracksIDs)
@@ -52,9 +48,7 @@ class Playlist
 
     public function reorderTracks($vibe, $rangeStart, $insertBefore)
     {
-        app(User::class)->setAccessToken($vibe->owner->access_token);
         $this->api->reorderPlaylistTracks($vibe->api_id, $rangeStart, $insertBefore);
-        app(User::class)->setAccessToken(auth()->user()->access_token);
     }
 
     public function loadMany($vibes)
@@ -71,18 +65,15 @@ class Playlist
         $vibe->name = $playlist->name;
         $vibe->uri = $playlist->uri;
         $vibe->description = $playlist->description ?? null;
-
         $vibe->api_tracks = app(Tracks::class)->loadFor($vibe, $playlist);
-
-        $this->checkIfSynced($vibe, $playlist);
+        $vibe->synced = $this->isSynced($vibe, $playlist);
         return $vibe;
     }
 
-    public function checkIfSynced($vibe, $playlist)
+    public function isSynced($vibe, $playlist)
     {
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
         $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track')->pluck('id')->toArray();
-        $vibe->synced = $vibeTracksIDs === $playlistTracksIDs ? true : false;
-        return $vibe;
+        return $vibeTracksIDs === $playlistTracksIDs ? true : false;
     }
 }
