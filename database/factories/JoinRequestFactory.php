@@ -7,10 +7,8 @@ use App\Notifications\RequestToJoinAVibe;
 use Faker\Generator as Faker;
 
 $factory->define(JoinRequest::class, function (Faker $faker) {
-	$vibe = factory(Vibe::class)->create();
-	$user = factory(User::class)->create();
     return [
-		'vibe_id' => $vibe->id,
-		'user_id' => $user->id
+		'vibe_id' => factory(Vibe::class)->create(),
+		'user_id' => factory(User::class)->create(),
     ];
 });
