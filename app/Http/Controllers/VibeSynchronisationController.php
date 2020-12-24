@@ -9,7 +9,6 @@ use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Track;
 use App\AutoDJ\Genre as AutoGenre;
-use App\AutoDJ\Tracks as AutoTracks;
 
 class VibeSynchronisationController extends Controller
 {
@@ -39,8 +38,6 @@ class VibeSynchronisationController extends Controller
 
         $playlistTracksVibeIDs = Track::whereIn('api_id', $playlistTracksIDs)->get()->pluck('id');
         $vibe->tracks()->attach($playlistTracksVibeIDs, ['auto_related' => $vibe->auto_dj]);
-
-        AutoTracks::updateAPI($vibe);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using playlist tracks.';
