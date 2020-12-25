@@ -28,7 +28,7 @@ class Vibe extends Model
 
     public function tracks() 
     {
-        return $this->belongsToMany(Track::class)->withPivot('auto_related')->withTimestamps();
+        return $this->belongsToMany(Track::class)->withPivot(['id', 'auto_related'])->withTimestamps();
     }
 
     public function joinRequests()
@@ -38,7 +38,7 @@ class Vibe extends Model
 
     public function pendingTracks()
     {
-        return $this->hasMany(PendingVibeTrack::class);
+        return $this->hasMany(PendingVibeTrack::class)->with('track');
     }
 
     public function votes()
@@ -90,6 +90,7 @@ class Vibe extends Model
             }])
             ->orderBy('votes_count', 'desc')
             ->orderBy('pivot_created_at', 'asc')
+            ->orderBy('pivot_id', 'asc')
             ->get();
     }
 
