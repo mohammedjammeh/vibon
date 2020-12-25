@@ -19,6 +19,7 @@ class CreatePendingVibeTracksTable extends Migration
             $table->unsignedInteger('track_id');
             $table->unsignedInteger('vibe_id');
             $table->unsignedInteger('user_id');
+            $table->unique(['track_id', 'vibe_id', 'user_id']);
 
             $table->foreign('track_id')->references('id')->on('tracks')->onDelete('cascade');
             $table->foreign('vibe_id')->references('id')->on('vibes')->onDelete('cascade');
