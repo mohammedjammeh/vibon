@@ -21,36 +21,38 @@ class VibeSynchronisationController extends Controller
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using vibe tracks.';
-
         broadcast(new PlaylistSynchronisedWithVibeTracks($vibe, $message))->toOthers();
-
         return $this->showResponse($loadedVibe, $message);
     }
 
     public function updateVibeTracks(Vibe $vibe)
     {
         $vibe->tracks()->where('auto_related', $vibe->auto_dj)->detach();
-
-        $playlistTracks = collect(app(Playlist::class)->get($vibe->api_id)->tracks->items)
-            ->pluck('track');
-        $playlistTracksIDs = $playlistTracks->pluck('id');
-        $this->storeUnstoredPlaylistTracks($playlistTracks);
-
-        $playlistTracksVibeIDs = Track::whereIn('api_id', $playlistTracksIDs)->get()->pluck('id');
-        $vibe->tracks()->attach($playlistTracksVibeIDs, ['auto_related' => $vibe->auto_dj]);
+        $vibe->tracks()->attach($this->getPlaylistTracksVibonIDs($vibe), ['auto_related' => $vibe->auto_dj]);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been synced using playlist tracks.';
-
         broadcast(new VibeSynchronisedWithPlaylistTracks($vibe, $message))->toOthers();
-
         return $this->showResponse($loadedVibe, $message);
     }
 
-    protected function storeUnstoredPlaylistTracks($playlistTracks)
+    protected function getPlaylistTracksVibonIDs($vibe)
     {
-        $playlistTracksNotOnVibe = $playlistTracks->whereNotIn('id', Track::pluck('api_id'));
-        $playlistTracksNotOnVibe->each(function ($track) {
+        $playlistTracks = collect(app(Playlist::class)
+            ->get($vibe->api_id)->tracks->items)
+            ->pluck('track');
+
+        $this->saveUnsavedPlaylistTracks($playlistTracks);
+
+        return $playlistTracks->map(function ($playlistTrack)  {
+            return Track::where('api_id', $playlistTrack->id)->first()->id;
+        })->toArray();
+    }
+
+    protected function saveUnsavedPlaylistTracks($playlistTracks)
+    {
+        $playlistTracksNotOnVibon = $playlistTracks->whereNotIn('id', Track::pluck('api_id'));
+        $playlistTracksNotOnVibon->each(function ($track) {
             $track = Track::create(['api_id' => $track->id]);
             AutoGenre::store($track);
         });
