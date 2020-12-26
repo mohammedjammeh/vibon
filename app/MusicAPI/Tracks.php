@@ -18,29 +18,44 @@ class Tracks
 
     public function loadFor($vibe, $playlist)
     {
-        $tracks = $vibe->showTracks;
         $playlistTracks = collect($playlist->tracks->items)->pluck('track');
 
-        return $this->getTracksFromPlaylist($tracks, $playlistTracks)
-            ->concat($this->getTracksNotOnPlaylist($tracks, $playlistTracks));
+        $tracks = $vibe->showTracks;
+        $pendingTracks = $vibe->pendingTracks->pluck('track');
+        $tracksNotOnPlaylist = $this->tracksNotOnPlaylist($tracks, $playlistTracks);
+
+        $loadedTracks = collect($this->load(
+            $pendingTracks->concat($tracksNotOnPlaylist)
+        ));
+
+        return collect([
+            'pending' => $loadedTracks->whereIn('id', $pendingTracks->pluck('api_id')),
+            'on_playlist' => $this->getVibeTracksFromPlaylist($tracks, $playlistTracks),
+            'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id')),
+            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))
+        ]);
     }
 
     public function load($tracks)
     {
         $tracksIDs = collect($tracks)->pluck('api_id')->toArray();
-        return $this->api->getTracks($tracksIDs)->tracks;
+        return empty($tracksIDs) ? [] : $this->api->getTracks($tracksIDs)->tracks;
     }
 
-    protected function getTracksFromPlaylist($tracks, $playlistTracks)
+    protected function getVibeTracksFromPlaylist($tracks, $playlistTracks)
     {
-        $tracksIDsForAPI = $tracks->pluck('api_id');
-        return $playlistTracks->whereIn('id', $tracksIDsForAPI);
+        $vibesPlaylistTracks = $tracks->map(function ($track) use($playlistTracks) {
+            return $playlistTracks->where('id', $track->api_id)->first();
+        });
+
+        return $vibesPlaylistTracks->filter(function($value, $key) {
+            return  $value !== null;
+        });
     }
 
-    protected function getTracksNotOnPlaylist($tracks, $playlistTracks)
+    protected function tracksNotOnPlaylist($tracks, $playlistTracks)
     {
         $playlistTracksIDs = $playlistTracks->pluck('id');
-        $tracksNotOnPlaylist = $tracks->whereNotIn('api_id', $playlistTracksIDs);
-        return $tracksNotOnPlaylist->isEmpty() ? [] : $this->load($tracksNotOnPlaylist);
+        return $tracks->whereNotIn('api_id', $playlistTracksIDs);
     }
 }

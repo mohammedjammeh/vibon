@@ -14,7 +14,7 @@ class CreateTrackVibeTable extends Migration
     public function up()
     {
         Schema::create('track_vibe', function (Blueprint $table) {
-            $table->primary(['track_id', 'vibe_id', 'auto_related']);
+            $table->increments('id');
 
             $table->unsignedInteger('track_id');
             $table->unsignedInteger('vibe_id');
@@ -22,6 +22,8 @@ class CreateTrackVibeTable extends Migration
 
             $table->foreign('track_id')->references('id')->on('tracks')->onDelete('cascade');
             $table->foreign('vibe_id')->references('id')->on('vibes')->onDelete('cascade');
+
+            $table->unique(['track_id', 'vibe_id', 'auto_related']);
 
             $table->timestamps();
         });

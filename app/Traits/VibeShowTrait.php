@@ -16,8 +16,11 @@ trait VibeShowTrait
         $loadedVibe->hasJoinRequestFromUser = $loadedVibe->hasJoinRequestFrom(auth()->user());
         $loadedVibe->joinRequestFromUser = $loadedVibe->joinRequestFrom(auth()->user());
         $loadedVibe->notifications = $loadedVibe->notifications();
-        $loadedVibe->api_tracks = $loadedVibe->api_tracks->map(function($loadedTrack) use($loadedVibe) {
-            return $this->updateTrackInfo($loadedTrack, $loadedVibe);
+
+        $loadedVibe->api_tracks->each(function ($tracks) use ($loadedVibe) {
+            $tracks->each(function ($track) use ($loadedVibe) {
+                $this->updateTrackInfo($track, $loadedVibe);
+            });
         });
 
         return ['vibe' => $loadedVibe, 'message' => $message];
@@ -32,7 +35,7 @@ trait VibeShowTrait
 
     protected function updateTrackInfo($loadedTrack, $vibe)
     {
-        $track = $vibe->tracks->where('api_id', $loadedTrack->id)->first();
+        $track = Track::firstOrCreate(['api_id' => $loadedTrack->id]);
         $loadedTrack->votes_count = $track->votesCountOn($vibe);
         $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
         $loadedTrack = $this->updateTrackVibonInfo($loadedTrack);

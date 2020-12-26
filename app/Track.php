@@ -36,7 +36,7 @@ class Track extends Model
     public function scopeAutoRelatedTo($query, $vibe) 
     {
         return $query->whereHas('vibes', function($vibeQuery) use($vibe) {
-            return $vibeQuery->where('id', $vibe->id)->where('track_vibe.auto_related', 1);
+            return $vibeQuery->where('vibes.id', $vibe->id)->where('track_vibe.auto_related', 1);
         });
     }
 
