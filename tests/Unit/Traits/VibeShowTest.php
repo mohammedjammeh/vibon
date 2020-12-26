@@ -44,7 +44,10 @@ class VibeShowTest extends TestCase
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
 
-        $this->assertEquals($vibeShow['vibe']->api_tracks->first()->vibon_id, $tracks->first()->id);
+        $this->assertEquals(
+            $vibeShow['vibe']->api_tracks->flatten()->first()->vibon_id,
+            $tracks->first()->id
+        );
     }
 
     public function test_the_show_response_method_adds_the_tracks_vibes_to_the_tracks_of_a_loaded_vibe_based_on_the_current_users_vibes()
@@ -60,7 +63,7 @@ class VibeShowTest extends TestCase
 
         $loadedVibe = app(Playlist::class)->load($vibes->first());
         $vibeShow = $this->showResponse($loadedVibe);
-        $loadedTrack = $vibeShow['vibe']->api_tracks->first();
+        $loadedTrack = $vibeShow['vibe']->api_tracks->flatten()->first();
 
         $this->assertContains($vibes->first()->id, $loadedTrack->vibes);
         $this->assertContains($vibes->last()->id, $loadedTrack->vibes);
@@ -88,7 +91,7 @@ class VibeShowTest extends TestCase
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
-        $loadedTrack = $vibeShow['vibe']->api_tracks->first();
+        $loadedTrack = $vibeShow['vibe']->api_tracks->flatten()->first();
 
         $this->assertContains($pendingVibes->first()->id, $loadedTrack->pending_vibes);
         $this->assertContains($pendingVibes->last()->id, $loadedTrack->pending_vibes);
@@ -107,7 +110,10 @@ class VibeShowTest extends TestCase
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
 
-        $this->assertEquals($vibeShow['vibe']->api_tracks->first()->votes_count, $votes->count());
+        $this->assertEquals(
+            $vibeShow['vibe']->api_tracks->flatten()->first()->votes_count,
+            $votes->count()
+        );
     }
 
     public function test_the_show_response_method_adds_is_voted_by_user_attribute_to_the_tracks_of_a_loaded_vibe_and_returns_true_if_voted_by_user()
@@ -124,7 +130,10 @@ class VibeShowTest extends TestCase
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
 
-        $this->assertEquals($vibeShow['vibe']->api_tracks->first()->is_voted_by_user, true);
+        $this->assertEquals(
+            $vibeShow['vibe']->api_tracks->flatten()->first()->is_voted_by_user,
+            true
+        );
     }
 
     public function test_the_show_response_method_adds_is_voted_by_user_attribute_to_the_tracks_of_a_loaded_vibe_and_returns_false_if_not_voted_by_user()
@@ -140,6 +149,9 @@ class VibeShowTest extends TestCase
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
 
-        $this->assertEquals($vibeShow['vibe']->api_tracks->first()->is_voted_by_user, false);
+        $this->assertEquals(
+            $vibeShow['vibe']->api_tracks->flatten()->first()->is_voted_by_user,
+            false
+        );
     }
 }
