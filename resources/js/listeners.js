@@ -11,13 +11,17 @@ const actions = {
                 vibes.sortVibesOrder();
             });
 
-        if (this.showingVibeIs(data.vibe)) {
+        if (this.showingVibeIs(data.vibe) && this.isReadyToBeDisplayed(data.message)) {
             this.updateMessage(data.message);
         }
     },
 
     showingVibeIs(vibe) {
         return vibes.showID === vibe;
+    },
+
+    isReadyToBeDisplayed(message) {
+        return message !== undefined;
     },
 
     updateMessage(message) {

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import vibes from '../../core/vibes';
+    import vibes from '../../../../core/vibes';
 
     export default {
         props: ['filteredVibes'],
