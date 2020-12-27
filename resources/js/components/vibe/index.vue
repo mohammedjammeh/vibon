@@ -56,7 +56,7 @@
 <script>
     import vibes from '../../core/vibes';
     import user from '../../core/user';
-    import indexList from '../partials/index-list';
+    import indexList from './partials/index/list';
 
     export default {
         components: {
