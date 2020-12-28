@@ -29,8 +29,8 @@ class Tracks
         ));
 
         return collect([
+            'playlist' => $playlistTracks,
             'pending' => $loadedTracks->whereIn('id', $pendingTracks->pluck('api_id')),
-            'on_playlist' => $this->getVibeTracksFromPlaylist($tracks, $playlistTracks),
             'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id')),
             'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))
         ]);
@@ -42,6 +42,12 @@ class Tracks
         return empty($tracksIDs) ? [] : $this->api->getTracks($tracksIDs)->tracks;
     }
 
+    protected function tracksNotOnPlaylist($tracks, $playlistTracks)
+    {
+        $playlistTracksIDs = $playlistTracks->pluck('id');
+        return $tracks->whereNotIn('api_id', $playlistTracksIDs);
+    }
+
     protected function getVibeTracksFromPlaylist($tracks, $playlistTracks)
     {
         $vibesPlaylistTracks = $tracks->map(function ($track) use($playlistTracks) {
@@ -51,11 +57,5 @@ class Tracks
         return $vibesPlaylistTracks->filter(function($value, $key) {
             return  $value !== null;
         });
-    }
-
-    protected function tracksNotOnPlaylist($tracks, $playlistTracks)
-    {
-        $playlistTracksIDs = $playlistTracks->pluck('id');
-        return $tracks->whereNotIn('api_id', $playlistTracksIDs);
     }
 }

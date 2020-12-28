@@ -49,7 +49,7 @@ class TracksTest extends TestCase
 
         $this->assertEmpty($emptyTracksAPI);
         $this->assertEquals(
-            $tracksAPI['on_playlist']->pluck('id'),
+            $tracksAPI['playlist']->pluck('id'),
             $vibe->showTracks->pluck('api_id')
         );
     }
@@ -65,7 +65,7 @@ class TracksTest extends TestCase
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
         $emptyTracksAPI = $tracksAPI['pending']
-            ->concat($tracksAPI['on_playlist'])
+            ->concat($tracksAPI['playlist'])
             ->concat($tracksAPI['not_on_vibon']);
 
         $this->assertEmpty($emptyTracksAPI);
@@ -82,7 +82,6 @@ class TracksTest extends TestCase
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
         $emptyTracksAPI = $tracksAPI['pending']
-            ->concat($tracksAPI['on_playlist'])
             ->concat($tracksAPI['not_on_playlist']);
 
         $this->assertEmpty($emptyTracksAPI);

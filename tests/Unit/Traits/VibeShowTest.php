@@ -38,32 +38,40 @@ class VibeShowTest extends TestCase
     public function test_the_show_response_method_adds_vibon_id_attribute_to_the_tracks_of_a_loaded_vibe()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-        $tracks = factory(Track::class, 2)->create();
-        $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
+        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
 
         $this->assertEquals(
-            $vibeShow['vibe']->api_tracks->flatten()->first()->vibon_id,
-            $tracks->first()->id
+            $vibeShow['vibe']->api_tracks['playlist']->first()->vibon_id,
+            $track->id
         );
     }
 
     public function test_the_show_response_method_adds_the_tracks_vibes_to_the_tracks_of_a_loaded_vibe_based_on_the_current_users_vibes()
     {
-        $tracks = factory(Track::class, 2)->create();
         $vibes = factory(Vibe::class, 2)->create(['auto_dj' => false]);
+        $vibeID = array_random([$vibes->first()->api_id, $vibes->last()->api_id]);
+        $playlist = app(Playlist::class)->get($vibeID);
+        $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track')->pluck('id');
 
-        $vibes->first()->users()->attach($this->user->id);
-        $vibes->last()->users()->attach($this->user->id);
+        $tracks = $playlistTracksIDs->map(function ($trackID) {
+            return factory(Track::class)->create(['api_id' => $trackID]);
+        });
+
+        $this->user->vibes()->attach($vibes->pluck('id'));
 
         $vibes->first()->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
         $vibes->last()->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
 
         $loadedVibe = app(Playlist::class)->load($vibes->first());
         $vibeShow = $this->showResponse($loadedVibe);
-        $loadedTrack = $vibeShow['vibe']->api_tracks->flatten()->first();
+        $loadedTrack = $vibeShow['vibe']->api_tracks['playlist']->first();
 
         $this->assertContains($vibes->first()->id, $loadedTrack->vibes);
         $this->assertContains($vibes->last()->id, $loadedTrack->vibes);
@@ -72,8 +80,12 @@ class VibeShowTest extends TestCase
     public function test_the_show_response_method_adds_pending_vibes_attribute_to_the_tracks_of_a_loaded_vibe()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-        $track = factory(Track::class)->create();
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
         $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+
 
         $user = factory(User::class)->create();
         $pendingVibes = factory(Vibe::class, 2)->create();
@@ -91,7 +103,7 @@ class VibeShowTest extends TestCase
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         $vibeShow = $this->showResponse($loadedVibe);
-        $loadedTrack = $vibeShow['vibe']->api_tracks->flatten()->first();
+        $loadedTrack = $vibeShow['vibe']->api_tracks['playlist']->first();
 
         $this->assertContains($pendingVibes->first()->id, $loadedTrack->pending_vibes);
         $this->assertContains($pendingVibes->last()->id, $loadedTrack->pending_vibes);
@@ -100,8 +112,12 @@ class VibeShowTest extends TestCase
     public function test_the_show_response_method_adds_votes_count_attribute_to_the_tracks_of_a_loaded_vibe_based_on_the_vibe()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-        $track = factory(Track::class)->create();
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
+        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+
         $votes = factory(Vote::class, 2)->create([
             'track_id' => $track,
             'vibe_id' => $vibe
@@ -111,7 +127,7 @@ class VibeShowTest extends TestCase
         $vibeShow = $this->showResponse($loadedVibe);
 
         $this->assertEquals(
-            $vibeShow['vibe']->api_tracks->flatten()->first()->votes_count,
+            $vibeShow['vibe']->api_tracks['playlist']->first()->votes_count,
             $votes->count()
         );
     }
@@ -119,8 +135,12 @@ class VibeShowTest extends TestCase
     public function test_the_show_response_method_adds_is_voted_by_user_attribute_to_the_tracks_of_a_loaded_vibe_and_returns_true_if_voted_by_user()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-        $track = factory(Track::class)->create();
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
+        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+
         factory(Vote::class)->create([
             'track_id' => $track,
             'vibe_id' => $vibe,
@@ -131,7 +151,7 @@ class VibeShowTest extends TestCase
         $vibeShow = $this->showResponse($loadedVibe);
 
         $this->assertEquals(
-            $vibeShow['vibe']->api_tracks->flatten()->first()->is_voted_by_user,
+            $vibeShow['vibe']->api_tracks['playlist']->first()->is_voted_by_user,
             true
         );
     }
@@ -139,8 +159,12 @@ class VibeShowTest extends TestCase
     public function test_the_show_response_method_adds_is_voted_by_user_attribute_to_the_tracks_of_a_loaded_vibe_and_returns_false_if_not_voted_by_user()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
-        $track = factory(Track::class)->create();
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
+        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+
         factory(Vote::class)->create([
             'track_id' => $track,
             'vibe_id' => $vibe
