@@ -1,8 +1,8 @@
 <template>
     <div>
-        <a @click="playTrack()">
+        <a @click="playSearchTrack()" title="play">
             <img :src="track.album.images[0].url">
-        </a>)
+        </a>
         <br><br>
 
         <p v-text="track.name" style="white-space: nowrap; overflow: hidden;"></p>
@@ -13,7 +13,7 @@
     import playback from '../../../../core/playback.js';
 
     export default {
-        props: ['vibe', 'track', 'searchTracks'],
+        props: ['track', 'searchTracks'],
 
         data() {
             return {
@@ -22,7 +22,9 @@
         },
 
         methods: {
-            playTrack() {
+            playSearchTrack() {
+                this.playback.type = 'search-tracks-list';
+
                 this.playback.playTracks({
                     playerInstance: this.playback.player,
                     tracks_uris: this.searchTracks.map(track => track.uri),
@@ -32,3 +34,18 @@
         }
     }
 </script>
+
+<style scoped>
+    img {
+        max-width: 100%;
+    }
+
+    div a {
+        transition: all 0.5s;
+    }
+
+    div a:hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+</style>

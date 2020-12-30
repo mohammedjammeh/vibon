@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 let Search = {
     route: '',
     tracks: {},
@@ -7,7 +9,7 @@ let Search = {
         this.route = '/search/' + input;
     },
 
-    searchInput: function(input) {
+    searchInput: _.debounce(function(input) {
         this.setRoute(input);
         return new Promise((resolve, reject) => {
             axios.get(this.route)
@@ -19,7 +21,7 @@ let Search = {
                     reject(error.response.data.errors);
                 });
         });
-    }
+    }, 2000)
 }
 
 export default Search;

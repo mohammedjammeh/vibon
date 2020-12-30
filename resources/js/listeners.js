@@ -133,7 +133,11 @@ Echo.channel('user.removed.from.vibe')
 // Playback
 Echo.channel('playback.updated')
     .listen('PlaybackUpdated', (data) => {
-        playback.updateVibePlayingTrack(data.vibeId, data.trackId)
+        playback.paused = data.isTrackPaused;
+        playback.type = data.type;
+        playback.vibeID = data.vibeId;
+
+        playback.updateVibePlayingTrack(data.trackId)
     });
 
 

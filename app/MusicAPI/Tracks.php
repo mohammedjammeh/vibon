@@ -30,9 +30,9 @@ class Tracks
 
         return collect([
             'playlist' => $playlistTracks,
-            'pending' => $loadedTracks->whereIn('id', $pendingTracks->pluck('api_id')),
-            'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id')),
-            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))
+            'pending' => $loadedTracks->whereIn('id', $pendingTracks->pluck('api_id'))->flatten(),
+            'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id'))->flatten(),
+            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))->flatten()
         ]);
     }
 

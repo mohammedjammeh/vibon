@@ -39,6 +39,7 @@
         },
 
         created() {
+            this.search.tracks = {};
             this.search.searchInput(this.input);
         },
 

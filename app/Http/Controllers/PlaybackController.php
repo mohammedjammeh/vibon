@@ -10,7 +10,8 @@ class PlaybackController extends Controller
         broadcast(new PlaybackUpdated(
             request('vibe_id'),
             request('track_id'),
-            request('is_track_paused')
+            request('is_track_paused'),
+            request('type')
         ))->toOthers();
     }
 }
