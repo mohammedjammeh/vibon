@@ -11,6 +11,9 @@ const playback = {
     paused: false,
     playingTrack: {},
     vibePlayingTrackBroadcastData: {},
+    type: null,
+    vibeID: null,
+
 
     routes: {
         'broadcast': 'playback/broadcast'
@@ -76,75 +79,73 @@ const playback = {
         this.show = true;
         this.paused = state['paused'];
         this.playingTrack = state['track_window']['current_track'];
-        let vibeURI = state['context']['uri'];
         let trackID = this.playingTrack['linked_from']['id']
             ? this.playingTrack['linked_from']['id']
             : this.playingTrack['id'];
 
-        if(this.isNull(vibeURI)) {
+        if(this.type === 'search-tracks-list') {
+            this.vibes.playingID = null;
             this.updateSearchPlayingTrack(trackID);
             return;
         }
 
-        let vibeID = this.getVibeID(vibeURI);
-        this.updateVibePlayingTrack(vibeID, trackID);
-        this.broadcastVibePlayingTrack(vibeID, trackID);
+        this.updateVibePlayingTrack(trackID);
+        this.broadcastVibePlayingTrack(trackID);
     },
 
-    isNull(vibeURI) {
-        return vibeURI === null;
-    },
 
     updateSearchPlayingTrack(trackID) {
         this.search.playingTrack = trackID;
     },
 
-    updateVibePlayingTrack(vibeID, trackID) {
-        if(Object.keys(this.vibes.all).length > 0) {
-            this.vibes.all.map((vibe) => {
-                if(this.getVibeID(vibe.uri) === vibeID) {
-                    vibe.api_tracks.forEach(track => {
-                        if(track.id === trackID) {
-                            this.vibes.playingTracks[vibe.id] = track.id;
-                        }
-                    });
-
-                    this.vibes.playingID = vibe.id;
-                }
-            });
+    updateVibePlayingTrack(trackID) {
+        if(this.type === 'vibe-playlist') {
+            this.updateVibePlaylistPlayingTrack(trackID);
         }
+
+        if(this.type === 'vibe-other') {
+            this.updateVibeOtherPlayingTrack(trackID);
+        }
+
+        this.vibes.playingID = this.vibeID;
     },
 
-    getVibeID(vibeURI) {
-        let splittedUri = vibeURI.split(':');
-        let lastIndex = splittedUri.length - 1;
-        return splittedUri[lastIndex];
+    updateVibePlaylistPlayingTrack(trackID) {
+        let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
+        vibe.api_tracks.playlist.forEach(track => {
+            if(track.id === trackID) {
+                this.vibes.playingTracks[vibe.id] = track.id;
+            }
+        });
     },
 
-    broadcastVibePlayingTrack(vibeID, trackID) {
-        if(this.vibePlayingTrackBroadcastDataIsNotDifferent(vibeID, trackID)) {
+    updateVibeOtherPlayingTrack(trackID) {
+        let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
+        let pendingTracks = vibe.api_tracks.pending;
+        let notOnPlaylistTracks = vibe.api_tracks.not_on_playlist;
+        let otherTracks = pendingTracks.concat(notOnPlaylistTracks);
+
+        otherTracks.forEach(track => {
+            if(track.id === trackID) {
+                this.vibes.playingTracks[vibe.id] = track.id;
+            }
+        });
+    },
+
+    broadcastVibePlayingTrack(trackID) {
+        if(this.vibePlayingTrackBroadcastDataIsNotDifferent(trackID)) {
             return;
         }
 
-        this.sendBroadcastDataToServer(vibeID, trackID);
+        this.sendBroadcastDataToServer(trackID);
     },
 
-    sendBroadcastDataToServer: _.debounce(function(vibeID, trackID) {
-        this.vibePlayingTrackBroadcastData['vibe_id'] = vibeID;
-        this.vibePlayingTrackBroadcastData['track_id'] = trackID;
-        this.vibePlayingTrackBroadcastData['is_track_paused'] = this.paused;
-        axios.post(this.routes.broadcast, this.vibePlayingTrackBroadcastData)
-            .then(response => {})
-            .catch(error => {
-                console.log(error.response.data.errors);
-            });
-    }, 500),
-
-    vibePlayingTrackBroadcastDataIsNotDifferent(vibeID, trackID) {
+    vibePlayingTrackBroadcastDataIsNotDifferent(trackID) {
         if(this.vibePlayingTrackBroadcastDataHasRightKeysSet()) {
-            return this.vibePlayingTrackBroadcastData['vibe_id'] === vibeID &&
-                this.vibePlayingTrackBroadcastData['track_id'] === trackID &&
-                this.vibePlayingTrackBroadcastData['is_track_paused'] === this.paused;
+            return this.vibePlayingTrackBroadcastData['track_id'] === trackID &&
+                this.vibePlayingTrackBroadcastData['vibe_id'] === this.vibeID &&
+                this.vibePlayingTrackBroadcastData['is_track_paused'] === this.paused &&
+                this.vibePlayingTrackBroadcastData['type'] === this.type;
         }
 
         return false;
@@ -153,8 +154,22 @@ const playback = {
     vibePlayingTrackBroadcastDataHasRightKeysSet() {
         return this.vibePlayingTrackBroadcastData.hasOwnProperty('vibe_id') &&
             this.vibePlayingTrackBroadcastData.hasOwnProperty('track_id') &&
-            this.vibePlayingTrackBroadcastData.hasOwnProperty('is_track_paused');
+            this.vibePlayingTrackBroadcastData.hasOwnProperty('is_track_paused') &&
+            this.vibePlayingTrackBroadcastData.hasOwnProperty('type');
     },
+
+    sendBroadcastDataToServer: _.debounce(function(trackID) {
+        this.vibePlayingTrackBroadcastData['track_id'] = trackID;
+        this.vibePlayingTrackBroadcastData['vibe_id'] = this.vibeID;
+        this.vibePlayingTrackBroadcastData['is_track_paused'] = this.paused;
+        this.vibePlayingTrackBroadcastData['type'] = this.type;
+
+        axios.post(this.routes.broadcast, this.vibePlayingTrackBroadcastData)
+            .then(response => {})
+            .catch(error => {
+                console.log(error.response.data.errors);
+            });
+    }, 500),
 
     playOrResume() {
         this.player.resume().then(() => {});

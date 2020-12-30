@@ -7,7 +7,7 @@
 
         <div v-else>
             <ul>
-                <li v-for="notification in this.notifications">
+                <li v-for="notification in this.vibes.show.notifications">
                     <div v-if="isRequestToJoinVibeAccepted(notification)">
                         <p>Join request has been accepted.</p>
                     </div>
@@ -36,8 +36,6 @@
     import vibes from '../../core/vibes.js';
 
     export default {
-        props: ['notifications'],
-
         data() {
             return {
                 user: user,
@@ -50,7 +48,7 @@
                 .then(() => {
                     Echo.private('App.User.' + user.id)
                         .notification((notification) => {
-                            this.notifications.unshift(notification.data);
+                            this.vibes.show.notifications.unshift(notification.data);
                         });
                 });
         },
@@ -81,10 +79,10 @@
             },
 
             notificationsIsEmpty() {
-                if(this.notifications == null) {
+                if(this.vibes.show.notifications == null) {
                     return false;
                 }
-                return Object.keys(this.notifications).length === 0;
+                return Object.keys(this.vibes.show.notifications).length === 0;
             },
         }
     }

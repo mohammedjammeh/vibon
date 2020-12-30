@@ -17,6 +17,7 @@ class PlaybackUpdated implements ShouldBroadcast
     public $vibeId;
     public $trackId;
     public $isTrackPaused;
+    public $type;
 
     /**
      * Create a new event instance.
@@ -24,13 +25,15 @@ class PlaybackUpdated implements ShouldBroadcast
      * @param $vibeId
      * @param $trackId
      * @param $isTrackPaused
+     * @param $type
      * @return void
      */
-    public function __construct($vibeId, $trackId, $isTrackPaused)
+    public function __construct($vibeId, $trackId, $isTrackPaused, $type)
     {
         $this->vibeId = $vibeId;
         $this->trackId = $trackId;
         $this->isTrackPaused = $isTrackPaused;
+        $this->type = $type;
     }
 
     /**
@@ -48,7 +51,8 @@ class PlaybackUpdated implements ShouldBroadcast
         return [
             'vibeId' => $this->vibeId,
             'trackId' => $this->trackId,
-            'isTrackPaused' => $this->isTrackPaused
+            'isTrackPaused' => $this->isTrackPaused,
+            'type' => $this->type
         ];
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="isNotInEditModel">
+        <div v-if="isNotInEditMode">
             <p v-text="this.vibes.show.name"></p>
             <p v-text="this.vibes.show.description"></p>
 
@@ -106,7 +106,7 @@
         },
 
         computed : {
-            isNotInEditModel() {
+            isNotInEditMode() {
                 return !this.editMode;
             }
         }

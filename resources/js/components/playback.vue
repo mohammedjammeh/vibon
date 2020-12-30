@@ -3,7 +3,8 @@
         <div>
             <img :src="playback.playingTrack.album.images[0].url" alt="">
             <br><br>
-            <p v-text="playback.playingTrack.name"></p>
+
+            <p v-text="playbackArtistAndTrackName"></p>
         </div>
 
         <div v-if="playback.paused" class="playback-resume">
@@ -53,6 +54,12 @@
 
             next() {
                 this.playback.next();
+            }
+        },
+
+        computed: {
+            playbackArtistAndTrackName() {
+                return this.playback.playingTrack.artists[0].name + ' - ' + playback.playingTrack.name;
             }
         }
     }

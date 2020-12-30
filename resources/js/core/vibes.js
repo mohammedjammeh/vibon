@@ -328,9 +328,11 @@ let Vibes = {
         });
     },
 
+    // check this later as this functionality will change
     updateTracksVibesDataForRemovedTrack(vibe, trackID, response) {
         if(!vibe.auto_jd) {
-            vibe.api_tracks.forEach(track => {
+            // this might have to be updated to include pending and tracks not on playlist
+            vibe.api_tracks.playlist.forEach(track => {
                 if(track.vibon_id === trackID) {
                     let trackVibeIndex = track.vibes.indexOf(response.vibe.id);
                     if (trackVibeIndex !== -1) {
@@ -341,9 +343,11 @@ let Vibes = {
         }
     },
 
+    // check this later as this functionality will change
     updateTracksVibesDataForAddedTrack(vibe, trackApiId, response) {
         if(!vibe.auto_jd) {
-            vibe.api_tracks.forEach(track => {
+            // this might have to be updated to include pending and tracks not on playlist
+            vibe.api_tracks.playlist.forEach(track => {
                 if(track.id === trackApiId) {
                     track.vibes.push(response.vibe.id);
                 }

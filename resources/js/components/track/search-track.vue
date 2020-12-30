@@ -3,13 +3,13 @@
         <play :track="track" :searchTracks="searchTracks"></play>
 
         <div>
-            <h5>Manual Vibes</h5>
+            <!--<p>Manual Vibes</p>-->
             <div v-for="userVibeID in user.manualVibesIDs">
                 <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" :searchTracks="searchTracks" v-if="track.vibes.includes(userVibeID)"></remove-button>
                 <add-button :userVibeID="userVibeID" :trackID="track.id" :searchTracks="searchTracks" v-else></add-button>
             </div>
 
-            <h5>Auto Vibes</h5>
+            <!--<p>Auto Vibes</p>-->
             <div v-for="userVibeID in user.autoVibesIDs">
                 <remove-button :userVibeID="userVibeID" :trackID="track.vibon_id" :searchTracks="searchTracks" v-if="track.vibes.includes(userVibeID)"></remove-button>
                 <add-button :userVibeID="userVibeID" :trackID="track.id" :searchTracks="searchTracks" v-else></add-button>

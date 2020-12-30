@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form method="POST" :action="vibes.routes.upvoteTrack(vibe.id, track.vibon_id)" @submit.prevent="onUpvoteTrackSubmit(track.vibon_id)">
+        <form method="POST" :action="vibes.routes.upvoteTrack(this.vibes.show.id, track.vibon_id)" @submit.prevent="onUpvoteTrackSubmit(track.vibon_id)">
             <input type="submit" name="vote-store" value="Vote">
             {{ track.votes_count }}
         </form>
@@ -13,7 +13,7 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['vibe', 'track'],
+        props: ['track'],
 
         data() {
             return {
@@ -24,7 +24,7 @@
 
         methods: {
             onUpvoteTrackSubmit(trackID) {
-                this.vibes.upvoteTrack(this.upvoteTrackForm, this.vibe.id, trackID);
+                this.vibes.upvoteTrack(this.upvoteTrackForm, this.vibes.show.id, trackID);
             }
         }
     }
