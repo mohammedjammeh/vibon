@@ -4,11 +4,15 @@ namespace App\Providers;
 
 use App\Events\JoinRequestAccepted;
 use App\Events\JoinRequestRejected;
+use App\Events\PendingVibeTrackAccepted;
+use App\Events\PendingVibeTrackRejected;
 use App\Events\UserJoinedVibe;
 use App\Events\UserLeftVibe;
 use App\Events\UserRemovedFromVibe;
 use App\Listeners\SendJoinRequestAcceptedNotification;
 use App\Listeners\SendJoinRequestRejectedNotification;
+use App\Listeners\SendPendingVibeTrackAcceptedNotification;
+use App\Listeners\SendPendingVibeTrackRejectedNotification;
 use App\Listeners\SendRemovedFromVibeNotification;
 use App\Listeners\SendUserJoinedVibeNotification;
 use App\Listeners\SendUserLeftVibeNotification;
@@ -69,6 +73,13 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserRemovedFromVibe::class => [
             SendRemovedFromVibeNotification::class,
+        ],
+
+        PendingVibeTrackAccepted::class => [
+            SendPendingVibeTrackAcceptedNotification::class,
+        ],
+        PendingVibeTrackRejected::class => [
+            SendPendingVibeTrackRejectedNotification::class,
         ],
     ];
 
