@@ -10,6 +10,12 @@ class PendingVibeTrack extends Pivot
 
     protected $table = 'pending_vibe_tracks';
 
+    protected $casts = [
+        'track_id' => 'integer',
+        'vibe_id' => 'integer',
+        'user_id' => 'integer'
+    ];
+
     public function track()
     {
         return $this->belongsTo(Track::class);
