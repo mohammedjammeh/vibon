@@ -66,6 +66,13 @@ let Vibes = {
             return '/track-vibe/vibe/' + vibeID + '/track-api/' + trapApiId;
         },
 
+        'pendTrack': function (vibeID, trapApiId) {
+            return '/pending-vibe-track/vibe/' + vibeID + '/track-api/' + trapApiId;
+        },
+        'cancelPendTrack': function (pendingTrackID) {
+            return '/pending-vibe-track/delete/' + pendingTrackID;
+        },
+
         'upvoteTrack': function (vibeID, trackID) {
             return '/vote/vibe/' + vibeID + '/track/' + trackID;
         },
@@ -240,26 +247,57 @@ let Vibes = {
             .catch(errors => console.log(errors));
     },
 
+    // check
     removeTrack: function (form, vibeID, trackID) {
         form.delete(this.routes.removeTrack(vibeID, trackID))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updateTracksVibesDataForRemovedTrack(vibe, trackID, response);
-                    return vibe.id === response.vibe.id ? response.vibe : vibe;
-                });
-                this.updateShowData();
+                // this.all = this.all.map((vibe) => {
+                //     this.updateTracksVibesDataForRemovedTrack(vibe, trackID, response);
+                //     return vibe.id === response.vibe.id ? response.vibe : vibe;
+                // });
+                // this.updateShowData();
             })
             .catch(errors => console.log(errors));
     },
 
+    // check
     addTrack: function (form, vibeID, trackApiId) {
         form.post(this.routes.addTrack(vibeID, trackApiId))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updateTracksVibesDataForAddedTrack(vibe, trackApiId, response);
-                    return vibe.id === response.vibe.id ? response.vibe : vibe;
-                });
-                this.updateShowData();
+                // this.all = this.all.map((vibe) => {
+                //     this.updateTracksVibesDataForAddedTrack(vibe, trackApiId, response);
+                //     return vibe.id === response.vibe.id ? response.vibe : vibe;
+                // });
+                // this.updateShowData();
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    // check
+    pendTrack: function (form, vibeID, trackApiId) {
+        form.post(this.routes.pendTrack(vibeID, trackApiId))
+            .then(response => {
+                console.log(trackApiId + ' pended')
+                // this.all = this.all.map((vibe) => {
+                //     this.updateTracksVibesDataForAddedTrack(vibe, trackApiId, response);
+                //     return vibe.id === response.vibe.id ? response.vibe : vibe;
+                // });
+                // this.updateShowData();
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    // check
+    cancelPendTrack: function (form, pendingTrackID) {
+        form.delete(this.routes.cancelPendTrack(pendingTrackID))
+            .then(response => {
+                console.log(response);
+                // console.log(pendingTrackID + ' canceled')
+                // this.all = this.all.map((vibe) => {
+                //     this.updateTracksVibesDataForRemovedTrack(vibe, trackID, response);
+                //     return vibe.id === response.vibe.id ? response.vibe : vibe;
+                // });
+                // this.updateShowData();
             })
             .catch(errors => console.log(errors));
     },
@@ -368,6 +406,11 @@ let Vibes = {
 
     isEmpty() {
         return Object.keys(this.all).length === 0;
+    },
+
+    ownedByUser(vibeID) {
+        let vibe = this.all.filter((vibe) => vibe.id === vibeID)[0];
+        return vibe.destroyable;
     }
 };
 

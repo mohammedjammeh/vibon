@@ -44,12 +44,9 @@
         },
 
         created() {
-            user.getID()
-                .then(() => {
-                    Echo.private('App.User.' + user.id)
-                        .notification((notification) => {
-                            this.vibes.show.notifications.unshift(notification.data);
-                        });
+            Echo.private('App.User.' + user.id)
+                .notification((notification) => {
+                    this.vibes.show.notifications.unshift(notification.data);
                 });
         },
 

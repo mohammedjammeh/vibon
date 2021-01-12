@@ -1,9 +1,17 @@
 <template>
     <div>
-        <form method="POST" :action="vibes.routes.addTrack(userVibeID, trackID)" @submit.prevent="onAddTrackSubmit(userVibeID, trackID)">
-            <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)">
-        </form>
-        <br>
+        <div v-if="this.vibes.ownedByUser(vibeID)">
+            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackID)" @submit.prevent="onAddTrackSubmit">
+                <input type="submit" name="track-vibe-add" :value="vibes.getVibeName(vibeID)">
+            </form>
+            <br>
+        </div>
+        <div v-else>
+            <form method="POST" :action="vibes.routes.pendTrack(vibeID, trackID)" @submit.prevent="onPendTrackSubmit">
+                <input type="submit" name="track-vibe-pend" :value="vibes.getVibeName(vibeID)">
+            </form>
+            <br>
+        </div>
     </div>
 </template>
 
@@ -12,18 +20,23 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['userVibeID', 'trackID'],
+        props: ['vibeID', 'trackID'],
 
         data() {
             return {
                 vibes: vibes,
-                addTrackForm: new Form({})
+                addTrackForm: new Form({}),
+                pendTrackForm: new Form({}),
             }
         },
 
         methods: {
-            onAddTrackSubmit(vibeID, trackID) {
-                this.vibes.addTrack(this.addTrackForm, vibeID, trackID);
+            onAddTrackSubmit() {
+                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackID);
+            },
+
+            onPendTrackSubmit() {
+                this.vibes.pendTrack(this.pendTrackForm, this.vibeID, this.trackID);
             }
         }
     }

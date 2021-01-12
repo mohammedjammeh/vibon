@@ -39,8 +39,11 @@ class VibePolicy
 
     protected function policyCheck($user, $vibe, $userVibe)
     {
-        if ($userVibe) {
-            return (int)$userVibe->pivot->user_id === $user->id && (int)$userVibe->pivot->vibe_id === $vibe->id;
+        if (!$userVibe) {
+            return false;
         }
+
+        return (int) $userVibe->pivot->user_id === $user->id &&
+            (int) $userVibe->pivot->vibe_id === $vibe->id;
     }
 }

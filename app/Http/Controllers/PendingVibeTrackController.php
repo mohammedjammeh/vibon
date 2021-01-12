@@ -8,19 +8,26 @@ use App\Events\PendingVibeTrackDeleted;
 use App\Events\PendingVibeTrackRejected;
 use App\MusicAPI\Playlist;
 use App\PendingVibeTrack;
-use App\Track;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
-use Illuminate\Http\Request;
+use App\Repositories\TrackRepo as TrackRepository;
 
 class PendingVibeTrackController extends Controller
 {
     use VibeShowTrait;
 
-    public function store(Vibe $vibe, Track $track)
+    public $trackRepository;
+
+    public function __construct(TrackRepository $trackRepository)
+    {
+        $this->trackRepository = $trackRepository;
+    }
+
+    public function store(Vibe $vibe, $trackApiId)
     {
         $this->authorize('update', $vibe);
 
+        $track = $this->trackRepository->create($trackApiId);
         $pendingVibeTrack = PendingVibeTrack::create([
             'track_id' => $track->id,
             'vibe_id' => $vibe->id,
@@ -48,7 +55,6 @@ class PendingVibeTrackController extends Controller
     {
         $this->authorize('delete', $pendingVibeTrack);
 
-        // notification
         broadcast(new PendingVibeTrackAccepted($pendingVibeTrack))->toOthers();
 
         $pendingVibeTrack->delete();
@@ -63,7 +69,6 @@ class PendingVibeTrackController extends Controller
     {
         $this->authorize('delete', $pendingVibeTrack);
 
-        // notification
         broadcast(new PendingVibeTrackRejected($pendingVibeTrack))->toOthers();
 
         $pendingVibeTrack->delete();
