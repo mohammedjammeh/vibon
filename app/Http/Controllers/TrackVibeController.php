@@ -8,19 +8,23 @@ use App\Track;
 use App\MusicAPI\Playlist;
 use App\Events\TrackVibeStored;
 use App\Events\TrackVibeDestroyed;
-use App\AutoDJ\Genre as AutoGenre;
+use App\Repositories\TrackRepo as TrackRepository;
 
 class TrackVibeController extends Controller
 {
     use VibeShowTrait;
 
+    public $trackRepository;
+
+    public function __construct(TrackRepository $trackRepository)
+    {
+        $this->trackRepository = $trackRepository;
+    }
+
     public function store(Vibe $vibe, $trackApiId)
     {
-        $track = Track::where('api_id', $trackApiId)->first();
-        if (is_null($track)) {
-            $track = Track::create(['api_id' => $trackApiId]);
-            AutoGenre::store($track);
-        }
+        $track = $this->trackRepository->create($trackApiId);
+
         $track->vibes()->attach($vibe->id, ['auto_related' => false]);
         $this->storeOnPlaylist($vibe, $track);
 

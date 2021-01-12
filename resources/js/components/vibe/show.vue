@@ -57,7 +57,10 @@
         },
 
         created() {
-            this.vibes.display(this.id);
+            user.getID()
+                .then(() => {
+                    this.vibes.display(this.id);
+                });
         },
 
         methods: {

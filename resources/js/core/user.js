@@ -47,14 +47,6 @@ const user = {
         });
     },
 
-    addVibeToVibesIDs(vibe) {
-        if(vibe.auto_dj) {
-            this.autoVibesIDs.push((vibe.id));
-            return;
-        }
-        this.manualVibesIDs.push(vibe.id);
-    },
-
     updateVibesIDs(vibe) {
         this.removeVibeFromVibesIDs(vibe.id);
         this.addVibeToVibesIDs(vibe);
@@ -63,6 +55,14 @@ const user = {
     removeVibeFromVibesIDs(vibeID) {
         this.autoVibesIDs = this.autoVibesIDs.filter(id => id !== vibeID);
         this.manualVibesIDs = this.manualVibesIDs.filter(id => id !== vibeID);
+    },
+
+    addVibeToVibesIDs(vibe) {
+        if(vibe.auto_dj) {
+            this.autoVibesIDs.push((vibe.id));
+            return;
+        }
+        this.manualVibesIDs.push(vibe.id);
     },
 
     sortVibesIDsOrder(vibes) {

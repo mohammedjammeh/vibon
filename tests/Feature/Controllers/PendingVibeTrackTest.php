@@ -29,8 +29,8 @@ class PendingVibeTrackTest extends TestCase
         $vibe->users()->attach($this->user);
 
         $response = $this->post(route('pending-vibe-track.store', [
-            'track' => $track,
             'vibe' => $vibe,
+            'track-api' => $track->api_id,
         ]));
 
         $response->assertStatus(Response::HTTP_OK);

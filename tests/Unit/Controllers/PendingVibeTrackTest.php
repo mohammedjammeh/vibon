@@ -30,8 +30,8 @@ class PendingVibeTrackTest extends TestCase
         $vibe->users()->attach($this->user);
 
         $response = $this->post(route('pending-vibe-track.store', [
-            'track' => $track,
             'vibe' => $vibe,
+            'track-api' => $track->api_id,
         ]));
 
         $response->assertStatus(Response::HTTP_OK);
@@ -48,8 +48,8 @@ class PendingVibeTrackTest extends TestCase
         $vibe = factory(Vibe::class)->create();
 
         $response = $this->post(route('pending-vibe-track.store', [
-            'track' => $track,
             'vibe' => $vibe,
+            'track-api' => $track->api_id,
         ]));
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
@@ -68,8 +68,8 @@ class PendingVibeTrackTest extends TestCase
         $vibe->users()->attach($this->user);
 
         $this->post(route('pending-vibe-track.store', [
-            'track' => $track,
             'vibe' => $vibe,
+            'track-api' => $track->api_id,
         ]));
 
         Event::assertDispatched(PendingVibeTrackCreated::class);
