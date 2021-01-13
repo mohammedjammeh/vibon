@@ -18,10 +18,12 @@ class CreateTrackVibeTable extends Migration
 
             $table->unsignedInteger('track_id');
             $table->unsignedInteger('vibe_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->boolean('auto_related')->default(0);
 
             $table->foreign('track_id')->references('id')->on('tracks')->onDelete('cascade');
             $table->foreign('vibe_id')->references('id')->on('vibes')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unique(['track_id', 'vibe_id', 'auto_related']);
 

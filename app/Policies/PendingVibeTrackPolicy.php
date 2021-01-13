@@ -20,6 +20,18 @@ class PendingVibeTrackPolicy
         //
     }
 
+    /**
+     * Determine whether the user can accept the pending vibe track.
+     *
+     * @param  \App\User  $user
+     * @param  \App\PendingVibeTrack  $pendingVibeTrack
+     * @return mixed
+     */
+    public function respond(User $user, PendingVibeTrack $pendingVibeTrack)
+    {
+        return (int) $user->id === (int) $pendingVibeTrack->vibe->owner->id;
+    }
+
 
     /**
      * Determine whether the user can delete the pending vibe track.

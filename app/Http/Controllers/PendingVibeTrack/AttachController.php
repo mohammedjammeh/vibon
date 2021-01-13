@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\PendingVibeTrack;
 
 use App\Events\PendingVibeTrackAccepted;
 use App\Events\PendingVibeTrackCreated;
 use App\Events\PendingVibeTrackDeleted;
 use App\Events\PendingVibeTrackRejected;
+use App\Http\Controllers\Controller;
 use App\MusicAPI\Playlist;
 use App\PendingVibeTrack;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Repositories\TrackRepo as TrackRepository;
 
-class PendingVibeTrackController extends Controller
+class AttachController extends Controller
 {
     use VibeShowTrait;
 
@@ -31,7 +32,8 @@ class PendingVibeTrackController extends Controller
         $pendingVibeTrack = PendingVibeTrack::create([
             'track_id' => $track->id,
             'vibe_id' => $vibe->id,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
+            'attach' => true
         ]);
 
         broadcast(new PendingVibeTrackCreated($pendingVibeTrack))->toOthers();
@@ -53,13 +55,17 @@ class PendingVibeTrackController extends Controller
 
     public function accept(PendingVibeTrack $pendingVibeTrack)
     {
-        $this->authorize('delete', $pendingVibeTrack);
+        $this->authorize('respond', $pendingVibeTrack);
 
         broadcast(new PendingVibeTrackAccepted($pendingVibeTrack))->toOthers();
 
         $pendingVibeTrack->delete();
+
         $pendingVibeTrack->vibe->tracks()
-            ->attach($pendingVibeTrack->track->id, ['auto_related' => false]);
+            ->attach($pendingVibeTrack->track->id, [
+                'user_id' => $pendingVibeTrack->user->id,
+                'auto_related' => false
+            ]);
 
         $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
         return $this->showResponse($loadedVibe);
@@ -67,7 +73,7 @@ class PendingVibeTrackController extends Controller
 
     public function reject(PendingVibeTrack $pendingVibeTrack)
     {
-        $this->authorize('delete', $pendingVibeTrack);
+        $this->authorize('respond', $pendingVibeTrack);
 
         broadcast(new PendingVibeTrackRejected($pendingVibeTrack))->toOthers();
 

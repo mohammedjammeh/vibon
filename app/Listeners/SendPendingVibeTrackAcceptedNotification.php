@@ -29,8 +29,9 @@ class SendPendingVibeTrackAcceptedNotification
     {
         $event->pendingVibeTrack->user
             ->notify(new PendingVibeTrackAcceptedNotification(
-                $event->pendingVibeTrack->vibe->id,
-                $event->pendingVibeTrack->track->id)
-            );
+                $event->pendingVibeTrack->vibe_id,
+                $event->pendingVibeTrack->track_id,
+                $event->pendingVibeTrack->attach
+            ));
     }
 }
