@@ -23,13 +23,18 @@ class TrackVibeController extends Controller
 
     public function store(Vibe $vibe, $trackApiId)
     {
+        $this->authorize('delete', $vibe);
+
         $track = $this->trackRepository->create($trackApiId);
 
-        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+        $track->vibes()->attach($vibe->id, [
+            'user_id' => $vibe->owner->id,
+            'auto_related' => false
+        ]);
+
         $this->storeOnPlaylist($vibe, $track);
 
         broadcast(new TrackVibeStored($vibe))->toOthers();
-
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
     }
@@ -43,6 +48,8 @@ class TrackVibeController extends Controller
 
     public function destroy(Vibe $vibe, Track $track) 
     {
+        $this->authorize('delete', $vibe);
+
         $vibe->tracks()
             ->wherePivot('auto_related', false)
             ->wherePivot('track_id', $track->id)
