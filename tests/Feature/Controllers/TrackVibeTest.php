@@ -18,8 +18,7 @@ class TrackVibeTest extends TestCase
     {
     	$track = factory(Track::class)->create();
     	$vibe = factory(Vibe::class)->create();
-    	$user = factory(User::class)->create();
-    	$vibe->users()->attach($user->id, ['owner' => true]);
+    	$vibe->users()->attach($this->user->id, ['owner' => true]);
 
     	$response = $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
         $responseData = $response->original;
@@ -29,6 +28,7 @@ class TrackVibeTest extends TestCase
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
+    		'user_id' => $vibe->owner->id,
     		'auto_related' => false
     	]);
     }
@@ -37,8 +37,7 @@ class TrackVibeTest extends TestCase
     {
         $newTrackApiId = '328WHEW92NWI21';
     	$vibe = factory(Vibe::class)->create();
-        $user = factory(User::class)->create();
-        $vibe->users()->attach($user->id, ['owner' => true]);
+        $vibe->users()->attach($this->user->id, ['owner' => true]);
 
     	$response = $this->post(route('track-vibe.store', [$vibe, $newTrackApiId]));
         $responseData = $response->original;
@@ -49,6 +48,7 @@ class TrackVibeTest extends TestCase
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
+            'user_id' => $vibe->owner->id,
     		'auto_related' => false
     	]);
     }
@@ -57,9 +57,8 @@ class TrackVibeTest extends TestCase
     {
         $vibe = factory(Vibe::class)->create();
         $track = factory(Track::class)->create();
-        $user = factory(User::class)->create();
         $vibe->tracks()->attach($track->id, ['auto_related' => false]);
-        $vibe->users()->attach($user->id, ['owner' => true]);
+        $vibe->users()->attach($this->user->id, ['owner' => true]);
 
         $response = $this->delete(route('track-vibe.destroy', [
             'vibe' => $vibe->id,
