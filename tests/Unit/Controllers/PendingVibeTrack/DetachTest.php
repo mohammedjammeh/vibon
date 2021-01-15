@@ -142,12 +142,13 @@ class DetachTest extends TestCase
     {
         $track = factory(Track::class)->create();
         $vibe = factory(Vibe::class)->create();
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
-        $vibe->users()->attach($this->user->id, ['owner' => true]);
-
         $pendingVibeTrack = factory(PendingVibeTrack::class)
             ->states('detach')
             ->create(['vibe_id' => $vibe->id, 'track_id' => $track->id]);
+
+        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
+        $vibe->users()->attach($this->user->id, ['owner' => true]);
+
         $response = $this->delete(route('pending-vibe-track-detach.accept', $pendingVibeTrack));
 
         $response->assertStatus(Response::HTTP_OK);
@@ -329,8 +330,6 @@ class DetachTest extends TestCase
 
     public function test_that_user_of_pending_vibe_track_to_detach_receives_notification_when_pending_track_vibe_is_rejected()
     {
-        $this->withoutExceptionHandling();
-
         Notification::fake();
 
         $track = factory(Track::class)->create();
