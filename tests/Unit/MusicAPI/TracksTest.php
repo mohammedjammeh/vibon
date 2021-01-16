@@ -15,20 +15,40 @@ class TracksTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function test_the_tracks_load_for_method_returns_loaded_pending_tracks_of_vibe()
+    public function test_the_tracks_load_for_method_returns_loaded_pending_tracks_to_attach_to_vibe()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
         $playlist = app(Playlist::class)->get($vibe->api_id);
         $tracks = factory(Track::class, 2)->create();
         foreach($tracks as $track) {
-            factory(PendingVibeTrack::class)->create([
-                'vibe_id' => $vibe,
-                'track_id' => $track
-            ]);
+            factory(PendingVibeTrack::class)
+                ->states('attach')
+                ->create([
+                    'vibe_id' => $vibe,
+                    'track_id' => $track
+                ]);
         }
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
-        $this->assertEquals($tracksAPI['pending']->pluck('id'), $tracks->pluck('api_id'));
+        $this->assertEquals($tracksAPI['pending_to_attach']->pluck('id'), $tracks->pluck('api_id'));
+    }
+
+    public function test_the_tracks_load_for_method_returns_loaded_pending_tracks_to_detach_from_vibe()
+    {
+        $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $tracks = factory(Track::class, 2)->create();
+        foreach($tracks as $track) {
+            factory(PendingVibeTrack::class)
+                ->states('detach')
+                ->create([
+                    'vibe_id' => $vibe,
+                    'track_id' => $track
+                ]);
+        }
+
+        $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
+        $this->assertEquals($tracksAPI['pending_to_detach']->pluck('id'), $tracks->pluck('api_id'));
     }
 
     public function test_the_tracks_load_for_method_returns_loaded_vibe_tracks_that_are_on_the_playlist()
@@ -43,7 +63,8 @@ class TracksTest extends TestCase
         }
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
-        $emptyTracksAPI = $tracksAPI['pending']
+        $emptyTracksAPI = $tracksAPI['pending_to_attach']
+            ->concat($tracksAPI['pending_to_detach'])
             ->concat($tracksAPI['not_on_playlist'])
             ->concat($tracksAPI['not_on_vibon']);
 
@@ -64,9 +85,10 @@ class TracksTest extends TestCase
         $vibe->tracks()->attach($tracks->pluck('id'), ['auto_related' => false]);
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
-        $emptyTracksAPI = $tracksAPI['pending']
+        $emptyTracksAPI = $tracksAPI['playlist']
+            ->concat($tracksAPI['pending_to_attach'])
             ->concat($tracksAPI['playlist'])
-            ->concat($tracksAPI['not_on_vibon']);
+            ->concat($tracksAPI['pending_to_detach']);
 
         $this->assertEmpty($emptyTracksAPI);
         $this->assertEquals(
@@ -81,7 +103,8 @@ class TracksTest extends TestCase
         $playlist = app(Playlist::class)->get($vibe->api_id);
 
         $tracksAPI = app(Tracks::class)->loadFor($vibe, $playlist);
-        $emptyTracksAPI = $tracksAPI['pending']
+        $emptyTracksAPI = $tracksAPI['pending_to_attach']
+            ->concat($tracksAPI['pending_to_detach'])
             ->concat($tracksAPI['not_on_playlist']);
 
         $this->assertEmpty($emptyTracksAPI);

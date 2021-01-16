@@ -30,10 +30,10 @@
             <br><br>
         </div>
 
-        <div v-if="this.vibeHasPendingTracks()">
-            <h4>Pending tracks</h4>
+        <div v-if="this.vibeHasPendingTracksToAttach()">
+            <h4>Pending to attach</h4>
             <div class="api-tracks">
-                <div v-for="track in vibes.show.api_tracks.pending">
+                <div v-for="track in vibes.show.api_tracks.pending_to_attach">
                     <vibe-track :track="track" :playlistTrack="false"></vibe-track>
                 </div>
             </div>
@@ -63,8 +63,8 @@
                 return Object.keys(this.vibes.show.api_tracks.playlist).length > 0;
             },
 
-            vibeHasPendingTracks() {
-                return Object.keys(this.vibes.show.api_tracks.pending).length > 0;
+            vibeHasPendingTracksToAttach() {
+                return Object.keys(this.vibes.show.api_tracks.pending_to_attach).length > 0;
             },
 
             vibeHasTracksNotOnPlaylist() {

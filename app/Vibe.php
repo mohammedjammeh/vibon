@@ -94,6 +94,16 @@ class Vibe extends Model
             ->get();
     }
 
+    public function getPendingTracksToAttachAttribute()
+    {
+        return $this->pendingTracks->where('attach', true)->pluck('track');
+    }
+
+    public function getPendingTracksToDetachAttribute()
+    {
+        return $this->pendingTracks->where('attach', false)->pluck('track');
+    }
+
     public function notifications()
     {
         $notifications =  auth()->user()->notificationsFor($this);

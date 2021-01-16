@@ -121,7 +121,7 @@ const playback = {
 
     updateVibeOtherPlayingTrack(trackID) {
         let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
-        let pendingTracks = vibe.api_tracks.pending;
+        let pendingTracks = vibe.api_tracks.pending_to_attach;
         let notOnPlaylistTracks = vibe.api_tracks.not_on_playlist;
         let otherTracks = pendingTracks.concat(notOnPlaylistTracks);
 

@@ -7,7 +7,7 @@
             <br>
         </div>
         <div v-else>
-            <form method="POST" :action="vibes.routes.pendTrack(vibeID, trackID)" @submit.prevent="onPendTrackSubmit">
+            <form method="POST" :action="vibes.routes.pendAttachTrack(vibeID, trackID)" @submit.prevent="onPendAttachTrackSubmit">
                 <input type="submit" name="track-vibe-pend" :value="vibes.getVibeName(vibeID)">
             </form>
             <br>
@@ -20,13 +20,13 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['vibeID', 'trackID'],
+         props: ['vibeID', 'trackID'],
 
         data() {
             return {
                 vibes: vibes,
                 addTrackForm: new Form({}),
-                pendTrackForm: new Form({}),
+                pendAttachTrackForm: new Form({}),
             }
         },
 
@@ -35,8 +35,8 @@
                 this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackID);
             },
 
-            onPendTrackSubmit() {
-                this.vibes.pendTrack(this.pendTrackForm, this.vibeID, this.trackID);
+            onPendAttachTrackSubmit() {
+                this.vibes.pendAttachTrack(this.pendAttachTrackForm, this.vibeID, this.trackID);
             }
         }
     }

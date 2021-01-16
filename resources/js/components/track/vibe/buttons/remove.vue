@@ -1,9 +1,17 @@
 <template>
     <div>
-        <form method="POST" :action="vibes.routes.removeTrack(userVibeID, trackID)" @submit.prevent="onRemoveTrackSubmit(userVibeID, trackID)">
-            <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)" style="background:red;">
-        </form>
-        <br>
+        <div v-if="this.vibes.ownedByUser(vibeID)">
+            <form method="POST" :action="vibes.routes.removeTrack(vibeID, trackID)" @submit.prevent="onRemoveTrackSubmit">
+                <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibeID)">
+            </form>
+            <br>
+        </div>
+        <div v-else>
+            <form method="POST" :action="vibes.routes.pendDetachTrack(vibeID, trackID)" @submit.prevent="onPendDetachTrackSubmit">
+                <input type="submit" name="track-vibe-pend" :value="vibes.getVibeName(vibeID)">
+            </form>
+            <br>
+        </div>
     </div>
 </template>
 
@@ -12,19 +20,30 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['userVibeID', 'trackID'],
+        props: ['vibeID', 'trackID'],
 
         data() {
             return {
                 vibes: vibes,
                 removeTrackForm: new Form({}),
+                pendDetachTrackForm: new Form({}),
             }
         },
 
         methods: {
-            onRemoveTrackSubmit(vibeID, trackVibonID) {
-                this.vibes.removeTrack(this.removeTrackForm, vibeID, trackVibonID);
+            onRemoveTrackSubmit() {
+                this.vibes.removeTrack(this.removeTrackForm, this.vibeID, this.trackID);
+            },
+
+            onPendDetachTrackSubmit() {
+                this.vibes.pendDetachTrack(this.pendDetachTrackForm, this.vibeID, this.trackID);
             }
         }
     }
 </script>
+
+<style scoped>
+    form input {
+        background: red;
+    }
+</style>

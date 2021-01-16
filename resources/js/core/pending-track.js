@@ -16,6 +16,10 @@ const pendingTrack = {
 
     isPendedByUser(pendingTrack) {
         return pendingTrack.user_id === this.user.id;
+    },
+
+    canBeRemovedByUser(pendingTrack, vibeID) {
+        return this.isPendedByUser(pendingTrack) || this.vibes.ownedByUser(vibeID);
     }
 };
 

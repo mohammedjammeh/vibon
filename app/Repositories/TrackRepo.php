@@ -10,7 +10,7 @@ use App\AutoDJ\Genre as AutoGenre;
  */
 class TrackRepo
 {
-    public function create($trackApiId)
+    public function firstOrCreate($trackApiId)
     {
         $track = Track::where('api_id', $trackApiId)->first();
         if(! is_null($track)) {
