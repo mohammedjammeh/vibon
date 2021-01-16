@@ -21,18 +21,20 @@ class Tracks
         $playlistTracks = collect($playlist->tracks->items)->pluck('track');
 
         $tracks = $vibe->showTracks;
-        $pendingTracks = $vibe->pendingTracks->pluck('track');
+        $tracksToAttach = $vibe->pendingTracksToAttach;
+        $tracksToDetach = $vibe->pendingTracksToDetach;
         $tracksNotOnPlaylist = $this->tracksNotOnPlaylist($tracks, $playlistTracks);
 
         $loadedTracks = collect($this->load(
-            $pendingTracks->concat($tracksNotOnPlaylist)
+            $tracksToAttach->concat($tracksToDetach)->concat($tracksNotOnPlaylist)
         ));
 
         return collect([
             'playlist' => $playlistTracks,
-            'pending' => $loadedTracks->whereIn('id', $pendingTracks->pluck('api_id'))->flatten(),
             'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id'))->flatten(),
-            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))->flatten()
+            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))->flatten(),
+            'pending_to_attach' => $loadedTracks->whereIn('id', $tracksToAttach->pluck('api_id'))->flatten(),
+            'pending_to_detach' => $loadedTracks->whereIn('id', $tracksToDetach->pluck('api_id'))->flatten(),
         ]);
     }
 

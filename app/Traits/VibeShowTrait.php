@@ -46,8 +46,8 @@ trait VibeShowTrait
     {
         $loadedTrack->vibon_id = $this->getVibonID($loadedTrack);
         $loadedTrack->vibes = $this->getVibesIDs($loadedTrack);
-        $loadedTrack->pending_vibes = PendingVibeTrack::where('track_id', $loadedTrack->vibon_id)
-            ->pluck('vibe_id')->toArray();
+        $loadedTrack->pending_vibes_to_attach = PendingVibeTrack::where('track_id', $loadedTrack->vibon_id)->where('attach', true)->pluck('vibe_id')->toArray();
+        $loadedTrack->pending_vibes_to_detach = PendingVibeTrack::where('track_id', $loadedTrack->vibon_id)->where('attach', false)->pluck('vibe_id')->toArray();
 
         return $loadedTrack;
     }

@@ -28,7 +28,7 @@ class AttachController extends Controller
     {
         $this->authorize('update', $vibe);
 
-        $track = $this->trackRepository->create($trackApiId);
+        $track = $this->trackRepository->firstOrCreate($trackApiId);
         $pendingVibeTrack = PendingVibeTrack::create([
             'track_id' => $track->id,
             'vibe_id' => $vibe->id,

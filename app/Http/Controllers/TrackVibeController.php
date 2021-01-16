@@ -25,7 +25,7 @@ class TrackVibeController extends Controller
     {
         $this->authorize('delete', $vibe);
 
-        $track = $this->trackRepository->create($trackApiId);
+        $track = $this->trackRepository->firstOrCreate($trackApiId);
 
         $track->vibes()->attach($vibe->id, [
             'user_id' => $vibe->owner->id,

@@ -77,7 +77,7 @@ class VibeShowTest extends TestCase
         $this->assertContains($vibes->last()->id, $loadedTrack->vibes);
     }
 
-    public function test_the_show_response_method_adds_pending_vibes_attribute_to_the_tracks_of_a_loaded_vibe()
+    public function test_the_show_response_method_adds_pending_vibes_to_attach_attribute_to_the_tracks_of_a_loaded_vibe()
     {
         $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
         $playlist = app(Playlist::class)->get($vibe->api_id);
@@ -86,16 +86,15 @@ class VibeShowTest extends TestCase
         $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
         $track->vibes()->attach($vibe->id, ['auto_related' => false]);
 
-
         $user = factory(User::class)->create();
         $pendingVibes = factory(Vibe::class, 2)->create();
         $user->vibes()->attach($pendingVibes->pluck('id'), ['owner' => true]);
-        factory(PendingVibeTrack::class)->create([
+        factory(PendingVibeTrack::class)->states('attach')->create([
            'track_id' => $track,
            'vibe_id' => $pendingVibes->first(),
            'user_id' => $user
         ]);
-        factory(PendingVibeTrack::class)->create([
+        factory(PendingVibeTrack::class)->states('attach')->create([
             'track_id' => $track,
             'vibe_id' => $pendingVibes->last(),
             'user_id' => $user
@@ -105,8 +104,39 @@ class VibeShowTest extends TestCase
         $vibeShow = $this->showResponse($loadedVibe);
         $loadedTrack = $vibeShow['vibe']->api_tracks['playlist']->first();
 
-        $this->assertContains($pendingVibes->first()->id, $loadedTrack->pending_vibes);
-        $this->assertContains($pendingVibes->last()->id, $loadedTrack->pending_vibes);
+        $this->assertContains($pendingVibes->first()->id, $loadedTrack->pending_vibes_to_attach);
+        $this->assertContains($pendingVibes->last()->id, $loadedTrack->pending_vibes_to_attach);
+    }
+
+    public function test_the_show_response_method_adds_pending_vibes_to_detach_attribute_to_the_tracks_of_a_loaded_vibe()
+    {
+        $vibe = factory(Vibe::class)->create(['auto_dj' => false]);
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTrackID = collect($playlist->tracks->items)->pluck('track')->first()->id;
+
+        $track = factory(Track::class)->create(['api_id' => $playlistTrackID]);
+        $track->vibes()->attach($vibe->id, ['auto_related' => false]);
+
+        $user = factory(User::class)->create();
+        $pendingVibes = factory(Vibe::class, 2)->create();
+        $user->vibes()->attach($pendingVibes->pluck('id'), ['owner' => true]);
+        factory(PendingVibeTrack::class)->states('detach')->create([
+            'track_id' => $track,
+            'vibe_id' => $pendingVibes->first(),
+            'user_id' => $user
+        ]);
+        factory(PendingVibeTrack::class)->states('detach')->create([
+            'track_id' => $track,
+            'vibe_id' => $pendingVibes->last(),
+            'user_id' => $user
+        ]);
+
+        $loadedVibe = app(Playlist::class)->load($vibe);
+        $vibeShow = $this->showResponse($loadedVibe);
+        $loadedTrack = $vibeShow['vibe']->api_tracks['playlist']->first();
+
+        $this->assertContains($pendingVibes->first()->id, $loadedTrack->pending_vibes_to_detach);
+        $this->assertContains($pendingVibes->last()->id, $loadedTrack->pending_vibes_to_detach);
     }
 
     public function test_the_show_response_method_adds_votes_count_attribute_to_the_tracks_of_a_loaded_vibe_based_on_the_vibe()

@@ -56,8 +56,13 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
 
     Route::post('/playback/broadcast', 'PlaybackController@broadcast')->name('playback.broadcast.vibe.track');
 
-    Route::post('/pending-vibe-track/vibe/{vibe}/track-api/{track}', 'PendingVibeTrackController@store')->name('pending-vibe-track.store');
-    Route::delete('/pending-vibe-track/delete/{pendingVibeTrack}', 'PendingVibeTrackController@destroy')->name('pending-vibe-track.destroy');
-    Route::delete('/pending-vibe-track/accept/{pendingVibeTrack}', 'PendingVibeTrackController@accept')->name('pending-vibe-track.accept');
-    Route::delete('/pending-vibe-track/reject/{pendingVibeTrack}', 'PendingVibeTrackController@reject')->name('pending-vibe-track.reject');
+    Route::post('/pending-vibe-track-attach/vibe/{vibe}/track-api/{track}', 'PendingVibeTrack\AttachController@store')->name('pending-vibe-track-attach.store');
+    Route::delete('/pending-vibe-track-attach/delete/{pendingVibeTrack}', 'PendingVibeTrack\AttachController@destroy')->name('pending-vibe-track-attach.destroy');
+    Route::delete('/pending-vibe-track-attach/accept/{pendingVibeTrack}', 'PendingVibeTrack\AttachController@accept')->name('pending-vibe-track-attach.accept');
+    Route::delete('/pending-vibe-track-attach/reject/{pendingVibeTrack}', 'PendingVibeTrack\AttachController@reject')->name('pending-vibe-track-attach.reject');
+
+    Route::post('/pending-vibe-track-detach/vibe/{vibe}/track/{track}', 'PendingVibeTrack\DetachController@store')->name('pending-vibe-track-detach.store');
+    Route::delete('/pending-vibe-track-detach/delete/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@destroy')->name('pending-vibe-track-detach.destroy');
+    Route::delete('/pending-vibe-track-detach/accept/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@accept')->name('pending-vibe-track-detach.accept');
+    Route::delete('/pending-vibe-track-detach/reject/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@reject')->name('pending-vibe-track-detach.reject');
 });
