@@ -253,25 +253,11 @@ let Vibes = {
             .catch(errors => console.log(errors));
     },
 
-    removeTrack: function (form, vibeID, trackID) {
-        form.delete(this.routes.removeTrack(vibeID, trackID))
-            .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updateRemovedTrackData(vibe, vibeID, trackID);
-                    return vibe.id === vibeID ? response.vibe : vibe;
-                });
-                this.updateShowData();
-            })
-            .catch(errors => console.log(errors));
-    },
 
     addTrack: function (form, vibeID, trackApiId) {
         form.post(this.routes.addTrack(vibeID, trackApiId))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updatedAddedTrackData(vibe, vibeID, trackApiId);
-                    return vibe.id === vibeID ? response.vibe : vibe;
-                });
+                this.updateTrackData(vibeID, trackApiId, response, this.addVibeToTrackVibes);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -280,10 +266,7 @@ let Vibes = {
     pendAttachTrack: function (form, vibeID, trackApiId) {
         form.post(this.routes.pendAttachTrack(vibeID, trackApiId))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updatePendingAttachData(vibe, vibeID, trackApiId);
-                    return vibe.id === vibeID ? response.vibe : vibe;
-                });
+                this.updateTrackData(vibeID, trackApiId, response, this.addVibeToTrackPendingVibesToAttach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -292,10 +275,16 @@ let Vibes = {
     pendDetachTrack: function (form, vibeID, trackID) {
         form.post(this.routes.pendDetachTrack(vibeID, trackID))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updatePendingDetachData(vibe, vibeID, trackID);
-                    return vibe.id === vibeID ? response.vibe : vibe;
-                });
+                this.updateTrackData(vibeID, trackID, response, this.addVibeToTrackPendingVibesToDetach);
+                this.updateShowData();
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    removeTrack: function (form, vibeID, trackID) {
+        form.delete(this.routes.removeTrack(vibeID, trackID))
+            .then(response => {
+                this.updateTrackData(vibeID, trackID, response, this.removeVibeFromTrackVibes);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -304,10 +293,7 @@ let Vibes = {
     cancelPendingAttachTrack: function (form, pendingTrack) {
         form.delete(this.routes.cancelPendingAttachTrack(pendingTrack.id))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updatePendingAttachDataCancelled(vibe, pendingTrack.vibe_id, pendingTrack.track_id);
-                    return vibe.id === response.vibe.id ? response.vibe : vibe;
-                });
+                this.updateTrackData(pendingTrack.vibe_id, pendingTrack.track_id, response, this.removeVibeFromTrackPendingVibesToAttach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -316,10 +302,7 @@ let Vibes = {
     cancelPendingDetachTrack: function (form, pendingTrack) {
         form.delete(this.routes.cancelPendingDetachTrack(pendingTrack.id))
             .then(response => {
-                this.all = this.all.map((vibe) => {
-                    this.updatePendingDetachDataCancelled(vibe, pendingTrack.vibe_id, pendingTrack.track_id);
-                    return vibe.id === response.vibe.id ? response.vibe : vibe;
-                });
+                this.updateTrackData(pendingTrack.vibe_id, pendingTrack.track_id, response, this.removeVibeFromTrackPendingVibesToDetach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -339,6 +322,56 @@ let Vibes = {
                 this.updateData(response);
             })
             .catch(errors => console.log(errors));
+    },
+
+    addVibeToTrackVibes(vibeID, track) {
+        track.vibes.push(vibeID);
+    },
+
+    addVibeToTrackPendingVibesToAttach(vibeID, track) {
+        track.pending_vibes_to_attach.push(vibeID);
+    },
+
+    addVibeToTrackPendingVibesToDetach(vibeID, track) {
+        track.pending_vibes_to_detach.push(vibeID);
+    },
+
+    removeVibeFromTrackVibes(vibeID, track) {
+        let trackVibeIndex = track.vibes.indexOf(vibeID);
+        if (trackVibeIndex !== -1) {
+            track.vibes.splice(trackVibeIndex, 1);
+        }
+    },
+
+    removeVibeFromTrackPendingVibesToAttach(vibeID, track) {
+        let pendingVibeTrackIndex = track.pending_vibes_to_attach.indexOf(vibeID);
+        if (pendingVibeTrackIndex !== -1) {
+            track.pending_vibes_to_attach.splice(pendingVibeTrackIndex, 1);
+        }
+    },
+
+    removeVibeFromTrackPendingVibesToDetach(vibeID, track) {
+        let pendingVibeTrackIndex = track.pending_vibes_to_detach.indexOf(vibeID);
+        if (pendingVibeTrackIndex !== -1) {
+            track.pending_vibes_to_detach.splice(pendingVibeTrackIndex, 1);
+        }
+    },
+
+    updateTrackData(updatedVibeID, updatedTrackIDorApiID, updateResponse, updateAction) {
+        this.all = this.all.map((vibe) => {
+            if(!vibe.auto_jd) {
+                for(let key in vibe.api_tracks) {
+                    if (vibe.api_tracks.hasOwnProperty(key)) {
+                        vibe.api_tracks[key].forEach(track => {
+                            if(track.vibon_id === updatedTrackIDorApiID || track.id === updatedTrackIDorApiID) {
+                                updateAction(updatedVibeID, track);
+                            }
+                        });
+                    }
+                }
+            }
+            return vibe.id === updateResponse.vibe.id ? updateResponse.vibe : vibe;
+        });
     },
 
     readyToShow() {
@@ -384,107 +417,6 @@ let Vibes = {
                 : vibe;
         });
     },
-
-    updateRemovedTrackData(vibe, vibeID, trackID) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.vibon_id === trackID) {
-                            // this.removeVibeFromTrackVibes(vibeID, track);
-                            let trackVibeIndex = track.vibes.indexOf(vibeID);
-                            if (trackVibeIndex !== -1) {
-                                track.vibes.splice(trackVibeIndex, 1);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    updatedAddedTrackData(vibe, vibeID, trackApiId) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.id === trackApiId) {
-                            track.vibes.push(vibeID);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    updatePendingAttachData(vibe, vibeID, trackApiId) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.id === trackApiId) {
-                            track.pending_vibes_to_attach.push(vibeID);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    updatePendingDetachData(vibe, vibeID, trackID) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.vibon_id === trackID) {
-                            track.pending_vibes_to_detach.push(vibeID);
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    updatePendingAttachDataCancelled(vibe, vibeID, trackID) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.vibon_id === trackID) {
-                            let pendingVibeTrackIndex = track.pending_vibes_to_attach.indexOf(vibeID);
-                            if (pendingVibeTrackIndex !== -1) {
-                                track.pending_vibes_to_attach.splice(pendingVibeTrackIndex, 1);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    updatePendingDetachDataCancelled(vibe, vibeID, trackID) {
-        if(!vibe.auto_jd) {
-            for(let key in vibe.api_tracks) {
-                if (vibe.api_tracks.hasOwnProperty(key)) {
-                    vibe.api_tracks[key].forEach(track => {
-                        if(track.vibon_id === trackID) {
-                            let pendingVibeTrackIndex = track.pending_vibes_to_detach.indexOf(vibeID);
-                            if (pendingVibeTrackIndex !== -1) {
-                                track.pending_vibes_to_detach.splice(pendingVibeTrackIndex, 1);
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    },
-
-    // removeVibeFromTrackVibes(vibeID, track) {
-    //     let trackVibeIndex = track.vibes.indexOf(vibeID);
-    //     if (trackVibeIndex !== -1) {
-    //         track.vibes.splice(trackVibeIndex, 1);
-    //     }
-    // },
 
     sortVibesOrder() {
         let vibesNames = this.all.map((vibe) => vibe.name);
