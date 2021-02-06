@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a v-if="playlistTrack" @click="playPlaylistTrack()" title="play">
+        <a v-if="isPlaylistTrack" @click="playPlaylistTrack()" title="play">
             <img :src="track.album.images[0].url">
         </a>
         <a v-else @click="playVibeOtherTrack()" title="play">
@@ -19,7 +19,7 @@
     import vibes from '../../../../core/vibes.js';
 
     export default {
-        props: ['track', 'playlistTrack'],
+        props: ['track', 'type'],
 
         data() {
             return {
@@ -29,7 +29,7 @@
 
         methods: {
             playPlaylistTrack() {
-                this.playback.type = 'vibe-playlist';
+                this.playback.type = this.type;
                 this.playback.vibeID = vibes.show.id;
 
                 this.playback.playVibe({
@@ -40,12 +40,15 @@
             },
 
             playVibeOtherTrack() {
-                this.playback.type = 'vibe-other';
+                this.playback.type = this.type;
                 this.playback.vibeID = vibes.show.id;
+
+                let tracks = vibes.show.api_tracks[this.type];
+                let trackUris = tracks.map((track) => track.uri);
 
                 this.playback.playTracks({
                     playerInstance: this.playback.player,
-                    tracks_uris: [this.track.uri],
+                    tracks_uris: trackUris,
                     track_uri: this.track.uri
                 });
             }
@@ -54,6 +57,10 @@
         computed: {
             artistAndTrackName() {
                 return this.track.artists[0].name + ' - ' + this.track.name;
+            },
+
+            isPlaylistTrack() {
+                return this.type === 'playlist';
             }
         }
     }

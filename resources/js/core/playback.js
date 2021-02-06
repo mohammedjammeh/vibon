@@ -99,37 +99,46 @@ const playback = {
     },
 
     updateVibePlayingTrack(trackID) {
-        if(this.type === 'vibe-playlist') {
-            this.updateVibePlaylistPlayingTrack(trackID);
-        }
+        // if(this.type === 'playlist') {
+        //     this.updateVibePlaylistPlayingTrack(trackID);
+        // }
 
-        if(this.type === 'vibe-other') {
+        // if(this.type === 'vibe-other') {
             this.updateVibeOtherPlayingTrack(trackID);
-        }
-
+        // }
+        //
         this.vibes.playingID = this.vibeID;
-    },
-
-    updateVibePlaylistPlayingTrack(trackID) {
-        let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
-        vibe.api_tracks.playlist.forEach(track => {
-            if(track.id === trackID) {
-                this.vibes.playingTracks[vibe.id] = track.id;
-            }
-        });
     },
 
     updateVibeOtherPlayingTrack(trackID) {
         let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
-        let pendingTracks = vibe.api_tracks.pending_to_attach;
-        let notOnPlaylistTracks = vibe.api_tracks.not_on_playlist;
-        let otherTracks = pendingTracks.concat(notOnPlaylistTracks);
 
-        otherTracks.forEach(track => {
-            if(track.id === trackID) {
-                this.vibes.playingTracks[vibe.id] = track.id;
+        // let playlist = vibe.api_tracks.playlist;
+        // let notOnVibonTracks = vibe.api_tracks.not_on_vibon;
+        // let notOnPlaylistTracks = vibe.api_tracks.not_on_playlist;
+        // let pendingTracksToAttach = vibe.api_tracks.pending_to_attach;
+        // let pendingTracksToDetach = vibe.api_tracks.pending_to_detach;
+        //
+        // let otherTracks = playlist.concat(notOnVibonTracks).concat(notOnPlaylistTracks).concat(pendingTracksToAttach).concat(pendingTracksToDetach);
+
+        // otherTracks.forEach(track => {
+        //     if(track.id === trackID) {
+        //         this.vibes.playingTracks[vibe.id] = track.id;
+        //     }
+        // });
+
+
+        // make sure 
+        for(let key in vibe.api_tracks) {
+            if (vibe.api_tracks.hasOwnProperty(key)) {
+                vibe.api_tracks[key].forEach(track => {
+                    if(track.id === trackID) {
+                        this.vibes.playingTracks[vibe.id] = track.id;
+                        this.vibes.playingType[vibe.id] = key;
+                    }
+                });
             }
-        });
+        }
     },
 
     broadcastVibePlayingTrack(trackID) {

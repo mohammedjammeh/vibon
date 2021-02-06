@@ -10,6 +10,7 @@ let Vibes = {
 
     user: User,
     playingTracks: {},
+    playingType: {},
     playingID: '',
 
     routes: {
