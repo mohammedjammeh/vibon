@@ -257,25 +257,7 @@ let Vibes = {
     addTrack: function (form, vibeID, trackApiId) {
         form.post(this.routes.addTrack(vibeID, trackApiId))
             .then(response => {
-                this.updateTrackData(vibeID, trackApiId, response, this.addVibeToTrackVibes);
-                this.updateShowData();
-            })
-            .catch(errors => console.log(errors));
-    },
-
-    pendAttachTrack: function (form, vibeID, trackApiId) {
-        form.post(this.routes.pendAttachTrack(vibeID, trackApiId))
-            .then(response => {
-                this.updateTrackData(vibeID, trackApiId, response, this.addVibeToTrackPendingVibesToAttach);
-                this.updateShowData();
-            })
-            .catch(errors => console.log(errors));
-    },
-
-    pendDetachTrack: function (form, vibeID, trackID) {
-        form.post(this.routes.pendDetachTrack(vibeID, trackID))
-            .then(response => {
-                this.updateTrackData(vibeID, trackID, response, this.addVibeToTrackPendingVibesToDetach);
+                this.updateTrackData(response, this.addVibeToTrackVibes);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -284,7 +266,16 @@ let Vibes = {
     removeTrack: function (form, vibeID, trackID) {
         form.delete(this.routes.removeTrack(vibeID, trackID))
             .then(response => {
-                this.updateTrackData(vibeID, trackID, response, this.removeVibeFromTrackVibes);
+                this.updateTrackData(response, this.removeVibeFromTrackVibes);
+                this.updateShowData();
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    pendAttachTrack: function (form, vibeID, trackApiId) {
+        form.post(this.routes.pendAttachTrack(vibeID, trackApiId))
+            .then(response => {
+                this.updateTrackData(response, this.addVibeToTrackPendingVibesToAttach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -293,7 +284,16 @@ let Vibes = {
     cancelPendingAttachTrack: function (form, pendingTrack) {
         form.delete(this.routes.cancelPendingAttachTrack(pendingTrack.id))
             .then(response => {
-                this.updateTrackData(pendingTrack.vibe_id, pendingTrack.track_id, response, this.removeVibeFromTrackPendingVibesToAttach);
+                this.updateTrackData(response, this.removeVibeFromTrackPendingVibesToAttach);
+                this.updateShowData();
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    pendDetachTrack: function (form, vibeID, trackID) {
+        form.post(this.routes.pendDetachTrack(vibeID, trackID))
+            .then(response => {
+                this.updateTrackData(response, this.addVibeToTrackPendingVibesToDetach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -302,7 +302,7 @@ let Vibes = {
     cancelPendingDetachTrack: function (form, pendingTrack) {
         form.delete(this.routes.cancelPendingDetachTrack(pendingTrack.id))
             .then(response => {
-                this.updateTrackData(pendingTrack.vibe_id, pendingTrack.track_id, response, this.removeVibeFromTrackPendingVibesToDetach);
+                this.updateTrackData(response, this.removeVibeFromTrackPendingVibesToDetach);
                 this.updateShowData();
             })
             .catch(errors => console.log(errors));
@@ -357,20 +357,20 @@ let Vibes = {
         }
     },
 
-    updateTrackData(updatedVibeID, updatedTrackIDorApiID, updateResponse, updateAction) {
+    updateTrackData(response, action) {
         this.all = this.all.map((vibe) => {
             if(!vibe.auto_jd) {
                 for(let key in vibe.api_tracks) {
                     if (vibe.api_tracks.hasOwnProperty(key)) {
                         vibe.api_tracks[key].forEach(track => {
-                            if(track.vibon_id === updatedTrackIDorApiID || track.id === updatedTrackIDorApiID) {
-                                updateAction(updatedVibeID, track);
+                            if(track.vibon_id === response.track.id) {
+                                action(response.vibe.id, track);
                             }
                         });
                     }
                 }
             }
-            return vibe.id === updateResponse.vibe.id ? updateResponse.vibe : vibe;
+            return vibe.id === response.vibe.id ? response.vibe : vibe;
         });
     },
 

@@ -3,8 +3,8 @@
 namespace Tests\Unit\Controllers;
 
 use App\Events\PendingVibeTrackAccepted;
-use App\Events\PendingVibeTrackCreated;
-use App\Events\PendingVibeTrackDeleted;
+use App\Events\PendingAttachVibeTrackCreated;
+use App\Events\PendingAttachVibeTrackDeleted;
 use App\Events\PendingVibeTrackRejected;
 use App\Notifications\PendingVibeTrackAcceptedNotification;
 use App\Notifications\PendingVibeTrackRejectedNotification;
@@ -74,7 +74,7 @@ class AttachTest extends TestCase
             'track-api' => $track->api_id,
         ]));
 
-        Event::assertDispatched(PendingVibeTrackCreated::class);
+        Event::assertDispatched(PendingAttachVibeTrackCreated::class);
     }
 
     public function test_that_pending_vibe_track_to_attach_can_be_deleted_by_user_who_created_it()
@@ -137,7 +137,7 @@ class AttachTest extends TestCase
 
         $this->delete(route('pending-vibe-track-attach.destroy', $pendingVibeTrack));
 
-        Event::assertDispatched(PendingVibeTrackDeleted::class);
+        Event::assertDispatched(PendingAttachVibeTrackDeleted::class);
     }
 
     public function test_that_pending_vibe_track_to_attach_can_be_accepted_by_owner_of_vibe()

@@ -28,15 +28,15 @@ class TrackVibeController extends Controller
         $track = $this->trackRepository->firstOrCreate($trackApiId);
 
         $track->vibes()->attach($vibe->id, [
-            'user_id' => $vibe->owner->id,
+//            'user_id' => $vibe->owner->id,
             'auto_related' => false
         ]);
 
         $this->storeOnPlaylist($vibe, $track);
 
-        broadcast(new TrackVibeStored($vibe))->toOthers();
+        broadcast(new TrackVibeStored($track, $vibe))->toOthers();
         $loadedVibe = app(Playlist::class)->load($vibe);
-        return $this->showResponse($loadedVibe);
+        return $this->showResponseWithTrack($loadedVibe, $track);
     }
 
     public function storeOnPlaylist($vibe, $track)
@@ -57,10 +57,9 @@ class TrackVibeController extends Controller
 
         $this->destroyOnPlaylist($vibe, $track);
 
-        broadcast(new TrackVibeDestroyed($vibe))->toOthers();
-
+        broadcast(new TrackVibeDestroyed($track, $vibe))->toOthers();
         $loadedVibe = app(Playlist::class)->load($vibe);
-        return $this->showResponse($loadedVibe);
+        return $this->showResponseWithTrack($loadedVibe, $track);
     }
 
     public function destroyOnPlaylist($vibe, $track)

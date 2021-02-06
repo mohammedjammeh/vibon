@@ -8,6 +8,13 @@ use App\Track;
 
 trait VibeShowTrait
 {
+    public function showResponseWithTrack($loadedVibe, $track)
+    {
+        $response = $this->showResponse($loadedVibe);
+        $response['track'] = $track;
+        return $response;
+    }
+
     public function showResponse($loadedVibe, $message = '')
     {
         $loadedVibe->destroyable = App(VibePolicy::class)->delete(auth()->user(), $loadedVibe);

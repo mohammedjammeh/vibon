@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\PendingVibeTrack;
 
+use App\Events\PendingDetachVibeTrackCreated;
+use App\Events\PendingDetachVibeTrackDeleted;
 use App\Events\PendingVibeTrackAccepted;
-use App\Events\PendingVibeTrackCreated;
-use App\Events\PendingVibeTrackDeleted;
 use App\Events\PendingVibeTrackRejected;
 use App\MusicAPI\Playlist;
 use App\PendingVibeTrack;
@@ -28,22 +28,21 @@ class DetachController extends Controller
             'attach' => false
         ]);
 
-        broadcast(new PendingVibeTrackCreated($pendingVibeTrack))->toOthers();
-
+        broadcast(new PendingDetachVibeTrackCreated($pendingVibeTrack))->toOthers();
         $loadedVibe = app(Playlist::class)->load($vibe);
-        return $this->showResponse($loadedVibe);
+        return $this->showResponseWithTrack($loadedVibe, $track);
     }
 
     public function destroy(PendingVibeTrack $pendingVibeTrack)
     {
         $this->authorize('delete', $pendingVibeTrack);
 
-        broadcast(new PendingVibeTrackDeleted($pendingVibeTrack))->toOthers();
+        broadcast(new PendingDetachVibeTrackDeleted($pendingVibeTrack))->toOthers();
 
         $pendingVibeTrack->delete();
 
         $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
-        return $this->showResponse($loadedVibe);
+        return $this->showResponseWithTrack($loadedVibe, $pendingVibeTrack->track);
     }
 
     public function accept(PendingVibeTrack $pendingVibeTrack)

@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Controllers\PendingVibeTrack;
 
+use App\Events\PendingDetachVibeTrackCreated;
+use App\Events\PendingDetachVibeTrackDeleted;
 use App\Events\PendingVibeTrackAccepted;
-use App\Events\PendingVibeTrackCreated;
-use App\Events\PendingVibeTrackDeleted;
 use App\Events\PendingVibeTrackRejected;
 use App\Notifications\PendingVibeTrackAcceptedNotification;
 use App\Notifications\PendingVibeTrackRejectedNotification;
@@ -75,7 +75,7 @@ class DetachTest extends TestCase
             'track' => $track,
         ]));
 
-        Event::assertDispatched(PendingVibeTrackCreated::class);
+        Event::assertDispatched(PendingDetachVibeTrackCreated::class);
     }
 
     public function test_that_pending_vibe_track_to_detach_can_be_deleted_by_user_who_created_it()
@@ -135,7 +135,7 @@ class DetachTest extends TestCase
         $pendingVibeTrack = factory(PendingVibeTrack::class)->states('detach')->create(['user_id' => $this->user]);
         $this->delete(route('pending-vibe-track-detach.destroy', $pendingVibeTrack));
 
-        Event::assertDispatched(PendingVibeTrackDeleted::class);
+        Event::assertDispatched(PendingDetachVibeTrackDeleted::class);
     }
 
     public function test_that_pending_vibe_track_to_detach_can_be_accepted_by_owner_of_vibe()

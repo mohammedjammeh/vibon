@@ -16,6 +16,15 @@ const actions = {
         }
     },
 
+    updateTrack(data, action) {
+        vibes.get(data.vibe)
+            .then((response) => {
+                response.track = {'id': data.track};
+                vibes.updateTrackData(response, action);
+                vibes.updateShowData();
+            });
+    },
+
     showingVibeIs(vibe) {
         return vibes.showID === vibe;
     },
@@ -65,12 +74,32 @@ Echo.channel('auto.vibe.refreshed')
 // Track Vibe
 Echo.channel('track.vibe.stored')
     .listen('TrackVibeStored', (data) => {
-        actions.updateVibe(data);
+        actions.updateTrack(data, vibes.addVibeToTrackVibes);
     });
 
 Echo.channel('track.vibe.destroyed')
     .listen('TrackVibeDestroyed', (data) => {
-        actions.updateVibe(data);
+        actions.updateTrack(data, vibes.removeVibeFromTrackVibes);
+    });
+
+Echo.channel('pending_attach_vibe_track.created')
+    .listen('PendingAttachVibeTrackCreated', (data) => {
+        actions.updateTrack(data, vibes.addVibeToTrackPendingVibesToAttach);
+    });
+
+Echo.channel('pending_attach_vibe_track.deleted')
+    .listen('PendingAttachVibeTrackDeleted', (data) => {
+        actions.updateTrack(data, vibes.removeVibeFromTrackPendingVibesToAttach);
+    });
+
+Echo.channel('pending_detach_vibe_track.created')
+    .listen('PendingDetachVibeTrackCreated', (data) => {
+        actions.updateTrack(data, vibes.addVibeToTrackPendingVibesToDetach);
+    });
+
+Echo.channel('pending_detach_vibe_track.deleted')
+    .listen('PendingDetachVibeTrackDeleted', (data) => {
+        actions.updateTrack(data, vibes.removeVibeFromTrackPendingVibesToDetach);
     });
 
 
