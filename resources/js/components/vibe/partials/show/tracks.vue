@@ -4,7 +4,7 @@
             <h4>Playlist</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.playlist">
-                    <vibe-track :track="track" :playlistTrack="true"></vibe-track>
+                    <vibe-track :track="track" :type="'playlist'"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -14,7 +14,7 @@
             <h4>Playlist tracks not on vibe</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.not_on_vibon">
-                    <vibe-track :track="track" :playlistTrack="true"></vibe-track>
+                    <vibe-track :track="track" :type="'not_on_vibon'"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -24,7 +24,7 @@
             <h4>Vibe tracks not on playlist</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.not_on_playlist">
-                    <vibe-track :track="track" :playlistTrack="false"></vibe-track>
+                    <vibe-track :track="track" :type="'not_on_playlist'"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -34,7 +34,7 @@
             <h4>Pending to attach</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.pending_to_attach">
-                    <vibe-track :track="track" :playlistTrack="false"></vibe-track>
+                    <vibe-track :track="track" :type="'pending_to_attach'"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -44,7 +44,7 @@
             <h4>Pending to detach</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.pending_to_detach">
-                    <vibe-track :track="track" :playlistTrack="false"></vibe-track>
+                    <vibe-track :track="track" :type="'pending_to_detach'"></vibe-track>
                 </div>
             </div>
             <br><br>

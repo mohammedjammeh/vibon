@@ -1,6 +1,6 @@
 <template>
     <div :class="isPlaying">
-        <play :track="track" :playlistTrack="this.playlistTrack"></play>
+        <play :track="track" :type="type"></play>
 
         <div>
             <div v-for="userVibeID in user.manualVibesIDs">
@@ -62,7 +62,7 @@
 
 
     export default {
-        props: ['track', 'playlistTrack'],
+        props: ['track', 'type'],
 
         components: {
             'play' : play,
@@ -83,7 +83,7 @@
 
         computed : {
             isPlaying() {
-                if(this.vibes.playingTracks[vibes.show.id] === this.track.id) {
+                if(this.vibes.playingTracks[vibes.show.id] === this.track.id && this.vibes.playingType[vibes.show.id] === this.type) {
                     return 'playback-play-track playing';
                 }
 
