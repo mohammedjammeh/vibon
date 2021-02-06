@@ -39,6 +39,16 @@
             </div>
             <br><br>
         </div>
+
+        <div v-if="this.vibeHasPendingTracksToDetach()">
+            <h4>Pending to detach</h4>
+            <div class="api-tracks">
+                <div v-for="track in vibes.show.api_tracks.pending_to_detach">
+                    <vibe-track :track="track" :playlistTrack="false"></vibe-track>
+                </div>
+            </div>
+            <br><br>
+        </div>
     </div>
 </template>
 
@@ -65,6 +75,10 @@
 
             vibeHasPendingTracksToAttach() {
                 return Object.keys(this.vibes.show.api_tracks.pending_to_attach).length > 0;
+            },
+
+            vibeHasPendingTracksToDetach() {
+                return Object.keys(this.vibes.show.api_tracks.pending_to_detach).length > 0;
             },
 
             vibeHasTracksNotOnPlaylist() {
