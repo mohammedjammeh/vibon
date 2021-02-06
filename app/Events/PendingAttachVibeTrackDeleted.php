@@ -10,7 +10,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PendingVibeTrackCreated implements ShouldBroadcast
+class PendingAttachVibeTrackDeleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -34,14 +34,14 @@ class PendingVibeTrackCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('pending_vibe_track.created');
+        return new Channel('pending_attach_vibe_track.deleted');
     }
 
     public function broadcastWith()
     {
         return [
             'vibe' => $this->pendingVibeTrack->vibe->id,
-            'message' => ''
+            'track' => $this->pendingVibeTrack->track->id
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Controllers\PendingVibeTrack;
 
-use App\Events\PendingVibeTrackCreated;
-use App\Events\PendingVibeTrackDeleted;
+use App\Events\PendingDetachVibeTrackCreated;
+use App\Events\PendingDetachVibeTrackDeleted;
 use App\Notifications\PendingVibeTrackAcceptedNotification;
 use App\Notifications\PendingVibeTrackRejectedNotification;
 use App\PendingVibeTrack;
@@ -41,7 +41,7 @@ class DetachTest extends TestCase
             'user_id' => $this->user->id,
             'attach' => false,
         ]);
-        Event::assertDispatched(PendingVibeTrackCreated::class);
+        Event::assertDispatched(PendingDetachVibeTrackCreated::class);
     }
 
     public function test_destroy_method_deletes_a_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_deleted_event()
@@ -60,7 +60,7 @@ class DetachTest extends TestCase
             'user_id' => $this->user->id,
             'attach' => $pendingVibeTrack->attach,
         ]);
-        Event::assertDispatched(PendingVibeTrackDeleted::class);
+        Event::assertDispatched(PendingDetachVibeTrackDeleted::class);
     }
 
     public function test_the_accept_method_accepts_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_accepted_event_to_notify_user()

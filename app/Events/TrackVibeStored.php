@@ -14,16 +14,19 @@ class TrackVibeStored implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $track;
     public $vibe;
 
     /**
      * Create a new event instance.
      *
+     * @param $track
      * @param $vibe
      * @return void
      */
-    public function __construct($vibe)
+    public function __construct($track, $vibe)
     {
+        $this->track = $track;
         $this->vibe = $vibe;
     }
 
@@ -41,7 +44,7 @@ class TrackVibeStored implements ShouldBroadcast
     {
         return [
             'vibe' => $this->vibe->id,
-            'message' => ''
+            'track' => $this->track->id
         ];
     }
 }

@@ -25,6 +25,7 @@ class TrackVibeTest extends TestCase
 
         $this->assertEquals('', $responseData['message']);
         $this->assertEquals($vibe->id, $responseData['vibe']->id);
+        $this->assertEquals($track->id, $responseData['track']->id);
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
@@ -45,6 +46,7 @@ class TrackVibeTest extends TestCase
 
         $this->assertEquals('', $responseData['message']);
         $this->assertEquals($vibe->id, $responseData['vibe']->id);
+        $this->assertEquals($track->id, $responseData['track']->id);
     	$this->assertDatabaseHas('track_vibe', [
     		'track_id' => $track->id,
     		'vibe_id' => $vibe->id,
@@ -68,6 +70,7 @@ class TrackVibeTest extends TestCase
 
         $this->assertEquals('', $responseData['message']);
         $this->assertEquals($vibe->id, $responseData['vibe']->id);
+        $this->assertEquals($track->id, $responseData['track']->id);
         $this->assertDatabaseMissing('track_vibe', [
             'track' => $track->id,
             'vibe' => $vibe->id,
