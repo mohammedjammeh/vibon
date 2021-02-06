@@ -28,7 +28,7 @@ class TrackVibeController extends Controller
         $track = $this->trackRepository->firstOrCreate($trackApiId);
 
         $track->vibes()->attach($vibe->id, [
-//            'user_id' => $vibe->owner->id,
+            'user_id' => $vibe->owner->id,
             'auto_related' => false
         ]);
 
