@@ -99,47 +99,17 @@ const playback = {
     },
 
     updateVibePlayingTrack(trackID) {
-        // if(this.type === 'playlist') {
-        //     this.updateVibePlaylistPlayingTrack(trackID);
-        // }
+        let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
 
-        // if(this.type === 'vibe-other') {
-            this.updateVibeOtherPlayingTrack(trackID);
-        // }
-        //
+        this.vibes.playingTracks[vibe.id] = null;
+        this.vibes.playingType[vibe.id] = null;
+
+        this.vibes.playingTracks[vibe.id] = trackID;
+        this.vibes.playingType[vibe.id] = this.type;
+
         this.vibes.playingID = this.vibeID;
     },
 
-    updateVibeOtherPlayingTrack(trackID) {
-        let vibe = this.vibes.all.filter((vibe) => vibe.id === this.vibeID)[0];
-
-        // let playlist = vibe.api_tracks.playlist;
-        // let notOnVibonTracks = vibe.api_tracks.not_on_vibon;
-        // let notOnPlaylistTracks = vibe.api_tracks.not_on_playlist;
-        // let pendingTracksToAttach = vibe.api_tracks.pending_to_attach;
-        // let pendingTracksToDetach = vibe.api_tracks.pending_to_detach;
-        //
-        // let otherTracks = playlist.concat(notOnVibonTracks).concat(notOnPlaylistTracks).concat(pendingTracksToAttach).concat(pendingTracksToDetach);
-
-        // otherTracks.forEach(track => {
-        //     if(track.id === trackID) {
-        //         this.vibes.playingTracks[vibe.id] = track.id;
-        //     }
-        // });
-
-
-        // make sure 
-        for(let key in vibe.api_tracks) {
-            if (vibe.api_tracks.hasOwnProperty(key)) {
-                vibe.api_tracks[key].forEach(track => {
-                    if(track.id === trackID) {
-                        this.vibes.playingTracks[vibe.id] = track.id;
-                        this.vibes.playingType[vibe.id] = key;
-                    }
-                });
-            }
-        }
-    },
 
     broadcastVibePlayingTrack(trackID) {
         if(this.vibePlayingTrackBroadcastDataIsNotDifferent(trackID)) {
