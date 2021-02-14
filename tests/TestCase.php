@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\MusicAPI\Tracks;
 use App\User;
 use App\MusicAPI\InterfaceAPI;
 use App\MusicAPI\Fake\WebAPI as FakeAPI;
@@ -20,5 +21,16 @@ abstract class TestCase extends BaseTestCase
     	$this->user = factory(User::class)->create();
 		$this->actingAs($this->user);
 		app()->bind(InterfaceAPI::class, FakeAPI::class);
+    }
+
+    protected function randomTrackCategory()
+    {
+        return array_random([
+            Tracks::PLAYLIST,
+            Tracks::NOT_ON_PLAYLIST,
+            Tracks::NOT_ON_VIBON,
+            Tracks::PENDING_TO_ATTACH,
+            Tracks::PENDING_TO_DETACH
+        ]);
     }
 }
