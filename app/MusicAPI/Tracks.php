@@ -6,6 +6,12 @@ class Tracks
 {
     protected $api;
 
+    const PLAYLIST = 'playlist';
+    const NOT_ON_PLAYLIST = 'not_on_playlist';
+    const NOT_ON_VIBON = 'not_on_vibon';
+    const PENDING_TO_ATTACH = 'pending_to_attach';
+    const PENDING_TO_DETACH = 'pending_to_detach';
+
     public function __construct(InterfaceAPI $interfaceAPI)
     {
         $this->api = $interfaceAPI;
@@ -30,11 +36,11 @@ class Tracks
         ));
 
         return collect([
-            'playlist' => $playlistTracks,
-            'not_on_playlist' => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id'))->flatten(),
-            'not_on_vibon' => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))->flatten(),
-            'pending_to_attach' => $loadedTracks->whereIn('id', $tracksToAttach->pluck('api_id'))->flatten(),
-            'pending_to_detach' => $loadedTracks->whereIn('id', $tracksToDetach->pluck('api_id'))->flatten(),
+            self::PLAYLIST => $playlistTracks,
+            self::NOT_ON_PLAYLIST => $loadedTracks->whereIn('id', $tracksNotOnPlaylist->pluck('api_id'))->flatten(),
+            self::NOT_ON_VIBON => $playlistTracks->whereNotIn('id', $tracks->pluck('api_id'))->flatten(),
+            self::PENDING_TO_ATTACH => $loadedTracks->whereIn('id', $tracksToAttach->pluck('api_id'))->flatten(),
+            self::PENDING_TO_DETACH => $loadedTracks->whereIn('id', $tracksToDetach->pluck('api_id'))->flatten(),
         ]);
     }
 

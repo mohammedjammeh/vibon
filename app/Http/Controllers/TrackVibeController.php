@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\MusicAPI\Tracks;
 use App\Traits\VibeShowTrait;
 use App\Vibe;
 use App\Track;
@@ -21,7 +22,7 @@ class TrackVibeController extends Controller
         $this->trackRepository = $trackRepository;
     }
 
-    public function store(Vibe $vibe, $trackApiId)
+    public function store(Vibe $vibe, $trackApiId, $category)
     {
         $this->authorize('delete', $vibe);
 
@@ -32,19 +33,13 @@ class TrackVibeController extends Controller
             'auto_related' => false
         ]);
 
-        $this->storeOnPlaylist($vibe, $track);
+        $this->storeOnPlaylist($vibe, $track, $category);
 
         broadcast(new TrackVibeStored($track, $vibe))->toOthers();
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponseWithTrack($loadedVibe, $track);
     }
 
-    public function storeOnPlaylist($vibe, $track)
-    {
-        if (!$vibe->auto_dj) {
-            return app(Playlist::class)->addTracks($vibe, [$track->api_id]);
-        }
-    }
 
     public function destroy(Vibe $vibe, Track $track) 
     {
@@ -62,10 +57,17 @@ class TrackVibeController extends Controller
         return $this->showResponseWithTrack($loadedVibe, $track);
     }
 
-    public function destroyOnPlaylist($vibe, $track)
+    protected function storeOnPlaylist($vibe, $track, $category)
+    {
+        if (!$vibe->auto_dj && $category !== Tracks::NOT_ON_VIBON) {
+            app(Playlist::class)->addTracks($vibe, [$track->api_id]);
+        }
+    }
+
+    protected function destroyOnPlaylist($vibe, $track)
     {
         if (!$vibe->auto_dj) {
-            return app(Playlist::class)->deleteTrack($vibe, $track->api_id);
+            app(Playlist::class)->deleteTrack($vibe, $track->api_id);
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div :class="isPlaying">
-        <play :track="track" :type="type"></play>
+        <play :track="track" :type="category"></play>
 
         <div>
             <div v-for="userVibeID in user.manualVibesIDs">
@@ -28,7 +28,8 @@
                 <add-button
                     v-else
                     :vibeID="userVibeID"
-                    :trackID="track.id"
+                    :trackApiId="track.id"
+                    :category="category"
                 >
                 </add-button>
             </div>
@@ -60,9 +61,8 @@
     import cancelPendingAttachTrackButton from './vibe/buttons/cancel-pending-attach-track';
     import cancelPendingDetachTrackButton from './vibe/buttons/cancel-pending-detach-track';
 
-
     export default {
-        props: ['track', 'type'],
+        props: ['track', 'category'],
 
         components: {
             'play' : play,
@@ -83,7 +83,7 @@
 
         computed : {
             isPlaying() {
-                if(this.vibes.playingTracks[vibes.show.id] === this.track.id && this.vibes.playingType[vibes.show.id] === this.type) {
+                if(this.vibes.playingTracks[vibes.show.id] === this.track.id && this.vibes.playingType[vibes.show.id] === this.category) {
                     return 'playback-play-track playing';
                 }
 
