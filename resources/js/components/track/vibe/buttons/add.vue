@@ -1,13 +1,13 @@
 <template>
     <div>
         <div v-if="this.vibes.ownedByUser(vibeID)">
-            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackID)" @submit.prevent="onAddTrackSubmit">
+            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackApiId, actualCategory)" @submit.prevent="onAddTrackSubmit">
                 <input type="submit" name="track-vibe-add" :value="vibes.getVibeName(vibeID)">
             </form>
             <br>
         </div>
         <div v-else>
-            <form method="POST" :action="vibes.routes.pendAttachTrack(vibeID, trackID)" @submit.prevent="onPendAttachTrackSubmit">
+            <form method="POST" :action="vibes.routes.pendAttachTrack(vibeID, trackApiId)" @submit.prevent="onPendAttachTrackSubmit">
                 <input type="submit" name="track-vibe-pend" :value="vibes.getVibeName(vibeID)">
             </form>
             <br>
@@ -17,14 +17,16 @@
 
 <script>
     import vibes from '../../../../core/vibes.js';
+    import tracks from '../../../../core/tracks.js';
     import Form from '../../../../classes/Form.js';
 
     export default {
-         props: ['vibeID', 'trackID'],
+         props: ['vibeID', 'trackApiId', 'category'],
 
         data() {
             return {
                 vibes: vibes,
+                tracks: tracks,
                 addTrackForm: new Form({}),
                 pendAttachTrackForm: new Form({}),
             }
@@ -32,12 +34,26 @@
 
         methods: {
             onAddTrackSubmit() {
-                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackID);
+                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackApiId, this.actualCategory);
             },
 
             onPendAttachTrackSubmit() {
-                this.vibes.pendAttachTrack(this.pendAttachTrackForm, this.vibeID, this.trackID);
+                this.vibes.pendAttachTrack(this.pendAttachTrackForm, this.vibeID, this.trackApiId);
             }
+        },
+
+        computed: {
+            actualCategory() {
+                 let vibe = this.vibes.all.find((vibe) => vibe.id === this.vibeID);
+                 let tracksNotOnVibon = vibe.api_tracks.not_on_vibon;
+                 let tracksNotOnVibonIDs = tracksNotOnVibon.map((track) => track.id);
+
+                 if(tracksNotOnVibonIDs.includes(this.trackApiId)) {
+                     return this.tracks.categories.not_on_vibon;
+                 }
+
+                 return this.category;
+             }
         }
     }
 </script>

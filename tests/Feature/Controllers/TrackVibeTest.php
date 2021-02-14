@@ -20,7 +20,7 @@ class TrackVibeTest extends TestCase
     	$vibe = factory(Vibe::class)->create();
     	$vibe->users()->attach($this->user->id, ['owner' => true]);
 
-    	$response = $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
+    	$response = $this->post(route('track-vibe.store', [$vibe, $track->api_id, $this->randomTrackCategory()]));
         $responseData = $response->original;
 
         $this->assertEquals('', $responseData['message']);
@@ -40,7 +40,7 @@ class TrackVibeTest extends TestCase
     	$vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => true]);
 
-    	$response = $this->post(route('track-vibe.store', [$vibe, $newTrackApiId]));
+    	$response = $this->post(route('track-vibe.store', [$vibe, $newTrackApiId, $this->randomTrackCategory()]));
         $responseData = $response->original;
         $track = Track::where('api_id', $newTrackApiId)->first();
 

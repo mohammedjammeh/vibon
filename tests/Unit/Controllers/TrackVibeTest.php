@@ -23,7 +23,7 @@ class TrackVibeTest extends TestCase
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => true]);
 
-        $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
+        $this->post(route('track-vibe.store', [$vibe, $track->api_id, $this->randomTrackCategory()]));
 
         $this->assertDatabaseHas('track_vibe', [
             'track_id' => $track->id,
@@ -39,7 +39,7 @@ class TrackVibeTest extends TestCase
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => false]);
 
-        $response = $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
+        $response = $this->post(route('track-vibe.store', [$vibe, $track->api_id, $this->randomTrackCategory()]));
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseMissing('track_vibe', [
@@ -58,7 +58,7 @@ class TrackVibeTest extends TestCase
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => true]);
 
-        $this->post(route('track-vibe.store', [$vibe, $track->api_id]));
+        $this->post(route('track-vibe.store', [$vibe, $track->api_id, $this->randomTrackCategory()]));
 
         Event::assertDispatched(TrackVibeStored::class);
     }

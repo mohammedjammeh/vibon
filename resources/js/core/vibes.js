@@ -63,8 +63,8 @@ let Vibes = {
         'removeTrack': function (vibeID, trackID) {
             return '/track-vibe/vibe/' + vibeID + '/track/' + trackID;
         },
-        'addTrack': function (vibeID, trapApiId) {
-            return '/track-vibe/vibe/' + vibeID + '/track-api/' + trapApiId;
+        'addTrack': function (vibeID, trapApiId, category) {
+            return '/track-vibe/vibe/' + vibeID + '/track-api/' + trapApiId + '/category/' + category;
         },
 
         'pendDetachTrack': function (vibeID, trackID) {
@@ -254,9 +254,8 @@ let Vibes = {
             .catch(errors => console.log(errors));
     },
 
-
-    addTrack: function (form, vibeID, trackApiId) {
-        form.post(this.routes.addTrack(vibeID, trackApiId))
+    addTrack: function (form, vibeID, trackApiId, category) {
+        form.post(this.routes.addTrack(vibeID, trackApiId, category))
             .then(response => {
                 this.updateTrackData(response, this.addVibeToTrackVibes);
                 this.updateShowData();
