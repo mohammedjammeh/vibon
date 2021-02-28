@@ -96,12 +96,32 @@ class Vibe extends Model
 
     public function getPendingTracksToAttachAttribute()
     {
-        return $this->pendingTracks->where('attach', true)->pluck('track');
+        return $this->pendingTracks->where('attach', true);
     }
 
     public function getPendingTracksToDetachAttribute()
     {
-        return $this->pendingTracks->where('attach', false)->pluck('track');
+        return $this->pendingTracks->where('attach', false);
+    }
+
+    public function pendingTrackToAttachUser($track)
+    {
+        $pendingTrack = $this->pendingTracksToAttach->where('track_id', $track->id)->first();
+        if(is_null($pendingTrack)) {
+            return null;
+        }
+
+        return $pendingTrack->user->display_name;
+    }
+
+    public function pendingTrackToDetachUser($track)
+    {
+        $pendingTrack = $this->pendingTracksToDetach->where('track_id', $track->id)->first();
+        if(is_null($pendingTrack)) {
+            return null;
+        }
+
+        return $pendingTrack->user->display_name;
     }
 
     public function notifications()
