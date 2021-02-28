@@ -1,6 +1,8 @@
 <template>
     <div>
         <div v-if="this.vibes.readyToShow()">
+            <tracks-requests></tracks-requests>
+
             <div v-if="this.vibeHasMessageToShow()">
                 <p v-text="this.vibes.message"></p>
                 <br>
@@ -34,6 +36,7 @@
     import memberButtons from './partials/show/member-buttons';
     import members from './partials/show/members';
     import joinRequests from './partials/show/join-requests';
+    import tracksRequests from './partials/show/tracks-requests';
     import ownerButtons from './partials/show/owner-buttons';
     import attributes from './partials/show/attributes';
     import tracks from './partials/show/tracks';
@@ -44,6 +47,7 @@
             'member-buttons': memberButtons,
             'members': members,
             'join-requests': joinRequests,
+            'tracks-requests': tracksRequests,
             'owner-buttons': ownerButtons,
             'attributes': attributes,
             'tracks': tracks

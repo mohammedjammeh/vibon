@@ -13,6 +13,8 @@ let Vibes = {
     playingType: {},
     playingID: '',
 
+    pendingTracksResponses: {},
+
     routes: {
         'index': '/vibe',
         'create': '/vibe',
@@ -99,6 +101,7 @@ let Vibes = {
                         }
                     }
                     this.updatePlayingTracksData();
+                    this.updatePendingTracksResponsesData();
                     this.updateShowData();
                     this.loading = false;
                     resolve(vibesData);
@@ -396,6 +399,15 @@ let Vibes = {
             playingVibesTracks[vibe.id] = '';
         });
         this.playingTracks = playingVibesTracks;
+    },
+
+    updatePendingTracksResponsesData() {
+        this.all.forEach(vibe => {
+            this.pendingTracksResponses[vibe.id] = {
+                'to_attach': [],
+                'to_detach': [],
+            };
+        });
     },
 
     updateData(response) {

@@ -43,9 +43,13 @@ trait VibeShowTrait
     protected function updateTrackInfo($loadedTrack, $vibe)
     {
         $track = Track::firstOrCreate(['api_id' => $loadedTrack->id]);
+
         $loadedTrack->votes_count = $track->votesCountOn($vibe);
         $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
+        $loadedTrack->pending_to_attach_user = $vibe->pendingTrackToAttachUser($track);
+        $loadedTrack->pending_to_detach_user = $vibe->pendingTrackToDetachUser($track);
         $loadedTrack = $this->updateTrackVibonInfo($loadedTrack);
+
         return $loadedTrack;
     }
 
