@@ -24,12 +24,12 @@ class Tracks
 
     public function loadFor($vibe, $playlist)
     {
-        $playlistTracks = collect($playlist->tracks->items)->pluck('track');
-
         $tracks = $vibe->showTracks;
-        $tracksToAttach = $vibe->pendingTracksToAttach;
-        $tracksToDetach = $vibe->pendingTracksToDetach;
+
+        $playlistTracks = collect($playlist->tracks->items)->pluck('track');
         $tracksNotOnPlaylist = $this->tracksNotOnPlaylist($tracks, $playlistTracks);
+        $tracksToAttach = $vibe->pendingTracksToAttach->pluck('track');
+        $tracksToDetach = $vibe->pendingTracksToDetach->pluck('track');
 
         $loadedTracks = collect($this->load(
             $tracksToAttach->concat($tracksToDetach)->concat($tracksNotOnPlaylist)
