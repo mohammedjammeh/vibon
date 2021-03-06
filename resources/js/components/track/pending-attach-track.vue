@@ -4,8 +4,8 @@
             <img :src="this.track.album.images[0].url">
         </div>
         <div class="description-and-buttons">
-            <p v-text="artistAndTrackName" style="white-space: nowrap; overflow: hidden;"></p>
-            <p v-text="track.pending_to_attach_user" style="white-space: nowrap; overflow: hidden;"></p>
+            <p v-text="artistAndTrackName"></p>
+            <p v-text="byUser"></p>
 
             <button v-if="isAccepted" @click="cancelAccept" class='accepted'>Accept</button>
             <button v-else @click="accept">Accept</button>
@@ -25,70 +25,76 @@
         data() {
             return {
                 vibes: vibes,
-                pendingTracksToAttach: vibes.pendingTracksResponses[vibes.show.id].to_attach,
-                pendingTracksToDetach: vibes.pendingTracksResponses[vibes.show.id].to_detach,
+                acceptedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].accepted,
+                rejectedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].rejected,
             }
         },
 
         methods: {
             accept() {
-                vibes.pendingTracksResponses[vibes.show.id].to_attach.push(this.track.id);
+                vibes.pendingTracksToAttachResponses[vibes.show.id].accepted.push(this.track.id);
                 this.cancelReject();
             },
             reject() {
-                vibes.pendingTracksResponses[vibes.show.id].to_detach.push(this.track.id);
+                vibes.pendingTracksToAttachResponses[vibes.show.id].rejected.push(this.track.id);
                 this.cancelAccept();
             },
             cancelAccept() {
-                let trackIdIndex =  vibes.pendingTracksResponses[vibes.show.id].to_attach.indexOf(this.track.id);
+                let trackIdIndex =  vibes.pendingTracksToAttachResponses[vibes.show.id].accepted.indexOf(this.track.id);
                 if (trackIdIndex !== -1) {
-                    vibes.pendingTracksResponses[vibes.show.id].to_attach.splice(trackIdIndex, 1);
+                    vibes.pendingTracksToAttachResponses[vibes.show.id].accepted.splice(trackIdIndex, 1);
                 }
             },
             cancelReject() {
-                let trackIdIndex =  vibes.pendingTracksResponses[vibes.show.id].to_detach.indexOf(this.track.id);
+                let trackIdIndex =  vibes.pendingTracksToAttachResponses[vibes.show.id].rejected.indexOf(this.track.id);
                 if (trackIdIndex !== -1) {
-                    vibes.pendingTracksResponses[vibes.show.id].to_detach.splice(trackIdIndex, 1);
+                    vibes.pendingTracksToAttachResponses[vibes.show.id].rejected.splice(trackIdIndex, 1);
                 }
             },
         },
 
         computed: {
             isAccepted() {
-                return this.pendingTracksToAttach.includes(this.track.id);
+                return this.acceptedPendingTracksToAttach.includes(this.track.id);
             },
 
             isRejected() {
-                return this.pendingTracksToDetach.includes(this.track.id);
+                return this.rejectedPendingTracksToAttach.includes(this.track.id);
             },
 
             artistAndTrackName() {
                 return this.track.artists[0].name + ' - ' + this.track.name;
             },
+
+            byUser() {
+                return 'Request by ' + this.track.pending_to_attach_user;
+            }
         },
     }
 </script>
 
 <style scoped>
-
     .track-request {
         float: left;
         width: 50%;
+        margin-bottom: 24px;
     }
 
     .track-request .image {
         float: left;
-        width: 22%;
-        margin-right: 3%;
+        width: 27%;
+        margin-right: 5%;
     }
     .track-request .description-and-buttons {
         float: left;
-        width: 75%;
+        width: 68%;
     }
 
     .track-request .description-and-buttons p {
-        margin: 0;
+        margin: 0 0 8px 0;
         padding: 0;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     .track-request .description-and-buttons button {
