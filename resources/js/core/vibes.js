@@ -13,7 +13,8 @@ let Vibes = {
     playingType: {},
     playingID: '',
 
-    pendingTracksResponses: {},
+    pendingTracksToAttachResponses: {},
+    pendingTracksToDetachResponses: {},
 
     routes: {
         'index': '/vibe',
@@ -87,7 +88,14 @@ let Vibes = {
         },
         'downvoteTrack': function (vibeID, trackID) {
             return '/vote/vibe/' + vibeID + '/track/' + trackID;
-        }
+        },
+
+        'sendPendingTracksToAttachResponses': function (vibeID) {
+            return '/logging';
+        },
+        'sendPendingTracksToDetachResponses': function (vibeID) {
+            return '/logging';
+        },
     },
 
     getAll() {
@@ -360,6 +368,24 @@ let Vibes = {
         }
     },
 
+    sendPendingTracksToAttachResponses(form, vibeID) {
+        console.log(this.pendingTracksToAttachResponses);
+        // form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
+        //     .then(response => {
+        //         this.updateData(response);
+        //     })
+        //     .catch(errors => console.log(errors));
+    },
+
+    sendPendingTracksToDetachResponses(form, vibeID) {
+        console.log(this.pendingTracksToDetachResponses);
+        // form.post(this.routes.sendPendingTracksToDetachResponses(vibeID))
+        //     .then(response => {
+        //         this.updateData(response);
+        //     })
+        //     .catch(errors => console.log(errors));
+    },
+
     updateTrackData(response, action) {
         this.all = this.all.map((vibe) => {
             if(!vibe.auto_jd) {
@@ -403,10 +429,8 @@ let Vibes = {
 
     updatePendingTracksResponsesData() {
         this.all.forEach(vibe => {
-            this.pendingTracksResponses[vibe.id] = {
-                'to_attach': [],
-                'to_detach': [],
-            };
+            this.pendingTracksToAttachResponses[vibe.id] = {'accepted': [], 'rejected': []};
+            this.pendingTracksToDetachResponses[vibe.id] = {'accepted': [], 'rejected': []};
         });
     },
 

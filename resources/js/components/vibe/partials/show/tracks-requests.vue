@@ -8,6 +8,12 @@
                         <pending-attach-track :track="track"></pending-attach-track>
                     </div>
                 </div>
+
+                <form method="POST" :action="this.vibes.routes.sendPendingTracksToAttachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToAttachResponses">
+                    <input type="submit" name="send-pending-tracks-to-attach-responses" value="Send Pending Tracks To Add Responses" :disabled="noPendingTracksToAttachResponses">
+                    <br><br>
+                </form>
+
                 <br><br>
             </div>
 
@@ -18,15 +24,13 @@
                         <pending-detach-track :track="track"></pending-detach-track>
                     </div>
                 </div>
+                <form method="POST" :action="this.vibes.routes.sendPendingTracksToDetachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToDetachResponses">
+                    <input type="submit" name="send-pending-tracks-to-detach-responses" value="Send Pending Tracks To Remove Responses" :disabled="noPendingTracksToDetachResponses">
+                    <br><br>
+                </form>
+
                 <br><br>
             </div>
-
-            <!--<form method="POST" :action="this.vibes.routes.autoRefresh(vibes.show.id)" @submit.prevent="onAutoRefreshSubmit" v-if="!this.vibes.show.auto_dj">-->
-                <!--<input type="submit" name="vibe-tracks-update" value="Refresh">-->
-                <!--<br><br>-->
-            <!--</form>-->
-
-            <!--<br><br>-->
         </div>
 
     </div>
@@ -47,7 +51,13 @@
         data() {
             return {
                 vibes: vibes,
-                // autoRefreshForm: new Form({}),
+                sendPendingTracksToAttachResponsesForm: new Form({}),
+                sendPendingTracksToDetachResponsesForm: new Form({}),
+                acceptedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].accepted,
+                rejectedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].rejected,
+
+                acceptedPendingTracksToDetach: vibes.pendingTracksToDetachResponses[vibes.show.id].accepted,
+                rejectedPendingTracksToDetach: vibes.pendingTracksToDetachResponses[vibes.show.id].rejected,
             }
         },
 
@@ -58,12 +68,23 @@
             vibeHasPendingTracksToDetach() {
                 return Object.keys(this.vibes.show.api_tracks.pending_to_detach).length > 0;
             },
-            // onAutoRefreshSubmit() {
-            //     this.vibes.autoRefresh(this.autoRefreshForm, vibes.show.id);
-            // },
+            onSendPendingTracksToAttachResponses() {
+                this.vibes.sendPendingTracksToAttachResponses(this.sendPendingTracksToAttachResponsesForm, this.vibes.show.id);
+            },
+            onSendPendingTracksToDetachResponses() {
+                this.vibes.sendPendingTracksToDetachResponses(this.sendPendingTracksToDetachResponsesForm, this.vibes.show.id);
+            },
         },
 
         computed: {
+            noPendingTracksToAttachResponses() {
+                return this.acceptedPendingTracksToAttach.length === 0 && this.rejectedPendingTracksToAttach.length === 0;
+            },
+
+            noPendingTracksToDetachResponses() {
+                // return true;
+                return this.acceptedPendingTracksToDetach.length === 0 && this.rejectedPendingTracksToDetach.length === 0;
+            },
         }
     }
 </script>
@@ -75,5 +96,6 @@
         padding-top: 10px;
         overflow-x: auto;
         white-space: nowrap;
+        margin-bottom: 10px;
     }
 </style>
