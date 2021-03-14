@@ -32,21 +32,21 @@
 
         methods: {
             accept() {
-                vibes.pendingTracksToDetachResponses[vibes.show.id].accepted.push(this.track.id);
+                vibes.pendingTracksToDetachResponses[vibes.show.id].accepted.push(this.track.vibon_id);
                 this.cancelReject();
             },
             reject() {
-                vibes.pendingTracksToDetachResponses[vibes.show.id].rejected.push(this.track.id);
+                vibes.pendingTracksToDetachResponses[vibes.show.id].rejected.push(this.track.vibon_id);
                 this.cancelAccept();
             },
             cancelAccept() {
-                let trackIdIndex =  vibes.pendingTracksToDetachResponses[vibes.show.id].accepted.indexOf(this.track.id);
+                let trackIdIndex =  vibes.pendingTracksToDetachResponses[vibes.show.id].accepted.indexOf(this.track.vibon_id);
                 if (trackIdIndex !== -1) {
                     vibes.pendingTracksToDetachResponses[vibes.show.id].accepted.splice(trackIdIndex, 1);
                 }
             },
             cancelReject() {
-                let trackIdIndex =  vibes.pendingTracksToDetachResponses[vibes.show.id].rejected.indexOf(this.track.id);
+                let trackIdIndex =  vibes.pendingTracksToDetachResponses[vibes.show.id].rejected.indexOf(this.track.vibon_id);
                 if (trackIdIndex !== -1) {
                     vibes.pendingTracksToDetachResponses[vibes.show.id].rejected.splice(trackIdIndex, 1);
                 }
@@ -55,11 +55,11 @@
 
         computed: {
             isAccepted() {
-                return this.acceptedPendingTracksToDetach.includes(this.track.id);
+                return this.acceptedPendingTracksToDetach.includes(this.track.vibon_id);
             },
 
             isRejected() {
-                return this.rejectedPendingTracksToDetach.includes(this.track.id);
+                return this.rejectedPendingTracksToDetach.includes(this.track.vibon_id);
             },
 
             artistAndTrackName() {

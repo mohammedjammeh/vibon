@@ -4,8 +4,8 @@ namespace Tests\Feature\Controllers;
 
 use App\Events\PendingAttachVibeTrackCreated;
 use App\Events\PendingAttachVibeTrackDeleted;
-use App\Notifications\PendingVibeTrackAcceptedNotification;
-use App\Notifications\PendingVibeTrackRejectedNotification;
+use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
+use App\Notifications\PendingAttachVibeTrackRejectedNotification;
 use App\PendingVibeTrack;
 use App\Track;
 use App\Vibe;
@@ -20,7 +20,7 @@ class AttachTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function test_the_store_method_stores_a_pending_vibe_track_to_attach_and_triggers_the_pending_vibe_track_created_event()
+    public function test_that_the_store_method_stores_a_pending_vibe_track_to_attach_and_triggers_the_pending_vibe_track_created_event()
     {
         Event::fake();
 
@@ -63,67 +63,62 @@ class AttachTest extends TestCase
         Event::assertDispatched(PendingAttachVibeTrackDeleted::class);
     }
 
-    public function test_the_accept_method_accepts_pending_vibe_track_to_attach_and_triggers_the_pending_vibe_track_accepted_event_to_notify_user()
+    public function test_that_the_respond_method_responds_to_pending_vibe_tracks_to_attach_and_triggers_the_pending_attach_vibe_tracks_events_to_notify_users()
     {
         Notification::fake();
 
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => true]);
-        $pendingVibeTrack = factory(PendingVibeTrack::class)->states('attach')->create(['vibe_id' => $vibe->id]);
+        $pendingVibeTracks = factory(PendingVibeTrack::class, 2)->states('attach')->create(['vibe_id' => $vibe->id]);
+        $acceptPendingVibeTrack = $pendingVibeTracks->first();
+        $rejectPendingVibeTrack = $pendingVibeTracks->last();
 
-        $response = $this->delete(route('pending-vibe-track-attach.accept', $pendingVibeTrack));
+        $response = $this->post(route('pending-vibe-track-attach.respond', $vibe), [
+            'accepted' => [$acceptPendingVibeTrack->track->id],
+            'rejected' => [$rejectPendingVibeTrack->track->id]
+        ]);
 
         $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals($response->original['vibe']->id, $pendingVibeTrack->vibe_id);
+        $this->assertEquals($response->original['vibe']->id, $vibe->id);
+
         $this->assertDatabaseHas('track_vibe', [
-            'track_id' => $pendingVibeTrack->track_id,
+            'track_id' => $acceptPendingVibeTrack->track->id,
             'vibe_id' => $vibe->id,
             'auto_related' => false
         ]);
-        Notification::assertSentTo(
-            $pendingVibeTrack->user,
-            PendingVibeTrackAcceptedNotification::class,
-            function ($notification, $channels) use ($pendingVibeTrack) {
-                $notificationAttach = $notification->attach === '0' ? false : true;
-                return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
-                    $notification->track_id === $pendingVibeTrack->track_id &&
-                    $notificationAttach === $pendingVibeTrack->attach;
-            }
-        );
-    }
 
-    public function test_the_reject_method_rejects_pending_vibe_track_to_attach_and_triggers_the_pending_vibe_track_reject_event_to_notify_user()
-    {
-        Notification::fake();
-
-        $vibe = factory(Vibe::class)->create();
-        $vibe->users()->attach($this->user->id, ['owner' => true]);
-        $pendingVibeTrack = factory(PendingVibeTrack::class)->states('attach')->create(['vibe_id' => $vibe->id]);
-
-        $response = $this->delete(route('pending-vibe-track-attach.reject', $pendingVibeTrack));
-
-        $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals($response->original['vibe']->id, $pendingVibeTrack->vibe_id);
-        $this->assertDatabaseMissing('pending_vibe_tracks', [
-            'track_id' => $pendingVibeTrack->track_id,
-            'vibe_id' => $pendingVibeTrack->vibe_id,
-            'user_id' => $pendingVibeTrack->user_id,
-            'attach' => $pendingVibeTrack->attach,
-        ]);
         $this->assertDatabaseMissing('track_vibe', [
-            'track_id' => $pendingVibeTrack->track_id,
-            'vibe_id' => $pendingVibeTrack->_vibe_id,
+            'track_id' => $rejectPendingVibeTrack->track->id,
+            'vibe_id' => $vibe->id,
             'auto_related' => false
         ]);
 
+        foreach ($pendingVibeTracks as $pendingVibeTrack) {
+            $this->assertDatabaseMissing('pending_vibe_tracks', [
+                'track_id' => $pendingVibeTrack->track_id,
+                'vibe_id' => $pendingVibeTrack->vibe_id,
+                'user_id' => $pendingVibeTrack->user_id,
+                'attach' => $pendingVibeTrack->attach,
+            ]);
+        }
+
         Notification::assertSentTo(
-            $pendingVibeTrack->user,
-            PendingVibeTrackRejectedNotification::class,
-            function ($notification, $channels) use ($pendingVibeTrack) {
-                $notificationAttach = $notification->attach === '0' ? false : true;
-                return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
-                    $notification->track_id === $pendingVibeTrack->track_id &&
-                    $notificationAttach === $pendingVibeTrack->attach;
+            $acceptPendingVibeTrack->user,
+            PendingAttachVibeTracksAcceptedNotification::class,
+            function ($notification, $channels) use ($acceptPendingVibeTrack) {
+                return $notification->vibe_id === $acceptPendingVibeTrack->vibe_id &&
+                    $notification->track_id === $acceptPendingVibeTrack->track_id &&
+                    boolval($notification->attach) === $acceptPendingVibeTrack->attach;
+            }
+        );
+
+        Notification::assertSentTo(
+            $rejectPendingVibeTrack->user,
+            PendingAttachVibeTrackRejectedNotification::class,
+            function ($notification, $channels) use ($rejectPendingVibeTrack) {
+                return $notification->vibe_id === $rejectPendingVibeTrack->vibe_id &&
+                    $notification->track_id === $rejectPendingVibeTrack->track_id &&
+                    boolval($notification->attach) === $rejectPendingVibeTrack->attach;
             }
         );
     }

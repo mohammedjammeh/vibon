@@ -10,21 +10,21 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PendingVibeTrackAccepted
+class PendingAttachVibeTracksRejected
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $pendingVibeTrack;
+    public $pendingVibeTracks;
 
     /**
      * Create a new event instance.
      *
-     * @param $pendingVibeTrack
+     * @param $pendingVibeTracks
      * @return void
      */
-    public function __construct($pendingVibeTrack)
+    public function __construct($pendingVibeTracks)
     {
-        $this->pendingVibeTrack = $pendingVibeTrack;
+        $this->pendingVibeTracks = $pendingVibeTracks;
     }
 
     /**
@@ -34,14 +34,13 @@ class PendingVibeTrackAccepted
      */
     public function broadcastOn()
     {
-//        return new PrivateChannel('channel-name');
-        return new Channel('pending_vibe_track.accepted');
+        return new Channel('pending_vibe_tracks.rejected');
     }
 
     public function broadcastWith()
     {
         return [
-            'vibe' => $this->pendingVibeTrack->vibe->id
+            'vibe' => $this->pendingVibeTracks->first()->vibe->id
         ];
     }
 }

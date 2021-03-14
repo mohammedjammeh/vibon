@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class PendingVibeTrackRejectedNotification extends Notification
+class PendingAttachVibeTrackRejectedNotification extends Notification
 {
     use Queueable;
 

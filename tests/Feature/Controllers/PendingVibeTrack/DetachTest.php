@@ -4,8 +4,8 @@ namespace Tests\Feature\Controllers\PendingVibeTrack;
 
 use App\Events\PendingDetachVibeTrackCreated;
 use App\Events\PendingDetachVibeTrackDeleted;
-use App\Notifications\PendingVibeTrackAcceptedNotification;
-use App\Notifications\PendingVibeTrackRejectedNotification;
+use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
+use App\Notifications\PendingAttachVibeTrackRejectedNotification;
 use App\PendingVibeTrack;
 use App\Track;
 use App\Vibe;
@@ -87,7 +87,7 @@ class DetachTest extends TestCase
         ]);
         Notification::assertSentTo(
             $pendingVibeTrack->user,
-            PendingVibeTrackAcceptedNotification::class,
+            PendingAttachVibeTracksAcceptedNotification::class,
             function ($notification, $channels) use ($pendingVibeTrack) {
                 $notificationAttach = $notification->attach === '0' ? false : true;
                 return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
@@ -127,7 +127,7 @@ class DetachTest extends TestCase
         ]);
         Notification::assertSentTo(
             $pendingVibeTrack->user,
-            PendingVibeTrackRejectedNotification::class,
+            PendingAttachVibeTrackRejectedNotification::class,
             function ($notification, $channels) use ($pendingVibeTrack) {
                 $notificationAttach = $notification->attach === '0' ? false : true;
                 return $notification->vibe_id === $pendingVibeTrack->vibe_id &&

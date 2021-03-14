@@ -91,7 +91,7 @@ let Vibes = {
         },
 
         'sendPendingTracksToAttachResponses': function (vibeID) {
-            return '/logging';
+            return '/pending-vibe-tracks-attach/respond/vibe/' + vibeID;
         },
         'sendPendingTracksToDetachResponses': function (vibeID) {
             return '/logging';
@@ -369,12 +369,14 @@ let Vibes = {
     },
 
     sendPendingTracksToAttachResponses(form, vibeID) {
-        console.log(this.pendingTracksToAttachResponses);
-        // form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
-        //     .then(response => {
-        //         this.updateData(response);
-        //     })
-        //     .catch(errors => console.log(errors));
+        form.constructor(this.pendingTracksToAttachResponses[vibeID]);
+
+        form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
+            .then(response => {
+                // console.log(response);
+                // this.updateData(response);
+            })
+            .catch(errors => console.log(errors));
     },
 
     sendPendingTracksToDetachResponses(form, vibeID) {

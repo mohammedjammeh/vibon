@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\PendingVibeTrack;
 
-use App\Events\PendingVibeTrackAccepted;
+use App\Events\PendingAttachVibeTracksAccepted;
 use App\Events\PendingAttachVibeTrackCreated;
 use App\Events\PendingAttachVibeTrackDeleted;
-use App\Events\PendingVibeTrackRejected;
+use App\Events\PendingAttachVibeTracksRejected;
+use App\Events\PendingAttachVibeTracksRespondedTo;
 use App\Http\Controllers\Controller;
 use App\MusicAPI\Playlist;
 use App\PendingVibeTrack;
@@ -53,33 +54,32 @@ class AttachController extends Controller
         return $this->showResponseWithTrack($loadedVibe, $pendingVibeTrack->track);
     }
 
-    public function accept(PendingVibeTrack $pendingVibeTrack)
+    public function respond(Vibe $vibe)
     {
-        $this->authorize('respond', $pendingVibeTrack);
+        $this->authorize('delete', $vibe);
 
-        broadcast(new PendingVibeTrackAccepted($pendingVibeTrack))->toOthers();
+        $responses = request()->input();
+        $pendingVibeTracks = PendingVibeTrack::where('attach', true)->where('vibe_id', $vibe->id)->get();
 
-        $pendingVibeTrack->delete();
+        $vibe->tracks()->attach($this->vibeTracksAttachment($pendingVibeTracks, $responses['accepted']));
 
-        $pendingVibeTrack->vibe->tracks()
-            ->attach($pendingVibeTrack->track->id, [
-                'user_id' => $pendingVibeTrack->user->id,
-                'auto_related' => false
-            ]);
+        event(new PendingAttachVibeTracksRespondedTo($pendingVibeTracks, $responses));
 
-        $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
+        $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
     }
 
-    public function reject(PendingVibeTrack $pendingVibeTrack)
+    private function vibeTracksAttachment($pendingVibeTracks, $acceptedTracksIDs)
     {
-        $this->authorize('respond', $pendingVibeTrack);
+        $acceptedPendingVibeTracks = $pendingVibeTracks->wherein('track_id', $acceptedTracksIDs);
+        $acceptedVibeTracksAttachment = [];
+        foreach ($acceptedPendingVibeTracks as $pendingVibeTrack) {
+            $acceptedVibeTracksAttachment[$pendingVibeTrack->track->id] = [
+                'user_id' => $pendingVibeTrack->user->id,
+                'auto_related' => false
+            ];
+        };
 
-        broadcast(new PendingVibeTrackRejected($pendingVibeTrack))->toOthers();
-
-        $pendingVibeTrack->delete();
-
-        $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
-        return $this->showResponse($loadedVibe);
+        return $acceptedVibeTracksAttachment;
     }
 }

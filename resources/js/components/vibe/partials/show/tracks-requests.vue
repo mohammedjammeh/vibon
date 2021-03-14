@@ -53,6 +53,7 @@
                 vibes: vibes,
                 sendPendingTracksToAttachResponsesForm: new Form({}),
                 sendPendingTracksToDetachResponsesForm: new Form({}),
+
                 acceptedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].accepted,
                 rejectedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].rejected,
 
@@ -82,7 +83,6 @@
             },
 
             noPendingTracksToDetachResponses() {
-                // return true;
                 return this.acceptedPendingTracksToDetach.length === 0 && this.rejectedPendingTracksToDetach.length === 0;
             },
         }
