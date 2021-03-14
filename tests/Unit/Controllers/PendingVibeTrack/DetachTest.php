@@ -4,10 +4,10 @@ namespace Tests\Unit\Controllers\PendingVibeTrack;
 
 use App\Events\PendingDetachVibeTrackCreated;
 use App\Events\PendingDetachVibeTrackDeleted;
-use App\Events\PendingVibeTrackAccepted;
-use App\Events\PendingVibeTrackRejected;
-use App\Notifications\PendingVibeTrackAcceptedNotification;
-use App\Notifications\PendingVibeTrackRejectedNotification;
+use App\Events\PendingAttachVibeTracksAccepted;
+use App\Events\PendingAttachVibeTracksRejected;
+use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
+use App\Notifications\PendingAttachVibeTrackRejectedNotification;
 use App\PendingVibeTrack;
 use App\Track;
 use App\User;
@@ -224,7 +224,7 @@ class DetachTest extends TestCase
 
         $this->delete(route('pending-vibe-track-detach.accept', $pendingVibeTrack));
 
-        Event::assertDispatched(PendingVibeTrackAccepted::class);
+        Event::assertDispatched(PendingAttachVibeTracksAccepted::class);
     }
 
     public function test_that_user_of_pending_vibe_track_to_detach_receives_notification_when_pending_track_vibe_is_accepted()
@@ -244,7 +244,7 @@ class DetachTest extends TestCase
 
         Notification::assertSentTo(
             $pendingVibeTrack->user,
-            PendingVibeTrackAcceptedNotification::class,
+            PendingAttachVibeTracksAcceptedNotification::class,
             function ($notification, $channels) use ($pendingVibeTrack) {
                 $notificationAttach = $notification->attach === '0' ? false : true;
                 return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
@@ -325,7 +325,7 @@ class DetachTest extends TestCase
 
         $this->delete(route('pending-vibe-track-detach.reject', $pendingVibeTrack));
 
-        Event::assertDispatched(PendingVibeTrackRejected::class);
+        Event::assertDispatched(PendingAttachVibeTracksRejected::class);
     }
 
     public function test_that_user_of_pending_vibe_track_to_detach_receives_notification_when_pending_track_vibe_is_rejected()
@@ -345,7 +345,7 @@ class DetachTest extends TestCase
 
         Notification::assertSentTo(
             $pendingVibeTrack->user,
-            PendingVibeTrackRejectedNotification::class,
+            PendingAttachVibeTrackRejectedNotification::class,
             function ($notification, $channels) use ($pendingVibeTrack) {
                 $notificationAttach = $notification->attach === '0' ? false : true;
                 return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
