@@ -34,7 +34,7 @@ class PendingAttachVibeTracksAccepted
      */
     public function broadcastOn()
     {
-        return new Channel('pending_vibe_tracks.accepted');
+        return new Channel('pending_attach_vibe_tracks.accepted');
     }
 
     public function broadcastWith()

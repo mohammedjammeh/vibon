@@ -10,7 +10,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PendingAttachVibeTracksRejected
+class PendingDetachVibeTracksAccepted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -34,7 +34,7 @@ class PendingAttachVibeTracksRejected
      */
     public function broadcastOn()
     {
-        return new Channel('pending_attach_vibe_tracks.rejected');
+        return new Channel('pending_detach_vibe_tracks.accepted');
     }
 
     public function broadcastWith()

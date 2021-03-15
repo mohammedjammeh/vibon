@@ -62,6 +62,5 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
 
     Route::post('/pending-vibe-track-detach/vibe/{vibe}/track/{track}', 'PendingVibeTrack\DetachController@store')->name('pending-vibe-track-detach.store');
     Route::delete('/pending-vibe-track-detach/delete/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@destroy')->name('pending-vibe-track-detach.destroy');
-    Route::delete('/pending-vibe-track-detach/accept/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@accept')->name('pending-vibe-track-detach.accept');
-    Route::delete('/pending-vibe-track-detach/reject/{pendingVibeTrack}', 'PendingVibeTrack\DetachController@reject')->name('pending-vibe-track-detach.reject');
+    Route::post('/pending-vibe-tracks-detach/respond/vibe/{vibe}', 'PendingVibeTrack\DetachController@respond')->name('pending-vibe-track-detach.respond');
 });

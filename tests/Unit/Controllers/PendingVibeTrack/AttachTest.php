@@ -2,10 +2,8 @@
 
 namespace Tests\Unit\Controllers;
 
-use App\Events\PendingAttachVibeTracksAccepted;
 use App\Events\PendingAttachVibeTrackCreated;
 use App\Events\PendingAttachVibeTrackDeleted;
-use App\Events\PendingAttachVibeTracksRejected;
 use App\Events\PendingAttachVibeTracksRespondedTo;
 use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
 use App\Notifications\PendingAttachVibeTrackRejectedNotification;
@@ -175,7 +173,7 @@ class AttachTest extends TestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function test_that_responding_to_pending_vibe_tracks_to_attach_stores_correct_track_data_based_on_response()
+    public function test_that_responding_to_pending_vibe_tracks_to_attach_stores_and_leaves_correct_track_data_based_on_response()
     {
         $vibe = factory(Vibe::class)->create();
         $vibe->users()->attach($this->user->id, ['owner' => true]);
@@ -210,12 +208,11 @@ class AttachTest extends TestCase
         $acceptPendingVibeTrack = $pendingVibeTracks->first();
         $rejectPendingVibeTrack = $pendingVibeTracks->last();
 
-        $response = $this->post(route('pending-vibe-track-attach.respond', $vibe), [
+        $this->post(route('pending-vibe-track-attach.respond', $vibe), [
             'accepted' => [$acceptPendingVibeTrack->track->id],
             'rejected' => [$rejectPendingVibeTrack->track->id]
         ]);
 
-        $response->assertStatus(Response::HTTP_OK);
         Event::assertDispatched(PendingAttachVibeTracksRespondedTo::class);
     }
 
@@ -227,12 +224,10 @@ class AttachTest extends TestCase
         $acceptPendingVibeTrack = $pendingVibeTracks->first();
         $rejectPendingVibeTrack = $pendingVibeTracks->last();
 
-        $response = $this->post(route('pending-vibe-track-attach.respond', $vibe), [
+        $this->post(route('pending-vibe-track-attach.respond', $vibe), [
             'accepted' => [$acceptPendingVibeTrack->track->id],
             'rejected' => [$rejectPendingVibeTrack->track->id]
         ]);
-
-        $response->assertStatus(Response::HTTP_OK);
 
         foreach ($pendingVibeTracks as $pendingVibeTrack) {
             $this->assertDatabaseMissing('pending_vibe_tracks', [
@@ -244,7 +239,7 @@ class AttachTest extends TestCase
         }
     }
 
-    public function test_that_responding_to_pending_vibe_tracks_to_attach_notifies_users_who_sent_requests_append_tracks()
+    public function test_that_responding_to_pending_vibe_tracks_to_attach_notifies_users_who_sent_requests_to_append_tracks()
     {
         Notification::fake();
 
@@ -254,12 +249,10 @@ class AttachTest extends TestCase
         $acceptPendingVibeTrack = $pendingVibeTracks->first();
         $rejectPendingVibeTrack = $pendingVibeTracks->last();
 
-        $response = $this->post(route('pending-vibe-track-attach.respond', $vibe), [
+        $this->post(route('pending-vibe-track-attach.respond', $vibe), [
             'accepted' => [$acceptPendingVibeTrack->track->id],
             'rejected' => [$rejectPendingVibeTrack->track->id]
         ]);
-
-        $response->assertStatus(Response::HTTP_OK);
 
         Notification::assertSentTo(
             $acceptPendingVibeTrack->user,

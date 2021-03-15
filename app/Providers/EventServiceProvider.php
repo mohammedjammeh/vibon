@@ -7,15 +7,22 @@ use App\Events\JoinRequestRejected;
 use App\Events\PendingAttachVibeTracksAccepted;
 use App\Events\PendingAttachVibeTracksRejected;
 use App\Events\PendingAttachVibeTracksRespondedTo;
+use App\Events\PendingDetachVibeTracksAccepted;
+use App\Events\PendingDetachVibeTracksRejected;
+use App\Events\PendingDetachVibeTracksRespondedTo;
 use App\Events\UserJoinedVibe;
 use App\Events\UserLeftVibe;
 use App\Events\UserRemovedFromVibe;
 use App\Listeners\DeletePendingAttachVibeTracks;
+use App\Listeners\DeletePendingDetachVibeTracks;
 use App\Listeners\NotifyPendingAttachVibeTracksUsers;
+use App\Listeners\NotifyPendingDetachVibeTracksUsers;
 use App\Listeners\SendJoinRequestAcceptedNotification;
 use App\Listeners\SendJoinRequestRejectedNotification;
 use App\Listeners\SendPendingAttachVibeTracksAcceptedNotifications;
 use App\Listeners\SendPendingAttachVibeTracksRejectedNotifications;
+use App\Listeners\SendPendingDetachVibeTracksAcceptedNotifications;
+use App\Listeners\SendPendingDetachVibeTracksRejectedNotifications;
 use App\Listeners\SendRemovedFromVibeNotification;
 use App\Listeners\SendUserJoinedVibeNotification;
 use App\Listeners\SendUserLeftVibeNotification;
@@ -87,6 +94,17 @@ class EventServiceProvider extends ServiceProvider
         ],
         PendingAttachVibeTracksRejected::class => [
             SendPendingAttachVibeTracksRejectedNotifications::class,
+        ],
+
+        PendingDetachVibeTracksRespondedTo::class => [
+            NotifyPendingDetachVibeTracksUsers::class,
+            DeletePendingDetachVibeTracks::class,
+        ],
+        PendingDetachVibeTracksAccepted::class => [
+            SendPendingDetachVibeTracksAcceptedNotifications::class,
+        ],
+        PendingDetachVibeTracksRejected::class => [
+            SendPendingDetachVibeTracksRejectedNotifications::class,
         ],
     ];
 
