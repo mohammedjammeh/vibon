@@ -6,6 +6,7 @@ use App\Events\PendingDetachVibeTrackCreated;
 use App\Events\PendingDetachVibeTrackDeleted;
 use App\Events\PendingAttachVibeTracksAccepted;
 use App\Events\PendingAttachVibeTracksRejected;
+use App\Events\PendingDetachVibeTracksRespondedTo;
 use App\MusicAPI\Playlist;
 use App\PendingVibeTrack;
 use App\Track;
@@ -45,31 +46,21 @@ class DetachController extends Controller
         return $this->showResponseWithTrack($loadedVibe, $pendingVibeTrack->track);
     }
 
-    public function accept(PendingVibeTrack $pendingVibeTrack)
+    public function respond(Vibe $vibe)
     {
-        $this->authorize('respond', $pendingVibeTrack);
+        $this->authorize('delete', $vibe);
 
-        broadcast(new PendingAttachVibeTracksAccepted($pendingVibeTrack))->toOthers();
+        $responses = request()->input();
+        $pendingVibeTracks = PendingVibeTrack::where('attach', false)->where('vibe_id', $vibe->id)->get();
 
-        $pendingVibeTrack->delete();
-        $pendingVibeTrack->vibe->tracks()
+        $vibe->tracks()
             ->wherePivot('auto_related', false)
-            ->wherePivot('track_id', $pendingVibeTrack->track->id)
+            ->wherePivotIn('track_id', $responses['accepted'])
             ->detach();
 
-        $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
-        return $this->showResponse($loadedVibe);
-    }
+        event(new PendingDetachVibeTracksRespondedTo($pendingVibeTracks, $responses));
 
-    public function reject(PendingVibeTrack $pendingVibeTrack)
-    {
-        $this->authorize('respond', $pendingVibeTrack);
-
-        broadcast(new PendingAttachVibeTracksRejected($pendingVibeTrack))->toOthers();
-
-        $pendingVibeTrack->delete();
-
-        $loadedVibe = app(Playlist::class)->load($pendingVibeTrack->vibe);
+        $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);
     }
 }

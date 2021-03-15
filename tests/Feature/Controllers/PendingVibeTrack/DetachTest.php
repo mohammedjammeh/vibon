@@ -4,8 +4,8 @@ namespace Tests\Feature\Controllers\PendingVibeTrack;
 
 use App\Events\PendingDetachVibeTrackCreated;
 use App\Events\PendingDetachVibeTrackDeleted;
-use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
-use App\Notifications\PendingAttachVibeTrackRejectedNotification;
+use App\Notifications\PendingDetachVibeTracksAcceptedNotification;
+use App\Notifications\PendingDetachVibeTracksRejectedNotification;
 use App\PendingVibeTrack;
 use App\Track;
 use App\Vibe;
@@ -20,7 +20,7 @@ class DetachTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function test_the_store_method_stores_a_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_created_event()
+    public function test_that_the_store_method_stores_a_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_created_event()
     {
         Event::fake();
 
@@ -44,7 +44,7 @@ class DetachTest extends TestCase
         Event::assertDispatched(PendingDetachVibeTrackCreated::class);
     }
 
-    public function test_destroy_method_deletes_a_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_deleted_event()
+    public function test_that_destroy_method_deletes_a_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_deleted_event()
     {
         Event::fake();
 
@@ -63,76 +63,65 @@ class DetachTest extends TestCase
         Event::assertDispatched(PendingDetachVibeTrackDeleted::class);
     }
 
-    public function test_the_accept_method_accepts_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_accepted_event_to_notify_user()
+    public function test_that_the_respond_method_responds_to_pending_vibe_track_to_detach_and_triggers_the_pending_detach_vibe_tracks_events_to_notify_user()
     {
         Notification::fake();
 
-        $track = factory(Track::class)->create();
         $vibe = factory(Vibe::class)->create();
-        $pendingVibeTrack = factory(PendingVibeTrack::class)
-            ->states('detach')
-            ->create(['vibe_id' => $vibe->id, 'track_id' => $track->id]);
-
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
         $vibe->users()->attach($this->user->id, ['owner' => true]);
+        $pendingVibeTracks = factory(PendingVibeTrack::class, 2)->states('detach')->create(['vibe_id' => $vibe->id]);
+        $acceptPendingVibeTrack = $pendingVibeTracks->first();
+        $rejectPendingVibeTrack = $pendingVibeTracks->last();
 
-        $response = $this->delete(route('pending-vibe-track-detach.accept', $pendingVibeTrack));
+        $this->attachPendingVibeTracks($vibe, $acceptPendingVibeTrack, $rejectPendingVibeTrack);
+
+        $response = $this->post(route('pending-vibe-track-detach.respond', $vibe), [
+            'accepted' => [$acceptPendingVibeTrack->track->id],
+            'rejected' => [$rejectPendingVibeTrack->track->id]
+        ]);
 
         $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals($response->original['vibe']->id, $pendingVibeTrack->vibe_id);
+
+        $this->assertEquals($response->original['vibe']->id, $vibe->id);
+
         $this->assertDatabaseMissing('track_vibe', [
-            'track_id' => $track->id,
+            'track_id' => $acceptPendingVibeTrack->track->id,
             'vibe_id' => $vibe->id,
             'auto_related' => false
         ]);
-        Notification::assertSentTo(
-            $pendingVibeTrack->user,
-            PendingAttachVibeTracksAcceptedNotification::class,
-            function ($notification, $channels) use ($pendingVibeTrack) {
-                $notificationAttach = $notification->attach === '0' ? false : true;
-                return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
-                    $notification->track_id === $pendingVibeTrack->track_id &&
-                    $notificationAttach === $pendingVibeTrack->attach;
-            }
-        );
-    }
 
-    public function test_the_reject_method_rejects_pending_vibe_track_to_detach_and_triggers_the_pending_vibe_track_reject_event_to_notify_user()
-    {
-        Notification::fake();
-
-        $track = factory(Track::class)->create();
-        $vibe = factory(Vibe::class)->create();
-        $pendingVibeTrack = factory(PendingVibeTrack::class)
-            ->states('detach')
-            ->create(['vibe_id' => $vibe->id, 'track_id' => $track->id]);
-
-        $vibe->tracks()->attach($track->id, ['auto_related' => false]);
-        $vibe->users()->attach($this->user->id, ['owner' => true]);
-
-        $response = $this->delete(route('pending-vibe-track-detach.reject', $pendingVibeTrack));
-
-        $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals($response->original['vibe']->id, $pendingVibeTrack->vibe_id);
-        $this->assertDatabaseMissing('pending_vibe_tracks', [
-            'track_id' => $pendingVibeTrack->track_id,
-            'vibe_id' => $pendingVibeTrack->vibe_id,
-            'user_id' => $pendingVibeTrack->user_id,
-            'attach' => $pendingVibeTrack->attach,
-        ]);
         $this->assertDatabaseHas('track_vibe', [
-            'track_id' => $pendingVibeTrack->track_id,
-            'vibe_id' => $pendingVibeTrack->vibe_id,
+            'track_id' => $rejectPendingVibeTrack->track->id,
+            'vibe_id' => $vibe->id,
             'auto_related' => false
         ]);
+
+        foreach ($pendingVibeTracks as $pendingVibeTrack) {
+            $this->assertDatabaseMissing('pending_vibe_tracks', [
+                'track_id' => $pendingVibeTrack->track_id,
+                'vibe_id' => $pendingVibeTrack->vibe_id,
+                'user_id' => $pendingVibeTrack->user_id,
+                'attach' => $pendingVibeTrack->attach,
+            ]);
+        }
+
         Notification::assertSentTo(
-            $pendingVibeTrack->user,
-            PendingAttachVibeTrackRejectedNotification::class,
-            function ($notification, $channels) use ($pendingVibeTrack) {
-                $notificationAttach = $notification->attach === '0' ? false : true;
-                return $notification->vibe_id === $pendingVibeTrack->vibe_id &&
-                    $notification->track_id === $pendingVibeTrack->track_id &&
-                    $notificationAttach === $pendingVibeTrack->attach;
+            $acceptPendingVibeTrack->user,
+            PendingDetachVibeTracksAcceptedNotification::class,
+            function ($notification, $channels) use ($acceptPendingVibeTrack) {
+                return $notification->vibe_id === $acceptPendingVibeTrack->vibe_id &&
+                    $notification->track_id === $acceptPendingVibeTrack->track_id &&
+                    boolval($notification->attach) === $acceptPendingVibeTrack->attach;
+            }
+        );
+
+        Notification::assertSentTo(
+            $rejectPendingVibeTrack->user,
+            PendingDetachVibeTracksRejectedNotification::class,
+            function ($notification, $channels) use ($rejectPendingVibeTrack) {
+                return $notification->vibe_id === $rejectPendingVibeTrack->vibe_id &&
+                    $notification->track_id === $rejectPendingVibeTrack->track_id &&
+                    boolval($notification->attach) === $rejectPendingVibeTrack->attach;
             }
         );
     }

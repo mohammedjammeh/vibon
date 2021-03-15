@@ -10,37 +10,23 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PendingAttachVibeTracksRejected
+class PendingDetachVibeTracksRespondedTo
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $pendingVibeTracks;
+    public $responses;
 
     /**
      * Create a new event instance.
      *
      * @param $pendingVibeTracks
+     * @param $responses
      * @return void
      */
-    public function __construct($pendingVibeTracks)
+    public function __construct($pendingVibeTracks, $responses)
     {
         $this->pendingVibeTracks = $pendingVibeTracks;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new Channel('pending_attach_vibe_tracks.rejected');
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'vibe' => $this->pendingVibeTracks->first()->vibe->id
-        ];
+        $this->responses = $responses;
     }
 }

@@ -33,4 +33,23 @@ abstract class TestCase extends BaseTestCase
             Tracks::PENDING_TO_DETACH
         ]);
     }
+
+    public function attachPendingVibeTracks($vibe, $acceptPendingVibeTrack, $rejectPendingVibeTrack)
+    {
+        $vibe->tracks()->attach([
+            $acceptPendingVibeTrack->id => [
+                'auto_related' => false,
+                'user_id' => $acceptPendingVibeTrack->user->id,
+            ],
+            $rejectPendingVibeTrack->id => [
+                'auto_related' => false,
+                'user_id' => $rejectPendingVibeTrack->user->id,
+            ],
+        ]);
+
+        $vibe->tracks()->attach($acceptPendingVibeTrack->id, [
+            'auto_related' => true,
+            'user_id' => $acceptPendingVibeTrack->user->id,
+        ]);
+    }
 }

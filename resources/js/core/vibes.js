@@ -94,7 +94,7 @@ let Vibes = {
             return '/pending-vibe-tracks-attach/respond/vibe/' + vibeID;
         },
         'sendPendingTracksToDetachResponses': function (vibeID) {
-            return '/logging';
+            return '/pending-vibe-tracks-detach/respond/vibe/' + vibeID;
         },
     },
 
@@ -370,22 +370,21 @@ let Vibes = {
 
     sendPendingTracksToAttachResponses(form, vibeID) {
         form.constructor(this.pendingTracksToAttachResponses[vibeID]);
-
         form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
             .then(response => {
                 // console.log(response);
-                // this.updateData(response);
             })
             .catch(errors => console.log(errors));
     },
 
     sendPendingTracksToDetachResponses(form, vibeID) {
-        console.log(this.pendingTracksToDetachResponses);
-        // form.post(this.routes.sendPendingTracksToDetachResponses(vibeID))
-        //     .then(response => {
-        //         this.updateData(response);
-        //     })
-        //     .catch(errors => console.log(errors));
+        form.constructor(this.pendingTracksToDetachResponses[vibeID]);
+        form.post(this.routes.sendPendingTracksToDetachResponses(vibeID))
+            .then(response => {
+                console.log(response);
+                // this.updateData(response);
+            })
+            .catch(errors => console.log(errors));
     },
 
     updateTrackData(response, action) {
