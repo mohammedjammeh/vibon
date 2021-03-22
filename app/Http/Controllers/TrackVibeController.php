@@ -67,7 +67,7 @@ class TrackVibeController extends Controller
     protected function destroyOnPlaylist($vibe, $track)
     {
         if (!$vibe->auto_dj) {
-            app(Playlist::class)->deleteTrack($vibe, $track->api_id);
+            app(Playlist::class)->deleteTracks($vibe, [$track->api_id]);
         }
     }
 }
