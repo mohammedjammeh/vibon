@@ -31,19 +31,19 @@ class Playlist
         return $this->api->deletePlaylist($id);
     }
 
-    public function addTracks($vibe, $tracksId)
+    public function addTracks($vibe, $tracksIds)
     {
-        $this->api->addTracksToPlaylist($vibe->api_id, $tracksId);
+        $this->api->addTracksToPlaylist($vibe->api_id, $tracksIds);
     }
 
-    public function deleteTrack($vibe, $trackId)
+    public function deleteTracks($vibe, $tracksIds)
     {
-        $this->api->deleteTrackFromPlaylist($vibe->api_id, $trackId);
+        $this->api->deleteTracksFromPlaylist($vibe->api_id, $tracksIds);
     }
 
-    public function replaceTracks($vibe, $tracksIDs)
+    public function replaceTracks($vibe, $tracksIds)
     {
-        return $this->api->replaceTracksOnPlaylist($vibe->api_id, $tracksIDs);
+        return $this->api->replaceTracksOnPlaylist($vibe->api_id, $tracksIds);
     }
 
     public function reorderTracks($vibe, $rangeStart, $insertBefore)
