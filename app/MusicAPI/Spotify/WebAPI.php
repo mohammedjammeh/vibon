@@ -104,20 +104,18 @@ class WebAPI implements InterfaceAPI
         return $this->api->addPlaylistTracks($playlistId, $tracksId);
     }
 
-    public function deleteTrackFromPlaylist($playlistId, $trackId)
+    public function deleteTracksFromPlaylist($playlistId, $tracksIds)
     {
         $playlist = $this->api->getPlaylist($playlistId);
         $tracks = [
-            'tracks' => [
-                ['id' => $trackId],
-            ],
+            'tracks' => $this->tracksToDelete($tracksIds),
         ];
         $this->api->deletePlaylistTracks($playlistId, $tracks, $playlist->snapshot_id);
     }
 
-    public function replaceTracksOnPlaylist($playlistId, $tracksId) 
+    public function replaceTracksOnPlaylist($playlistId, $tracksIds)
     {
-        $this->api->replacePlaylistTracks($playlistId, $tracksId);
+        $this->api->replacePlaylistTracks($playlistId, $tracksIds);
     }
 
     public function reorderPlaylistTracks($playlistId, $rangeStart, $insertBefore)
@@ -186,5 +184,16 @@ class WebAPI implements InterfaceAPI
     public function getPlaybackCurrentTrack()
     {
         return (array)$this->api->getMyCurrentPlaybackInfo();
+    }
+
+    private function tracksToDelete($tracksIds)
+    {
+        $tracksToDelete = [];
+
+        foreach ($tracksIds as $trackId) {
+            $tracksToDelete[] = ['id' => $trackId];
+        }
+
+        return $tracksToDelete;
     }
 }
