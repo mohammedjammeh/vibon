@@ -10,9 +10,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PendingAttachVibeTracksRespondedTo
+class PendingAttachVibeTracksRespondedTo implements ShouldBroadcast
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $pendingVibeTracks;
     public $responses;
@@ -28,5 +28,23 @@ class PendingAttachVibeTracksRespondedTo
     {
         $this->pendingVibeTracks = $pendingVibeTracks;
         $this->responses = $responses;
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn()
+    {
+        return new Channel('pending_attach_vibe_tracks.responded_to');
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'vibe' => $this->pendingVibeTracks->first()->vibe_id,
+            'responses' => $this->responses
+        ];
     }
 }

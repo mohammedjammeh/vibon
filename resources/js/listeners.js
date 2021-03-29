@@ -87,19 +87,47 @@ Echo.channel('pending_attach_vibe_track.created')
         actions.updateTrack(data, vibes.addVibeToTrackPendingVibesToAttach);
     });
 
-Echo.channel('pending_attach_vibe_track.deleted')
-    .listen('PendingAttachVibeTrackDeleted', (data) => {
-        actions.updateTrack(data, vibes.removeVibeFromTrackPendingVibesToAttach);
-    });
-
 Echo.channel('pending_detach_vibe_track.created')
     .listen('PendingDetachVibeTrackCreated', (data) => {
         actions.updateTrack(data, vibes.addVibeToTrackPendingVibesToDetach);
     });
 
+Echo.channel('pending_attach_vibe_track.deleted')
+    .listen('PendingAttachVibeTrackDeleted', (data) => {
+        actions.updateTrack(data, vibes.removeVibeFromTrackPendingVibesToAttach);
+    });
+
 Echo.channel('pending_detach_vibe_track.deleted')
     .listen('PendingDetachVibeTrackDeleted', (data) => {
         actions.updateTrack(data, vibes.removeVibeFromTrackPendingVibesToDetach);
+    });
+
+Echo.channel('pending_attach_vibe_tracks.responded_to')
+    .listen('PendingAttachVibeTracksRespondedTo', (eventData) => {
+        vibes.get(eventData.vibe)
+            .then((getVibeResponse) => {
+                vibes.updateTracksForResponseToPendingTracks(
+                    getVibeResponse.vibe,
+                    eventData.responses,
+                    vibes.addVibeToTrackVibes,
+                    vibes.removeVibeFromTrackPendingVibesToAttach,
+                );
+                vibes.updateShowData();
+            });
+    });
+
+Echo.channel('pending_detach_vibe_tracks.responded_to')
+    .listen('PendingDetachVibeTracksRespondedTo', (eventData) => {
+        vibes.get(eventData.vibe)
+            .then((getVibeResponse) => {
+                vibes.updateTracksForResponseToPendingTracks(
+                    getVibeResponse.vibe,
+                    eventData.responses,
+                    vibes.removeVibeFromTrackVibes,
+                    vibes.removeVibeFromTrackPendingVibesToDetach
+                );
+                vibes.updateShowData();
+            });
     });
 
 

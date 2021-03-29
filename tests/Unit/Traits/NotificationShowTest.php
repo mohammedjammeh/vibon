@@ -21,7 +21,7 @@ class NotificationShowTest extends TestCase
 
         $this->post(route('user-vibe.join', $vibe));
 
-        $notificationData = $this->updateData($owner->notifications->first());
+        $notificationData = $this->addUserData($owner->notifications->first());
         $this->assertEquals($notificationData['user_display_name'], $this->user->display_name);
     }
 }

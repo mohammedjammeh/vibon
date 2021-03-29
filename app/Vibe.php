@@ -2,6 +2,13 @@
 
 namespace App;
 
+use App\Notifications\JoinedVibe;
+use App\Notifications\LeftVibe;
+use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
+use App\Notifications\PendingAttachVibeTracksRejectedNotification;
+use App\Notifications\PendingDetachVibeTracksAcceptedNotification;
+use App\Notifications\PendingDetachVibeTracksRejectedNotification;
+use App\Notifications\RequestToJoinAVibe;
 use App\Traits\NotificationShowTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,8 +135,30 @@ class Vibe extends Model
     {
         $notifications =  auth()->user()->notificationsFor($this);
         foreach ($notifications as $notification) {
-            $notification->data = $this->updateData($notification);
+            if ($this->isUserNotification($notification)) {
+                $notification->data = $this->addUserData($notification);
+            }
+
+            if($this->isTrackNotification($notification)) {
+                $notification->data = $this->addTrackData($notification);
+            }
         }
+
         return $notifications;
+    }
+
+    protected function isUserNotification($notification)
+    {
+        return $notification->type === RequestToJoinAVibe::class ||
+            $notification->type === LeftVibe::class ||
+            $notification->type === JoinedVibe::class;
+    }
+
+    protected function isTrackNotification($notification)
+    {
+        return $notification->type === PendingAttachVibeTracksAcceptedNotification::class ||
+            $notification->type === PendingAttachVibeTracksRejectedNotification::class ||
+            $notification->type === PendingDetachVibeTracksAcceptedNotification::class ||
+            $notification->type === PendingDetachVibeTracksRejectedNotification::class;
     }
 }

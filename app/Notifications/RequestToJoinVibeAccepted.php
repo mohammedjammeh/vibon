@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Traits\NotificationShowTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -12,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class RequestToJoinVibeAccepted extends Notification
 {
-    use Queueable, NotificationShowTrait;
+    use Queueable;
 
     public $vibe_id;
 
@@ -59,11 +58,8 @@ class RequestToJoinVibeAccepted extends Notification
      */
     public function toBroadcast($notifiable)
     {
-        $notification = DatabaseNotification::find($this->id);
-        $notification->data = $this->updateData($notification);
-
         return new BroadcastMessage([
-            'data' => $notification,
+            'data' => DatabaseNotification::find($this->id),
         ]);
     }
 }

@@ -63,7 +63,7 @@ class AttachController extends Controller
 
         $vibe->tracks()->attach($this->vibeTracksAttachment($pendingVibeTracks, $responses['accepted']));
 
-        event(new PendingAttachVibeTracksRespondedTo($pendingVibeTracks, $responses));
+        broadcast(new PendingAttachVibeTracksRespondedTo($pendingVibeTracks, $responses))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);

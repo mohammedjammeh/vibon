@@ -2,20 +2,25 @@
 
 namespace App\Traits;
 
-use App\Notifications\JoinedVibe;
-use App\Notifications\LeftVibe;
-use App\Notifications\RequestToJoinAVibe;
+use App\MusicAPI\Tracks;
+use App\Track;
 use App\User;
 
 trait NotificationShowTrait
 {
-    public function updateData($notification)
+    public function addUserData($notification)
     {
         $notificationData = $notification->data;
+        $notificationData['user_display_name'] = User::find($notificationData['user_id'])->display_name;
 
-        if ($notification->type === RequestToJoinAVibe::class || $notification->type === LeftVibe::class || $notification->type === JoinedVibe::class) {
-            $notificationData['user_display_name'] = User::find($notification->data['user_id'])->display_name;
-        }
+        return $notificationData;
+    }
+
+    public function addTrackData($notification)
+    {
+        $notificationData = $notification->data;
+        $track = Track::find($notificationData['track_id']);
+        $notificationData['track_name'] = collect(app(Tracks::class)->load([$track]))->first()->name;
 
         return $notificationData;
     }

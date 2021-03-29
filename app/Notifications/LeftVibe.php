@@ -64,7 +64,7 @@ class LeftVibe extends Notification
     public function toBroadcast($notifiable)
     {
         $notification = DatabaseNotification::find($this->id);
-        $notification->data = $this->updateData($notification);
+        $notification->data = $this->addUserData($notification);
 
         return new BroadcastMessage([
             'data' => $notification,

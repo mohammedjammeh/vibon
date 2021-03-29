@@ -109,7 +109,7 @@ let Vibes = {
                         }
                     }
                     this.updatePlayingTracksData();
-                    this.updatePendingTracksResponsesData();
+                    this.setPendingTracksResponsesData();
                     this.updateShowData();
                     this.loading = false;
                     resolve(vibesData);
@@ -318,6 +318,38 @@ let Vibes = {
             })
             .catch(errors => console.log(errors));
     },
+
+    sendPendingTracksToAttachResponses(form, vibeID) {
+        form.constructor(this.pendingTracksToAttachResponses[vibeID]);
+        form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
+            .then(response => {
+                this.updateTracksForResponseToPendingTracks(
+                    response.vibe,
+                    this.pendingTracksToAttachResponses[vibeID],
+                    this.addVibeToTrackVibes,
+                    this.removeVibeFromTrackPendingVibesToAttach
+                );
+                this.updateShowData();
+                this.resetPendingTracksToAttachResponsesData(vibeID);
+            })
+            .catch(errors => console.log(errors));
+    },
+
+    sendPendingTracksToDetachResponses(form, vibeID) {
+        form.constructor(this.pendingTracksToDetachResponses[vibeID]);
+        form.post(this.routes.sendPendingTracksToDetachResponses(vibeID))
+            .then(response => {
+                this.updateTracksForResponseToPendingTracks(
+                    response.vibe,
+                    this.pendingTracksToDetachResponses[vibeID],
+                    this.removeVibeFromTrackVibes,
+                    this.removeVibeFromTrackPendingVibesToDetach
+                );
+                this.updateShowData();
+                this.resetPendingTracksToAttachResponsesData(vibeID);
+            })
+            .catch(errors => console.log(errors));
+    },
     
     upvoteTrack: function (form, vibeID, trackID) {
         form.post(this.routes.upvoteTrack(vibeID, trackID))
@@ -333,6 +365,47 @@ let Vibes = {
                 this.updateData(response);
             })
             .catch(errors => console.log(errors));
+    },
+
+    updateTrackData(response, action) {
+        this.all = this.all.map((vibe) => {
+            if(!vibe.auto_jd) {
+                for(let key in vibe.api_tracks) {
+                    if (vibe.api_tracks.hasOwnProperty(key)) {
+                        vibe.api_tracks[key].forEach(track => {
+                            if(track.vibon_id === response.track.id) {
+                                action(response.vibe.id, track);
+                            }
+                        });
+                    }
+                }
+            }
+            return vibe.id === response.vibe.id ? response.vibe : vibe;
+        });
+    },
+
+    updateTracksForResponseToPendingTracks(responseVibe, responses, acceptedAction, respondedAction) {
+        let acceptedTracksIDs = responses.accepted;
+        let rejectedTracksIDs = responses.rejected;
+        let respondedTracksIDs = [...acceptedTracksIDs, ...rejectedTracksIDs];
+
+        this.all = this.all.map((vibe) => {
+            if(!vibe.auto_jd) {
+                for(let key in vibe.api_tracks) {
+                    if (vibe.api_tracks.hasOwnProperty(key)) {
+                        vibe.api_tracks[key].forEach(track => {
+                            if(acceptedTracksIDs.includes(track.vibon_id)) {
+                                acceptedAction(responseVibe.id, track);
+                            }
+                            if(respondedTracksIDs.includes(track.vibon_id)) {
+                                respondedAction(responseVibe.id, track);
+                            }
+                        });
+                    }
+                }
+            }
+            return vibe.id === responseVibe.id ? responseVibe : vibe;
+        });
     },
 
     addVibeToTrackVibes(vibeID, track) {
@@ -368,42 +441,6 @@ let Vibes = {
         }
     },
 
-    sendPendingTracksToAttachResponses(form, vibeID) {
-        form.constructor(this.pendingTracksToAttachResponses[vibeID]);
-        form.post(this.routes.sendPendingTracksToAttachResponses(vibeID))
-            .then(response => {
-                // console.log(response);
-            })
-            .catch(errors => console.log(errors));
-    },
-
-    sendPendingTracksToDetachResponses(form, vibeID) {
-        form.constructor(this.pendingTracksToDetachResponses[vibeID]);
-        form.post(this.routes.sendPendingTracksToDetachResponses(vibeID))
-            .then(response => {
-                console.log(response);
-                // this.updateData(response);
-            })
-            .catch(errors => console.log(errors));
-    },
-
-    updateTrackData(response, action) {
-        this.all = this.all.map((vibe) => {
-            if(!vibe.auto_jd) {
-                for(let key in vibe.api_tracks) {
-                    if (vibe.api_tracks.hasOwnProperty(key)) {
-                        vibe.api_tracks[key].forEach(track => {
-                            if(track.vibon_id === response.track.id) {
-                                action(response.vibe.id, track);
-                            }
-                        });
-                    }
-                }
-            }
-            return vibe.id === response.vibe.id ? response.vibe : vibe;
-        });
-    },
-
     readyToShow() {
         return Object.keys(this.show).length > 0;
     },
@@ -428,11 +465,19 @@ let Vibes = {
         this.playingTracks = playingVibesTracks;
     },
 
-    updatePendingTracksResponsesData() {
+    setPendingTracksResponsesData() {
         this.all.forEach(vibe => {
             this.pendingTracksToAttachResponses[vibe.id] = {'accepted': [], 'rejected': []};
             this.pendingTracksToDetachResponses[vibe.id] = {'accepted': [], 'rejected': []};
         });
+    },
+
+    resetPendingTracksToAttachResponsesData(vibeID) {
+        this.pendingTracksToAttachResponses[vibeID] = {'accepted': [], 'rejected': []};
+    },
+
+    setDetachedPendingTracksResponsesData(vibeID) {
+        this.pendingTracksToDetachResponses[vibeID] = {'accepted': [], 'rejected': []};
     },
 
     updateData(response) {

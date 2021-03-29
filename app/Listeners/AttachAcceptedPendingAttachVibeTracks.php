@@ -29,13 +29,19 @@ class AttachAcceptedPendingAttachVibeTracks
     public function handle(PendingAttachVibeTracksRespondedTo $event)
     {
         $vibe = $event->pendingVibeTracks->first()->vibe;
-
-        if (!$vibe->auto_dj) {
-            $playlist = app(Playlist::class)->get($vibe->api_id);
-            $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track.id');
-            $tracks = Track::whereIn('id', $event->responses['accepted'])->whereNotIn('api_id', $playlistTracksIDs);
-
-            app(Playlist::class)->addTracks($vibe, $tracks->pluck('api_id')->toArray());
+        if ($vibe->auto_dj) {
+            return;
         }
+
+        $playlist = app(Playlist::class)->get($vibe->api_id);
+        $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track.id');
+        $tracks = Track::whereIn('id', $event->responses['accepted'])->whereNotIn('api_id', $playlistTracksIDs);
+        $tracksIDs = $tracks->pluck('api_id');
+
+        if($tracksIDs->isEmpty()) {
+            return;
+        }
+
+        app(Playlist::class)->addTracks($vibe, $tracksIDs->toArray());
     }
 }
