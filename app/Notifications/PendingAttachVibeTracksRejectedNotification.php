@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Traits\NotificationShowTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -9,9 +10,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class PendingAttachVibeTrackRejectedNotification extends Notification
+class PendingAttachVibeTracksRejectedNotification extends Notification
 {
-    use Queueable;
+    use Queueable, NotificationShowTrait;
 
     public $vibe_id;
     public $track_id;
@@ -67,6 +68,7 @@ class PendingAttachVibeTrackRejectedNotification extends Notification
     public function toBroadcast($notifiable)
     {
         $notification = DatabaseNotification::find($this->id);
+        $notification->data = $this->addTrackData($notification);
 
         return new BroadcastMessage([
             'data' => $notification,

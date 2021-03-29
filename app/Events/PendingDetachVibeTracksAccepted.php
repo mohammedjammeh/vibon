@@ -26,21 +26,4 @@ class PendingDetachVibeTracksAccepted
     {
         $this->pendingVibeTracks = $pendingVibeTracks;
     }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new Channel('pending_detach_vibe_tracks.accepted');
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'vibe' => $this->pendingVibeTracks->first()->vibe->id
-        ];
-    }
 }

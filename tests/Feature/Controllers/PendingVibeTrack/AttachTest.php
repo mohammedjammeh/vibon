@@ -5,7 +5,7 @@ namespace Tests\Feature\Controllers;
 use App\Events\PendingAttachVibeTrackCreated;
 use App\Events\PendingAttachVibeTrackDeleted;
 use App\Notifications\PendingAttachVibeTracksAcceptedNotification;
-use App\Notifications\PendingAttachVibeTrackRejectedNotification;
+use App\Notifications\PendingAttachVibeTracksRejectedNotification;
 use App\PendingVibeTrack;
 use App\Track;
 use App\Vibe;
@@ -114,7 +114,7 @@ class AttachTest extends TestCase
 
         Notification::assertSentTo(
             $rejectPendingVibeTrack->user,
-            PendingAttachVibeTrackRejectedNotification::class,
+            PendingAttachVibeTracksRejectedNotification::class,
             function ($notification, $channels) use ($rejectPendingVibeTrack) {
                 return $notification->vibe_id === $rejectPendingVibeTrack->vibe_id &&
                     $notification->track_id === $rejectPendingVibeTrack->track_id &&

@@ -58,7 +58,7 @@ class DetachController extends Controller
             ->wherePivotIn('track_id', $responses['accepted'])
             ->detach();
 
-        event(new PendingDetachVibeTracksRespondedTo($pendingVibeTracks, $responses));
+        broadcast(new PendingDetachVibeTracksRespondedTo($pendingVibeTracks, $responses))->toOthers();
 
         $loadedVibe = app(Playlist::class)->load($vibe);
         return $this->showResponse($loadedVibe);

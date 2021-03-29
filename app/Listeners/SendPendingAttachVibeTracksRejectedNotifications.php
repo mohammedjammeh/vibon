@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PendingAttachVibeTracksRejected;
-use App\Notifications\PendingAttachVibeTrackRejectedNotification;
+use App\Notifications\PendingAttachVibeTracksRejectedNotification;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -29,7 +29,7 @@ class SendPendingAttachVibeTracksRejectedNotifications
     {
         $event->pendingVibeTracks->each(function ($pendingVibeTrack) {
             $pendingVibeTrack->user->notify(
-                new PendingAttachVibeTrackRejectedNotification(
+                new PendingAttachVibeTracksRejectedNotification(
                     $pendingVibeTrack->vibe_id,
                     $pendingVibeTrack->track_id,
                     $pendingVibeTrack->attach

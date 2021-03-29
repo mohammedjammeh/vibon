@@ -30,10 +30,12 @@ class DetachAcceptedPendingDetachVibeTracks
     {
         $vibe = $event->pendingVibeTracks->first()->vibe;
 
-        if (!$vibe->auto_dj) {
-            $tracks = Track::whereIn('id', $event->responses['accepted']);
-
-            app(Playlist::class)->deleteTracks($vibe, $tracks->pluck('api_id')->toArray());
+        if ($vibe->auto_dj) {
+            return;
         }
+
+        $tracks = Track::whereIn('id', $event->responses['accepted']);
+        app(Playlist::class)->deleteTracks($vibe, $tracks->pluck('api_id')->toArray());
+
     }
 }

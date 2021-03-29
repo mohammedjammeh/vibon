@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Traits\NotificationShowTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
@@ -12,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class RemovedFromAVibe extends Notification
 {
-    use Queueable, NotificationShowTrait;
+    use Queueable;
 
     protected $vibe_id;
 
@@ -58,11 +57,8 @@ class RemovedFromAVibe extends Notification
      */
     public function toBroadcast($notifiable)
     {
-        $notification = DatabaseNotification::find($this->id);
-        $notification->data = $this->updateData($notification);
-
         return new BroadcastMessage([
-            'data' => $notification,
+            'data' => DatabaseNotification::find($this->id),
         ]);
     }
 }

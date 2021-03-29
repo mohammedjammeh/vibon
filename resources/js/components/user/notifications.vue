@@ -1,14 +1,17 @@
 <template>
     <div>
         <h4>Notifications</h4>
-        <div v-if="this.notificationsIsEmpty()">
+        <div v-if="notificationsIsEmpty">
             <p>No notifications yet..</p>
         </div>
 
         <div v-else>
             <ul>
                 <li v-for="notification in this.vibes.show.notifications">
-                    <div v-if="isRequestToJoinVibeAccepted(notification)">
+                    <div v-if="isRequestToJoinVibe(notification)">
+                        <p>'{{ notification.data.user_display_name }}' sent join request.</p>
+                    </div>
+                    <div v-else-if="isRequestToJoinVibeAccepted(notification)">
                         <p>Join request has been accepted.</p>
                     </div>
                     <div v-else-if="isRequestToJoinVibeRejected(notification)">
@@ -20,8 +23,20 @@
                     <div v-else-if="userJoinedVibe(notification)">
                         <p>'{{ notification.data.user_display_name }}' has joined.</p>
                     </div>
-                    <div v-else-if="isRemovedFromVibe(notification)">
+                    <div v-else-if="userRemovedFromVibe(notification)">
                         <p>You have been removed from this vibe by the owner.</p>
+                    </div>
+                    <div v-else-if="pendingAttachVibeTracksAccepted(notification)">
+                        <p> You request to add '{{ notification.data.track_name }}' track has been accepted.</p>
+                    </div>
+                    <div v-else-if="pendingAttachVibeTracksRejected(notification)">
+                        <p> You request to add '{{ notification.data.track_name }}' track has been rejected.</p>
+                    </div>
+                    <div v-else-if="pendingDetachVibeTracksAccepted(notification)">
+                        <p> You request to remove '{{ notification.data.track_name }}' track has been accepted.</p>
+                    </div>
+                    <div v-else-if="pendingDetachVibeTracksRejected(notification)">
+                        <p> You request to remove '{{ notification.data.track_name }}' track has been rejected.</p>
                     </div>
                 </li>
             </ul>
@@ -46,7 +61,12 @@
         created() {
             Echo.private('App.User.' + user.id)
                 .notification((notification) => {
-                    this.vibes.show.notifications.unshift(notification.data);
+                    for(let key in this.vibes.show.notifications) {
+                        if(this.vibes.show.notifications.hasOwnProperty(key)) {
+                            this.vibes.show.notifications[parseInt(key) + 1] = this.vibes.show.notifications[key];
+                        }
+                    }
+                    this.vibes.show.notifications[0] = notification;
                 });
         },
 
@@ -63,10 +83,6 @@
                 return notification.type === 'App\\Notifications\\RequestToJoinVibeRejected';
             },
 
-            isRemovedFromVibe(notification) {
-                return notification.type === 'App\\Notifications\\RemovedFromAVibe';
-            },
-
             userLeftVibe(notification) {
                 return notification.type === 'App\\Notifications\\LeftVibe';
             },
@@ -75,6 +91,28 @@
                 return notification.type === 'App\\Notifications\\JoinedVibe';
             },
 
+            userRemovedFromVibe(notification) {
+                return notification.type === 'App\\Notifications\\RemovedFromAVibe';
+            },
+
+            pendingAttachVibeTracksAccepted(notification) {
+                return notification.type === 'App\\Notifications\\PendingAttachVibeTracksAcceptedNotification';
+            },
+
+            pendingAttachVibeTracksRejected(notification) {
+                return notification.type === 'App\\Notifications\\PendingAttachVibeTracksRejectedNotification';
+            },
+
+            pendingDetachVibeTracksAccepted(notification) {
+                return notification.type === 'App\\Notifications\\PendingDetachVibeTracksAcceptedNotification';
+            },
+
+            pendingDetachVibeTracksRejected(notification) {
+                return notification.type === 'App\\Notifications\\PendingDetachVibeTracksRejectedNotification';
+            },
+        },
+
+        computed: {
             notificationsIsEmpty() {
                 if(this.vibes.show.notifications == null) {
                     return false;
