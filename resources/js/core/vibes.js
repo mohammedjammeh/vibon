@@ -346,7 +346,7 @@ let Vibes = {
                     this.removeVibeFromTrackPendingVibesToDetach
                 );
                 this.updateShowData();
-                this.resetPendingTracksToAttachResponsesData(vibeID);
+                this.resetPendingTracksToDetachResponsesData(vibeID);
             })
             .catch(errors => console.log(errors));
     },
@@ -476,7 +476,7 @@ let Vibes = {
         this.pendingTracksToAttachResponses[vibeID] = {'accepted': [], 'rejected': []};
     },
 
-    setDetachedPendingTracksResponsesData(vibeID) {
+    resetPendingTracksToDetachResponsesData(vibeID) {
         this.pendingTracksToDetachResponses[vibeID] = {'accepted': [], 'rejected': []};
     },
 
