@@ -32,7 +32,7 @@ class Tracks
         $tracksToDetach = $vibe->pendingTracksToDetach->pluck('track');
 
         $loadedTracks = collect($this->load(
-            $tracksToAttach->concat($tracksToDetach)->concat($tracksNotOnPlaylist)
+            $tracksToAttach->concat($tracksToDetach)->concat($tracksNotOnPlaylist)->unique('id')
         ));
 
         return collect([
