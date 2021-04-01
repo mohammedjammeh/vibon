@@ -32,6 +32,7 @@
 
 <script>
     import vibes from '../../core/vibes.js';
+    import user from '../../core/user.js';
     import notifications from '../user/notifications.vue';
     import memberButtons from './partials/show/member-buttons';
     import members from './partials/show/members';
@@ -56,11 +57,17 @@
         data() {
             return {
                 id: parseInt(this.$route.params.id),
-                vibes: vibes
+                vibes: vibes,
+                user: user,
             }
         },
 
         created() {
+            if (user.id !== null) {
+                this.vibes.display(this.id);
+                return;
+            }
+            
             user.getID()
                 .then(() => {
                     this.vibes.display(this.id);
