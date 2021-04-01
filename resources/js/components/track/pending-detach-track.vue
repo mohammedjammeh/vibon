@@ -20,7 +20,7 @@
     import vibes from '../../core/vibes.js';
 
     export default {
-        props: ['track', 'acceptedPendingTracksToAttach', 'rejectedPendingTracksToAttach'],
+        props: ['track', 'acceptedPendingTracksToDetach', 'rejectedPendingTracksToDetach'],
 
         data() {
             return {
