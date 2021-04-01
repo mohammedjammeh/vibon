@@ -20,13 +20,11 @@
     import vibes from '../../core/vibes.js';
 
     export default {
-        props: ['track', 'category'],
+        props: ['track', 'acceptedPendingTracksToDetach', 'rejectedPendingTracksToDetach'],
 
         data() {
             return {
                 vibes: vibes,
-                acceptedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].accepted,
-                rejectedPendingTracksToAttach: vibes.pendingTracksToAttachResponses[vibes.show.id].rejected,
             }
         },
 
@@ -55,11 +53,11 @@
 
         computed: {
             isAccepted() {
-                return this.acceptedPendingTracksToAttach.includes(this.track.vibon_id);
+                return this.acceptedPendingTracksToDetach.includes(this.track.vibon_id);
             },
 
             isRejected() {
-                return this.rejectedPendingTracksToAttach.includes(this.track.vibon_id);
+                return this.rejectedPendingTracksToDetach.includes(this.track.vibon_id);
             },
 
             artistAndTrackName() {
