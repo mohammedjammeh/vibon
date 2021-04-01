@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="this.vibes.readyToShow()">
-            <tracks-requests></tracks-requests>
+            <tracks-requests :key="this.vibes.show.id"></tracks-requests>
 
             <div v-if="this.vibeHasMessageToShow()">
                 <p v-text="this.vibes.message"></p>

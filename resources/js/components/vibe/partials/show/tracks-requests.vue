@@ -5,7 +5,12 @@
                 <h4>Add tracks requests</h4>
                 <div class="tracks-requests">
                     <div v-for="track in vibes.show.api_tracks.pending_to_attach">
-                        <pending-attach-track :track="track"></pending-attach-track>
+                        <pending-attach-track
+                            :track="track"
+                            :acceptedPendingTracksToAttach="acceptedPendingTracksToAttach"
+                            :rejectedPendingTracksToAttach="rejectedPendingTracksToAttach"
+                        >
+                        </pending-attach-track>
                     </div>
                 </div>
 
@@ -21,7 +26,13 @@
                 <h4>Remove tracks requests</h4>
                 <div class="tracks-requests">
                     <div v-for="track in vibes.show.api_tracks.pending_to_detach">
-                        <pending-detach-track :track="track"></pending-detach-track>
+                        <pending-detach-track :track="track" :key="vibes.show.id"></pending-detach-track>
+                        <pending-attach-track
+                            :track="track"
+                            :acceptedPendingTracksToDetach="acceptedPendingTracksToDetach"
+                            :rejectedPendingTracksToDetach="rejectedPendingTracksToDetach"
+                        >
+                        </pending-attach-track>
                     </div>
                 </div>
                 <form method="POST" :action="this.vibes.routes.sendPendingTracksToDetachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToDetachResponses">

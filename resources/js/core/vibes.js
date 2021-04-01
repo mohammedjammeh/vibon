@@ -473,11 +473,31 @@ let Vibes = {
     },
 
     resetPendingTracksToAttachResponsesData(vibeID) {
-        this.pendingTracksToAttachResponses[vibeID] = {'accepted': [], 'rejected': []};
+        for(let key in this.pendingTracksToAttachResponses[vibeID].accepted) {
+            if(this.pendingTracksToAttachResponses[vibeID].accepted.hasOwnProperty(key)) {
+                this.pendingTracksToAttachResponses[vibeID].accepted.splice(key, 1);
+            }
+        }
+
+        for(let key in this.pendingTracksToAttachResponses[vibeID].rejected) {
+            if(this.pendingTracksToAttachResponses[vibeID].rejected.hasOwnProperty(key)) {
+                this.pendingTracksToAttachResponses[vibeID].rejected.splice(key, 1);
+            }
+        }
     },
 
     resetPendingTracksToDetachResponsesData(vibeID) {
-        this.pendingTracksToDetachResponses[vibeID] = {'accepted': [], 'rejected': []};
+        for(let key in this.pendingTracksToDetachResponses[vibeID].accepted) {
+            if(this.pendingTracksToDetachResponses[vibeID].accepted.hasOwnProperty(key)) {
+                this.pendingTracksToDetachResponses[vibeID].accepted.splice(key, 1);
+            }
+        }
+
+        for(let key in this.pendingTracksToDetachResponses[vibeID].rejected) {
+            if(this.pendingTracksToDetachResponses[vibeID].rejected.hasOwnProperty(key)) {
+                this.pendingTracksToDetachResponses[vibeID].rejected.splice(key, 1);
+            }
+        }
     },
 
     updateData(response) {
