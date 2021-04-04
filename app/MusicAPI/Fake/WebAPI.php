@@ -209,4 +209,28 @@ class WebAPI extends spotifyWebAPI
             'genres' => array('roots', 'reggae')
         ];
     }
+
+    public function getUserDevices()
+    {
+        return [
+            (object) [
+                'id' => '639na43rer3923lee39842',
+                'is_active' => true,
+                'is_private_session' => false,
+                'is_restricted' => false,
+                'name' => 'Galaxy M10',
+                'type' => 'Smartphone',
+                'volume_percent' => 100,
+            ],
+            (object) [
+                'id' => '329na43rer3923lee39239',
+                'is_active' => false,
+                'is_private_session' => false,
+                'is_restricted' => false,
+                'name' => 'Vibon',
+                'type' => 'Computer',
+                'volume_percent' => 100,
+            ],
+        ];
+    }
 }

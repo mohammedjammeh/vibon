@@ -1,26 +1,20 @@
 const user = {
     id: null,
+    deviceID: null,
     autoVibesIDs: [],
     manualVibesIDs: [],
 
     routes: {
-        'vibes': '/user/vibes',
         'attributes': 'user/attributes',
     },
 
-    getID() {
+    getAttributes() {
         return axios.get(this.routes.attributes)
             .then(response => {
                 this.id = response.data.id;
-            })
-            .catch(errors => console.log(errors));
-    },
-
-    getVibesIDs() {
-        return axios.get(this.routes.vibes)
-            .then(response => {
-                this.autoVibesIDs = response.data.auto;
-                this.manualVibesIDs = response.data.manual;
+                this.deviceID = response.data.device_id;
+                this.autoVibesIDs = response.data.auto_vibes;
+                this.manualVibesIDs = response.data.manual_vibes;
             })
             .catch(errors => console.log(errors));
     },

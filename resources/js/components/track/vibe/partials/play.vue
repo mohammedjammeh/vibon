@@ -1,9 +1,9 @@
 <template>
     <div>
-        <a v-if="isPlaylistTrack" @click="playPlaylistTrack()" title="play">
+        <a v-if="isPlaylistTrack" @click="playPlaylistTracks()" title="play">
             <img :src="track.album.images[0].url">
         </a>
-        <a v-else @click="playVibeOtherTrack()" title="play">
+        <a v-else @click="playOtherVibeTracks()" title="play">
             <img :src="track.album.images[0].url">
         </a>
 
@@ -16,6 +16,7 @@
 
 <script>
     import playback from '../../../../core/playback.js';
+    import user from '../../../../core/user.js';
     import vibes from '../../../../core/vibes.js';
 
     export default {
@@ -28,18 +29,19 @@
         },
 
         methods: {
-            playPlaylistTrack() {
+            playPlaylistTracks() {
                 this.playback.type = this.type;
                 this.playback.vibeID = vibes.show.id;
 
-                this.playback.playVibe({
+                this.playback.playPlaylist({
                     playerInstance: this.playback.player,
                     playlist_uri: vibes.show.uri,
-                    track_uri: this.track.uri
+                    track_uri: this.track.uri,
+                    device_id: user.deviceID,
                 });
             },
 
-            playVibeOtherTrack() {
+            playOtherVibeTracks() {
                 this.playback.type = this.type;
                 this.playback.vibeID = vibes.show.id;
 
@@ -49,7 +51,8 @@
                 this.playback.playTracks({
                     playerInstance: this.playback.player,
                     tracks_uris: trackUris,
-                    track_uri: this.track.uri
+                    track_uri: this.track.uri,
+                    device_id: user.deviceID,
                 });
             }
         },

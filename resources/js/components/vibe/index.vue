@@ -71,10 +71,8 @@
         },
 
         created() {
-            this.user.getVibesIDs();
-
-            this.vibes.getAll().then(() => {
-                this.vibes.sortVibesOrder();
+            this.user.getAttributes().then(() => {
+                this.vibes.getAll();
             });
         },
 

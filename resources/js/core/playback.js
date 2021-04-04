@@ -19,7 +19,7 @@ const playback = {
         'broadcast': 'playback/broadcast'
     },
 
-    playVibe: ({
+    playPlaylist: ({
          playlist_uri,
          track_uri,
          playerInstance: {
@@ -27,9 +27,11 @@ const playback = {
                  getOAuthToken,
                  id
              }
-         }}) => {
+         },
+        device_id
+    }) => {
         getOAuthToken(access_token => {
-            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                     context_uri: playlist_uri,
@@ -53,9 +55,11 @@ const playback = {
                  getOAuthToken,
                  id
              }
-         }}) => {
+         },
+         device_id
+    }) => {
         getOAuthToken(access_token => {
-            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
                 method: 'PUT',
                 body: JSON.stringify({
                     uris: tracks_uris,
