@@ -1,7 +1,6 @@
 <template>
     <div>
         <div v-if="this.vibes.readyToShow()">
-            <tracks-requests :key="this.vibes.show.id"></tracks-requests>
 
             <div v-if="this.vibeHasMessageToShow()">
                 <p v-text="this.vibes.message"></p>
@@ -19,6 +18,8 @@
             <user-notifications></user-notifications>
 
             <members></members>
+
+            <tracks-requests :key="this.vibes.show.id"></tracks-requests>
 
             <tracks></tracks>
         </div>
@@ -63,15 +64,7 @@
         },
 
         created() {
-            if (user.id !== null) {
-                this.vibes.display(this.id);
-                return;
-            }
-            
-            user.getID()
-                .then(() => {
-                    this.vibes.display(this.id);
-                });
+            this.vibes.display(this.id);
         },
 
         methods: {

@@ -31,7 +31,6 @@ Route::middleware(['auth', 'check.user.tracks', 'only.ajax'])->group(function ()
 
     Route::resource('/vibe', 'VibeController');
 
-    Route::get('/user/vibes', 'UserController@vibes')->name('user.vibes');
     Route::get('/user/attributes', 'UserController@attributes')->name('user.attributes');
 
     Route::post('/join-request/vibe/{vibe}', 'JoinRequestController@store')->name('join-request.store');

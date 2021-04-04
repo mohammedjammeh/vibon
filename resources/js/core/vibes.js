@@ -111,6 +111,7 @@ let Vibes = {
                     this.updatePlayingTracksData();
                     this.setPendingTracksResponsesData();
                     this.updateShowData();
+                    this.sortVibesOrder();
                     this.loading = false;
                     resolve(vibesData);
                 })
