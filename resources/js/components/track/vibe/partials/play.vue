@@ -33,12 +33,17 @@
                 this.playback.type = this.type;
                 this.playback.vibeID = vibes.show.id;
 
-                this.playback.playPlaylist({
-                    playerInstance: this.playback.player,
-                    playlist_uri: vibes.show.uri,
-                    track_uri: this.track.uri,
-                    device_id: user.deviceID,
-                });
+                if(user.deviceID !== null) {
+                    this.playPlaylistTrackAction();
+                    return;
+                }
+
+                axios.get(user.routes.attributes)
+                    .then(response => {
+                        user.deviceID = response.data.device_id;
+                        this.playPlaylistTrackAction();
+                    })
+                    .catch(errors => console.log(errors));
             },
 
             playOtherVibeTracks() {
@@ -48,6 +53,29 @@
                 let tracks = vibes.show.api_tracks[this.type];
                 let trackUris = tracks.map((track) => track.uri);
 
+                if(user.deviceID !== null) {
+                    this.playOtherVibeTracksAction(trackUris);
+                    return;
+                }
+
+                axios.get(user.routes.attributes)
+                    .then(response => {
+                        user.deviceID = response.data.device_id;
+                        this.playOtherVibeTracksAction(trackUris);
+                    })
+                    .catch(errors => console.log(errors));
+            },
+
+            playPlaylistTrackAction() {
+                this.playback.playPlaylist({
+                    playerInstance: this.playback.player,
+                    playlist_uri: vibes.show.uri,
+                    track_uri: this.track.uri,
+                    device_id: user.deviceID,
+                });
+            },
+
+            playOtherVibeTracksAction(trackUris) {
                 this.playback.playTracks({
                     playerInstance: this.playback.player,
                     tracks_uris: trackUris,
