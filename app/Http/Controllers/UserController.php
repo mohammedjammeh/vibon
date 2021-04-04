@@ -19,7 +19,7 @@ class UserController extends Controller
             'token_set_at' => $user->token_set_at,
             'auto_vibes' => $vibes->where('auto_dj', true)->pluck('id'),
             'manual_vibes' => $vibes->where('auto_dj', false)->pluck('id'),
-            'device_id' => collect(app(UserAPI::class)->devices())->where('name', 'Vibon')->first()->id
+            'device_id' => optional(collect(app(UserAPI::class)->devices())->where('name', 'Vibon')->first())->id
         ];
     }
 }
