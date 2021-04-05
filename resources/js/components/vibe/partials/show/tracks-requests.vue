@@ -1,49 +1,50 @@
 <template>
     <div v-if="this.vibes.show.destroyable">
-        <div>
-            <div v-if="this.vibeHasPendingTracksToAttach()">
-                <h4>Add tracks requests</h4>
-                <div class="tracks-requests">
-                    <div v-for="track in vibes.show.api_tracks.pending_to_attach">
-                        <pending-attach-track
-                            :track="track"
-                            :acceptedPendingTracksToAttach="acceptedPendingTracksToAttach"
-                            :rejectedPendingTracksToAttach="rejectedPendingTracksToAttach"
-                        >
-                        </pending-attach-track>
-                    </div>
+        <h4>Add tracks requests</h4>
+        <div v-if="this.vibeHasPendingTracksToAttach()">
+            <div class="tracks-requests">
+                <div v-for="track in vibes.show.api_tracks.pending_to_attach">
+                    <pending-attach-track
+                        :track="track"
+                        :acceptedPendingTracksToAttach="acceptedPendingTracksToAttach"
+                        :rejectedPendingTracksToAttach="rejectedPendingTracksToAttach"
+                    >
+                    </pending-attach-track>
                 </div>
-
-                <form method="POST" :action="this.vibes.routes.sendPendingTracksToAttachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToAttachResponses">
-                    <input type="submit" name="send-pending-tracks-to-attach-responses" value="Send Pending Tracks To Add Responses" :disabled="noPendingTracksToAttachResponses">
-                    <br><br>
-                </form>
-
-                <br><br>
             </div>
 
-            <div v-if="this.vibeHasPendingTracksToDetach()">
-                <h4>Remove tracks requests</h4>
-                <div class="tracks-requests">
-                    <div v-for="track in vibes.show.api_tracks.pending_to_detach">
-                        <pending-detach-track :track="track" :key="vibes.show.id"></pending-detach-track>
-                        <pending-attach-track
-                            :track="track"
-                            :acceptedPendingTracksToDetach="acceptedPendingTracksToDetach"
-                            :rejectedPendingTracksToDetach="rejectedPendingTracksToDetach"
-                        >
-                        </pending-attach-track>
-                    </div>
-                </div>
-                <form method="POST" :action="this.vibes.routes.sendPendingTracksToDetachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToDetachResponses">
-                    <input type="submit" name="send-pending-tracks-to-detach-responses" value="Send Pending Tracks To Remove Responses" :disabled="noPendingTracksToDetachResponses">
-                    <br><br>
-                </form>
-
+            <form method="POST" :action="this.vibes.routes.sendPendingTracksToAttachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToAttachResponses">
+                <input type="submit" name="send-pending-tracks-to-attach-responses" value="Send Pending Tracks To Add Responses" :disabled="noPendingTracksToAttachResponses">
                 <br><br>
-            </div>
+            </form>
         </div>
+        <div v-else>
+            <p>No requests to add tracks..</p>
+        </div>
+        <br><br>
 
+        <h4>Remove tracks requests</h4>
+        <div v-if="this.vibeHasPendingTracksToDetach()">
+            <div class="tracks-requests">
+                <div v-for="track in vibes.show.api_tracks.pending_to_detach">
+                    <pending-detach-track :track="track" :key="vibes.show.id"></pending-detach-track>
+                    <pending-attach-track
+                        :track="track"
+                        :acceptedPendingTracksToDetach="acceptedPendingTracksToDetach"
+                        :rejectedPendingTracksToDetach="rejectedPendingTracksToDetach"
+                    >
+                    </pending-attach-track>
+                </div>
+            </div>
+            <form method="POST" :action="this.vibes.routes.sendPendingTracksToDetachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToDetachResponses">
+                <input type="submit" name="send-pending-tracks-to-detach-responses" value="Send Pending Tracks To Remove Responses" :disabled="noPendingTracksToDetachResponses">
+                <br><br>
+            </form>
+        </div>
+        <div v-else>
+            <p>No requests to remove tracks..</p>
+        </div>
+        <br><br>
     </div>
 </template>
 
