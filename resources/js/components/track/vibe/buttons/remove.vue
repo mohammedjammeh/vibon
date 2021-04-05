@@ -2,13 +2,13 @@
     <div>
         <div v-if="this.vibes.ownedByUser(vibeID)">
             <form method="POST" :action="vibes.routes.removeTrack(vibeID, trackID)" @submit.prevent="onRemoveTrackSubmit">
-                <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(vibeID)">
+                <input type="submit" name="track-vibe-destroy" value="Remove track">
             </form>
             <br>
         </div>
         <div v-else>
             <form method="POST" :action="vibes.routes.pendDetachTrack(vibeID, trackID)" @submit.prevent="onPendDetachTrackSubmit">
-                <input type="submit" name="track-vibe-pend" :value="vibes.getVibeName(vibeID)">
+                <input type="submit" name="track-vibe-pend" value="Remove track request">
             </form>
             <br>
         </div>
@@ -41,9 +41,3 @@
         }
     }
 </script>
-
-<style scoped>
-    form input {
-        background: red;
-    }
-</style>

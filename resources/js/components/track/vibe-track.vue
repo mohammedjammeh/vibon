@@ -2,36 +2,42 @@
     <div :class="isPlaying">
         <play :track="track" :type="category"></play>
 
-        <div>
+        <div class="tracks">
             <div v-for="userVibeID in user.manualVibesIDs">
-                <cancel-pending-detach-track-button
-                    v-if="track.pending_vibes_to_detach.includes(userVibeID)"
-                    :vibeID="userVibeID"
-                    :trackID="track.vibon_id"
-                >
-                </cancel-pending-detach-track-button>
+                <div class="track-name">
+                    <p v-text="vibes.getVibeName(userVibeID)"></p>
+                </div>
 
-                <remove-button
-                    v-else-if="track.vibes.includes(userVibeID)"
-                    :vibeID="userVibeID"
-                    :trackID="track.vibon_id"
-                >
-                </remove-button>
+                <div class="track-buttons">
+                    <cancel-pending-detach-track-button
+                        v-if="track.pending_vibes_to_detach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                    >
+                    </cancel-pending-detach-track-button>
 
-                <cancel-pending-attach-track-button
-                    v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
-                    :vibeID="userVibeID"
-                    :trackID="track.vibon_id"
-                >
-                </cancel-pending-attach-track-button>
+                    <remove-button
+                        v-else-if="track.vibes.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                    >
+                    </remove-button>
 
-                <add-button
-                    v-else
-                    :vibeID="userVibeID"
-                    :trackApiId="track.id"
-                    :category="category"
-                >
-                </add-button>
+                    <cancel-pending-attach-track-button
+                        v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                    >
+                    </cancel-pending-attach-track-button>
+
+                    <add-button
+                        v-else
+                        :vibeID="userVibeID"
+                        :trackApiId="track.id"
+                        :category="category"
+                    >
+                    </add-button>
+                </div>
             </div>
 
             <!--<p>Auto</p>-->
@@ -96,5 +102,24 @@
 <style scoped>
     .playing {
         background: green;
+    }
+
+    .tracks {
+        overflow: auto;
+    }
+
+    .track-name {
+        float: left;
+        width: 30%;
+        margin-top: 3px;
+    }
+
+    .track-buttons {
+        float: left;
+        width: 70%;
+    }
+
+    .track-buttons div {
+        float: right;
     }
 </style>
