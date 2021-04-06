@@ -9,7 +9,7 @@
 
         <br><br>
 
-        <p v-text="artistAndTrackName" style="white-space: nowrap; overflow: hidden;"></p>
+        <p class="artist-and-track-name" v-text="artistAndTrackName"></p>
 
     </div>
 </template>
@@ -38,12 +38,9 @@
                     return;
                 }
 
-                axios.get(user.routes.attributes)
-                    .then(response => {
-                        user.deviceID = response.data.device_id;
-                        this.playPlaylistTrackAction();
-                    })
-                    .catch(errors => console.log(errors));
+                this.user.getAttributes().then(() => {
+                    this.playPlaylistTrackAction();
+                });
             },
 
             playOtherVibeTracks() {
@@ -58,12 +55,9 @@
                     return;
                 }
 
-                axios.get(user.routes.attributes)
-                    .then(response => {
-                        user.deviceID = response.data.device_id;
-                        this.playOtherVibeTracksAction(trackUris);
-                    })
-                    .catch(errors => console.log(errors));
+                this.user.getAttributes().then(() => {
+                    this.playOtherVibeTracksAction(trackUris);
+                });
             },
 
             playPlaylistTrackAction() {
@@ -109,5 +103,10 @@
     div a:hover {
         cursor: pointer;
         opacity: 0.8;
+    }
+
+    .artist-and-track-name {
+        white-space: nowrap;
+        overflow: hidden;
     }
 </style>
