@@ -4,7 +4,7 @@
             <h4>Playlist</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.playlist">
-                    <vibe-track :track="track" :category="tracks.categories.playlist"></vibe-track>
+                    <vibe-track :track="track" :category="trackCore.categories.playlist"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -14,7 +14,7 @@
             <h4>Playlist tracks not on vibe</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.not_on_vibon">
-                    <vibe-track :track="track" :category="tracks.categories.not_on_vibon"></vibe-track>
+                    <vibe-track :track="track" :category="trackCore.categories.not_on_vibon"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -24,7 +24,7 @@
             <h4>Vibe tracks not on playlist</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.not_on_playlist">
-                    <vibe-track :track="track" :category="tracks.categories.not_on_playlist"></vibe-track>
+                    <vibe-track :track="track" :category="trackCore.categories.not_on_playlist"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -34,7 +34,7 @@
             <h4>Pending to attach</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.pending_to_attach">
-                    <vibe-track :track="track" :category="tracks.categories.pending_to_attach"></vibe-track>
+                    <vibe-track :track="track" :category="trackCore.categories.pending_to_attach"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -44,7 +44,7 @@
             <h4>Pending to detach</h4>
             <div class="api-tracks">
                 <div v-for="track in vibes.show.api_tracks.pending_to_detach">
-                    <vibe-track :track="track" :category="tracks.categories.pending_to_detach"></vibe-track>
+                    <vibe-track :track="track" :category="trackCore.categories.pending_to_detach"></vibe-track>
                 </div>
             </div>
             <br><br>
@@ -54,7 +54,7 @@
 
 <script>
     import vibes from '../../../../core/vibes.js';
-    import tracks from '../../../../core/tracks.js';
+    import trackCore from '../../../../core/track.js';
     import track from '../../../track/vibe-track.vue';
 
     export default {
@@ -65,7 +65,7 @@
         data() {
             return {
                 vibes: vibes,
-                tracks: tracks,
+                trackCore: trackCore,
                 editMode: false,
             }
         },

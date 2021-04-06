@@ -1,35 +1,54 @@
 <template>
     <div>
-        <!--<form method="POST" :action="vibes.routes.addTrack(userVibeID, trackID)" @submit.prevent="onAddTrackSubmit(userVibeID, trackID)">-->
-            <!--<input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)">-->
-        <!--</form>-->
-        <!--<br>-->
-        <form method="POST" :action="vibes.routes.addTrack(userVibeID, trackID)" @submit.prevent="onAddTrackSubmit(userVibeID, trackID)">
-            <input type="submit" name="track-vibe-destroy" :value="vibes.getVibeName(userVibeID)">
-        </form>
-        <br>
+        <div v-if="this.vibes.ownedByUser(vibeID)">
+            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackApiId, trackCategory)" @submit.prevent="onAddTrackSubmit">
+                <input type="submit" name="track-vibe-add" value="Add track">
+            </form>
+            <br>
+        </div>
+        <div v-else>
+            <form method="POST" :action="vibes.routes.pendAttachTrack(vibeID, trackApiId)" @submit.prevent="onPendAttachTrackSubmit">
+                <input type="submit" name="track-vibe-pend" value="Add track request">
+            </form>
+            <br>
+        </div>
     </div>
 </template>
 
 <script>
-    import vibes from '../../../../core/vibes.js';
     import Form from '../../../../classes/Form.js';
+    import vibes from '../../../../core/vibes.js';
+    import trackCore from '../../../../core/track.js';
 
     export default {
-        props: ['userVibeID', 'trackID', 'searchTracks'],
+        props: ['vibeID', 'trackApiId', 'searchTracks'],
 
         data() {
             return {
                 vibes: vibes,
-                addTrackForm: new Form({})
+                trackCore: trackCore,
+                addTrackForm: new Form({}),
+                pendAttachTrackForm: new Form({}),
             }
         },
 
         methods: {
-            onAddTrackSubmit(vibeID, trackID) {
-                this.vibes.addTrack(this.addTrackForm, vibeID, trackID);
-                let track =  this.searchTracks.find(track => track.id === trackID);
-                track.vibes.push(vibeID);
+            onAddTrackSubmit() {
+                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackApiId, this.trackCategory);
+                let track =  this.searchTracks.find(track => track.id === this.trackApiId);
+                this.vibes.addVibeToTrackVibes(this.vibeID, track);
+            },
+
+            onPendAttachTrackSubmit() {
+                this.vibes.pendAttachTrack(this.pendAttachTrackForm, this.vibeID, this.trackApiId);
+                let track =  this.searchTracks.find(track => track.id === this.trackApiId);
+                this.vibes.addVibeToTrackPendingVibesToAttach(this.vibeID, track);
+            }
+        },
+
+        computed: {
+            trackCategory() {
+                return trackCore.category(this.vibeID, this.trackApiId, this.category);
             }
         }
     }
