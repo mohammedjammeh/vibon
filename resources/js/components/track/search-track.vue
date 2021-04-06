@@ -2,33 +2,35 @@
     <div :class="isPlaying">
         <play :track="track" :searchTracks="searchTracks"></play>
         <div class="track">
-            <div v-for="userVibeID in user.myVibesIDs">
+            <div v-for="userVibeID in user.memberOfVibesIDs">
                 <div class="track-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
                 </div>
 
                 <div class="track-buttons">
-                    <p v-if="track.vibes.includes(userVibeID)"></p>
-                    <!--<cancel-pending-detach-track-button-->
-                            <!--v-if="track.pending_vibes_to_detach.includes(userVibeID)"-->
-                            <!--:vibeID="userVibeID"-->
-                            <!--:trackID="track.vibon_id"-->
-                    <!--&gt;-->
-                    <!--</cancel-pending-detach-track-button>-->
+                    <cancel-pending-detach-track-button
+                        v-if="track.pending_vibes_to_detach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                        :searchTracks="searchTracks"
+                    >
+                    </cancel-pending-detach-track-button>
 
-                    <!--<remove-button-->
-                            <!--v-else-if="track.vibes.includes(userVibeID)"-->
-                            <!--:vibeID="userVibeID"-->
-                            <!--:trackID="track.vibon_id"-->
-                    <!--&gt;-->
-                    <!--</remove-button>-->
+                    <remove-button
+                        v-else-if="track.vibes.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                        :searchTracks="searchTracks"
+                    >
+                    </remove-button>
 
-                    <!--<cancel-pending-attach-track-button-->
-                            <!--v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"-->
-                            <!--:vibeID="userVibeID"-->
-                            <!--:trackID="track.vibon_id"-->
-                    <!--&gt;-->
-                    <!--</cancel-pending-attach-track-button>-->
+                    <cancel-pending-attach-track-button
+                        v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
+                        :searchTracks="searchTracks"
+                    >
+                    </cancel-pending-attach-track-button>
 
                     <add-button
                         v-else
@@ -63,6 +65,8 @@
     import play from './search/partials/play';
     import addButton from './search/buttons/add';
     import removeButton from './search/buttons/remove';
+    import cancelPendingAttachTrackButton from './search/buttons/cancel-pending-attach-track';
+    import cancelPendingDetachTrackButton from './search/buttons/cancel-pending-detach-track';
 
     export default {
         props: ['track', 'searchTracks'],
@@ -70,7 +74,9 @@
         components: {
             'play' : play,
             'add-button': addButton,
-            'remove-button': removeButton
+            'remove-button': removeButton,
+            'cancel-pending-attach-track-button': cancelPendingAttachTrackButton,
+            'cancel-pending-detach-track-button': cancelPendingDetachTrackButton,
         },
 
         data() {

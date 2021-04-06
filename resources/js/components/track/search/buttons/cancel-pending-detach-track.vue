@@ -3,11 +3,11 @@
         <form method="POST" :action="vibes.routes.cancelPendingDetachTrack(pendingTrack.id)" @submit.prevent="onCancelPendingDetachTrackSubmit">
             <input v-if="this.pendingTrackCore.canBeRemovedByUser(pendingTrack, vibeID)"
                 type="submit" name="track-vibe-cancel-pend"
-                value="Cancel remove request"
+                value="Cancel Remove"
             >
             <input v-else
                 type="submit" name="track-vibe-cancel-pend"
-                value="Cancel remove request"
+                value="Cancel Remove"
                 disabled
             >
         </form>
@@ -21,7 +21,7 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['vibeID', 'trackID'],
+        props: ['vibeID', 'trackID', 'searchTracks'],
 
         data() {
             return {
@@ -34,6 +34,8 @@
         methods: {
             onCancelPendingDetachTrackSubmit() {
                 this.vibes.cancelPendingDetachTrack(this.cancelPendingDetachTrackForm, this.pendingTrack);
+                let track =  this.searchTracks.find(track => track.vibon_id === this.trackID);
+                this.vibes.removeVibeFromTrackPendingVibesToDetach(this.vibeID, track);
             }
         },
 
