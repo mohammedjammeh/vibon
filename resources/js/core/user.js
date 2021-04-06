@@ -65,17 +65,17 @@ const user = {
     },
 
     sortMemberOfVibesIDs(vibes) {
-        let sortedManuelVibesIDs = vibes.map((vibe) => {
+        let sortedMemberOfVibesIDs = vibes.map((vibe) => {
             return this.memberOfVibesIDs.filter(vibeID => vibeID === vibe.id)[0];
         });
-        this.memberOfVibesIDs = sortedManuelVibesIDs.filter((vibeID) => vibeID !== undefined);
+        this.memberOfVibesIDs = sortedMemberOfVibesIDs.filter((vibeID) => vibeID !== undefined);
     },
 
     sortMyVibesIDs(vibes) {
-        let sortedAutoVibesIDs = vibes.map((vibe) => {
+        let sortedMyVibesIDs = vibes.map((vibe) => {
             return this.myVibesIDs.filter(vibeID => vibeID === vibe.id)[0];
         });
-        this.myVibesIDs = sortedAutoVibesIDs.filter((vibeID) => vibeID !== undefined);
+        this.myVibesIDs = sortedMyVibesIDs.filter((vibeID) => vibeID !== undefined);
     }
 };
 

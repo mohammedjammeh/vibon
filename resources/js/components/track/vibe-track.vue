@@ -2,7 +2,7 @@
     <div :class="isPlaying">
         <play :track="track" :type="category"></play>
 
-        <div class="tracks">
+        <div class="track">
             <div v-for="userVibeID in user.myVibesIDs">
                 <div class="track-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
@@ -10,31 +10,31 @@
 
                 <div class="track-buttons">
                     <cancel-pending-detach-track-button
-                            v-if="track.pending_vibes_to_detach.includes(userVibeID)"
-                            :vibeID="userVibeID"
-                            :trackID="track.vibon_id"
+                        v-if="track.pending_vibes_to_detach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
                     >
                     </cancel-pending-detach-track-button>
 
                     <remove-button
-                            v-else-if="track.vibes.includes(userVibeID)"
-                            :vibeID="userVibeID"
-                            :trackID="track.vibon_id"
+                        v-else-if="track.vibes.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
                     >
                     </remove-button>
 
                     <cancel-pending-attach-track-button
-                            v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
-                            :vibeID="userVibeID"
-                            :trackID="track.vibon_id"
+                        v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
+                        :vibeID="userVibeID"
+                        :trackID="track.vibon_id"
                     >
                     </cancel-pending-attach-track-button>
 
                     <add-button
-                            v-else
-                            :vibeID="userVibeID"
-                            :trackApiId="track.id"
-                            :category="category"
+                        v-else
+                        :vibeID="userVibeID"
+                        :trackApiId="track.id"
+                        :category="category"
                     >
                     </add-button>
                 </div>
@@ -134,7 +134,7 @@
         background: green;
     }
 
-    .tracks {
+    .track {
         overflow: auto;
     }
 
