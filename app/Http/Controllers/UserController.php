@@ -17,8 +17,8 @@ class UserController extends Controller
             'id' => $user->id,
             'access_token' => $user->access_token,
             'token_set_at' => $user->token_set_at,
-            'auto_vibes' => $vibes->where('auto_dj', true)->pluck('id'),
-            'manual_vibes' => $vibes->where('auto_dj', false)->pluck('id'),
+            'my_vibes' => $vibes->where('pivot.owner', true)->pluck('id'),
+            'member_of_vibes' => $vibes->where('pivot.owner', false)->pluck('id'),
             'device_id' => optional(collect(app(UserAPI::class)->devices())->where('name', 'Vibon')->first())->id
         ];
     }
