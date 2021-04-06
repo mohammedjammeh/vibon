@@ -2,13 +2,13 @@
     <div>
         <div v-if="this.vibes.ownedByUser(vibeID)">
             <form method="POST" :action="vibes.routes.addTrack(vibeID, trackApiId, trackCategory)" @submit.prevent="onAddTrackSubmit">
-                <input type="submit" name="track-vibe-add" value="Add track">
+                <input type="submit" name="track-vibe-add" value="Add">
             </form>
             <br>
         </div>
         <div v-else>
             <form method="POST" :action="vibes.routes.pendAttachTrack(vibeID, trackApiId)" @submit.prevent="onPendAttachTrackSubmit">
-                <input type="submit" name="track-vibe-pend" value="Add track request">
+                <input type="submit" name="track-vibe-pend" value="Add Request">
             </form>
             <br>
         </div>

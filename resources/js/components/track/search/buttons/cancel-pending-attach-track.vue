@@ -1,13 +1,13 @@
 <template>
     <div>
-        <form method="POST" :action="vibes.routes.cancelPendingDetachTrack(pendingTrack.id)" @submit.prevent="onCancelPendingDetachTrackSubmit">
+        <form method="POST" :action="vibes.routes.cancelPendingAttachTrack(pendingTrack.id)" @submit.prevent="onCancelPendingAttachTrackSubmit">
             <input v-if="this.pendingTrackCore.canBeRemovedByUser(pendingTrack, vibeID)"
                 type="submit" name="track-vibe-cancel-pend"
-                value="Cancel remove request"
+                value="Cancel Add"
             >
-            <input v-else
-                type="submit" name="track-vibe-cancel-pend"
-                value="Cancel remove request"
+            <input v-else type="submit"
+                name="track-vibe-cancel-pend"
+                value="Cancel Add"
                 disabled
             >
         </form>
@@ -21,19 +21,21 @@
     import Form from '../../../../classes/Form.js';
 
     export default {
-        props: ['vibeID', 'trackID'],
+        props: ['vibeID', 'trackID', 'searchTracks'],
 
         data() {
             return {
                 vibes: vibes,
                 pendingTrackCore: pendingTrackCore,
-                cancelPendingDetachTrackForm: new Form({}),
+                cancelPendingAttachTrackForm: new Form({}),
             }
         },
 
         methods: {
-            onCancelPendingDetachTrackSubmit() {
-                this.vibes.cancelPendingDetachTrack(this.cancelPendingDetachTrackForm, this.pendingTrack);
+            onCancelPendingAttachTrackSubmit() {
+                this.vibes.cancelPendingAttachTrack(this.cancelPendingAttachTrackForm, this.pendingTrack);
+                let track =  this.searchTracks.find(track => track.vibon_id === this.trackID);
+                this.vibes.removeVibeFromTrackPendingVibesToAttach(this.vibeID, track);
             }
         },
 
@@ -44,7 +46,3 @@
         }
     }
 </script>
-
-<style scoped>
-    form input {}
-</style>
