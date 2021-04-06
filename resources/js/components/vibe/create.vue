@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a @click="$modal.show('create-vibe-modal')">Start a vibe</a>
+        <button @click="$modal.show('create-vibe-modal')">start vibe</button>
 
         <modal
             name="create-vibe-modal"
@@ -82,3 +82,19 @@
         }
     }
 </script>
+
+<style scoped>
+    button {
+        padding: 5px 10px;
+        border: 1px solid lightgrey;
+        border-radius: 3px;
+    }
+
+    form {
+        margin: 20px;
+    }
+
+    div[data-modal="create-vibe-modal"] {
+        background: rgba(0, 0, 0, 0.4);
+    }
+</style>
