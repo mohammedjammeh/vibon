@@ -3,44 +3,44 @@
         <play :track="track" :type="category"></play>
 
         <div class="tracks">
-            <div v-for="userVibeID in user.manualVibesIDs">
+            <div v-for="userVibeID in user.myVibesIDs">
                 <div class="track-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
                 </div>
 
                 <div class="track-buttons">
                     <cancel-pending-detach-track-button
-                        v-if="track.pending_vibes_to_detach.includes(userVibeID)"
-                        :vibeID="userVibeID"
-                        :trackID="track.vibon_id"
+                            v-if="track.pending_vibes_to_detach.includes(userVibeID)"
+                            :vibeID="userVibeID"
+                            :trackID="track.vibon_id"
                     >
                     </cancel-pending-detach-track-button>
 
                     <remove-button
-                        v-else-if="track.vibes.includes(userVibeID)"
-                        :vibeID="userVibeID"
-                        :trackID="track.vibon_id"
+                            v-else-if="track.vibes.includes(userVibeID)"
+                            :vibeID="userVibeID"
+                            :trackID="track.vibon_id"
                     >
                     </remove-button>
 
                     <cancel-pending-attach-track-button
-                        v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
-                        :vibeID="userVibeID"
-                        :trackID="track.vibon_id"
+                            v-else-if="track.pending_vibes_to_attach.includes(userVibeID)"
+                            :vibeID="userVibeID"
+                            :trackID="track.vibon_id"
                     >
                     </cancel-pending-attach-track-button>
 
                     <add-button
-                        v-else
-                        :vibeID="userVibeID"
-                        :trackApiId="track.id"
-                        :category="category"
+                            v-else
+                            :vibeID="userVibeID"
+                            :trackApiId="track.id"
+                            :category="category"
                     >
                     </add-button>
                 </div>
             </div>
-
-            <div v-for="userVibeID in user.autoVibesIDs">
+            
+            <div v-for="userVibeID in user.memberOfVibesIDs">
                 <div class="track-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
                 </div>

@@ -1,8 +1,8 @@
 const user = {
     id: null,
     deviceID: null,
-    autoVibesIDs: [],
-    manualVibesIDs: [],
+    myVibesIDs: [],
+    memberOfVibesIDs: [],
 
     routes: {
         'attributes': 'user/attributes',
@@ -13,8 +13,8 @@ const user = {
             .then(response => {
                 this.id = response.data.id;
                 this.deviceID = response.data.device_id;
-                this.autoVibesIDs = response.data.auto_vibes;
-                this.manualVibesIDs = response.data.manual_vibes;
+                this.myVibesIDs = response.data.my_vibes;
+                this.memberOfVibesIDs = response.data.member_of_vibes;
             })
             .catch(errors => console.log(errors));
     },
@@ -47,35 +47,35 @@ const user = {
     },
 
     removeVibeFromVibesIDs(vibeID) {
-        this.autoVibesIDs = this.autoVibesIDs.filter(id => id !== vibeID);
-        this.manualVibesIDs = this.manualVibesIDs.filter(id => id !== vibeID);
+        this.myVibesIDs = this.myVibesIDs.filter(id => id !== vibeID);
+        this.memberOfVibesIDs = this.memberOfVibesIDs.filter(id => id !== vibeID);
     },
 
     addVibeToVibesIDs(vibe) {
         if(vibe.auto_dj) {
-            this.autoVibesIDs.push((vibe.id));
+            this.myVibesIDs.push((vibe.id));
             return;
         }
-        this.manualVibesIDs.push(vibe.id);
+        this.memberOfVibesIDs.push(vibe.id);
     },
 
     sortVibesIDsOrder(vibes) {
-        this.sortManualVibesIDs(vibes);
-        this.sortAutoVibesIDs(vibes);
+        this.sortMemberOfVibesIDs(vibes);
+        this.sortMyVibesIDs(vibes);
     },
 
-    sortManualVibesIDs(vibes) {
+    sortMemberOfVibesIDs(vibes) {
         let sortedManuelVibesIDs = vibes.map((vibe) => {
-            return this.manualVibesIDs.filter(manualVibeID => manualVibeID === vibe.id)[0];
+            return this.memberOfVibesIDs.filter(vibeID => vibeID === vibe.id)[0];
         });
-        this.manualVibesIDs = sortedManuelVibesIDs.filter((vibeID) => vibeID !== undefined);
+        this.memberOfVibesIDs = sortedManuelVibesIDs.filter((vibeID) => vibeID !== undefined);
     },
 
-    sortAutoVibesIDs(vibes) {
+    sortMyVibesIDs(vibes) {
         let sortedAutoVibesIDs = vibes.map((vibe) => {
-            return this.autoVibesIDs.filter(autoVibeID => autoVibeID === vibe.id)[0];
+            return this.myVibesIDs.filter(vibeID => vibeID === vibe.id)[0];
         });
-        this.autoVibesIDs = sortedAutoVibesIDs.filter((vibeID) => vibeID !== undefined);
+        this.myVibesIDs = sortedAutoVibesIDs.filter((vibeID) => vibeID !== undefined);
     }
 };
 
