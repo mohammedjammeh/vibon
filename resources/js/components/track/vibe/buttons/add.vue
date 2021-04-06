@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="this.vibes.ownedByUser(vibeID)">
-            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackApiId, actualCategory)" @submit.prevent="onAddTrackSubmit">
+            <form method="POST" :action="vibes.routes.addTrack(vibeID, trackApiId, trackCategory)" @submit.prevent="onAddTrackSubmit">
                 <input type="submit" name="track-vibe-add" value="Add track">
             </form>
             <br>
@@ -16,9 +16,9 @@
 </template>
 
 <script>
-    import vibes from '../../../../core/vibes.js';
-    import tracks from '../../../../core/tracks.js';
     import Form from '../../../../classes/Form.js';
+    import vibes from '../../../../core/vibes.js';
+    import trackCore from '../../../../core/track.js';
 
     export default {
          props: ['vibeID', 'trackApiId', 'category'],
@@ -26,7 +26,7 @@
         data() {
             return {
                 vibes: vibes,
-                tracks: tracks,
+                trackCore: trackCore,
                 addTrackForm: new Form({}),
                 pendAttachTrackForm: new Form({}),
             }
@@ -34,7 +34,7 @@
 
         methods: {
             onAddTrackSubmit() {
-                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackApiId, this.actualCategory);
+                this.vibes.addTrack(this.addTrackForm, this.vibeID, this.trackApiId, this.trackCategory);
             },
 
             onPendAttachTrackSubmit() {
@@ -43,16 +43,8 @@
         },
 
         computed: {
-            actualCategory() {
-                 let vibe = this.vibes.all.find((vibe) => vibe.id === this.vibeID);
-                 let tracksNotOnVibon = vibe.api_tracks.not_on_vibon;
-                 let tracksNotOnVibonIDs = tracksNotOnVibon.map((track) => track.id);
-
-                 if(tracksNotOnVibonIDs.includes(this.trackApiId)) {
-                     return this.tracks.categories.not_on_vibon;
-                 }
-
-                 return this.category;
+            trackCategory() {
+                return trackCore.category(this.vibeID, this.trackApiId, this.category);
              }
         }
     }
