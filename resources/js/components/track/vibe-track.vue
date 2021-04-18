@@ -2,9 +2,9 @@
     <div :class="isPlaying">
         <play :track="track" :type="category"></play>
 
-        <div class="track">
+        <div v-if="vibes.show.currentUserIsAMember" class="vibe-track">
             <div v-for="userVibeID in user.myVibesIDs">
-                <div class="track-name">
+                <div class="vibe-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
                 </div>
 
@@ -41,7 +41,7 @@
             </div>
             
             <div v-for="userVibeID in user.memberOfVibesIDs">
-                <div class="track-name">
+                <div class="vibe-name">
                     <p v-text="vibes.getVibeName(userVibeID)"></p>
                 </div>
 
@@ -78,8 +78,7 @@
             </div>
         </div>
 
-
-        <div v-if="!vibes.show.auto_dj">
+        <div v-if="!vibes.show.auto_dj && vibes.show.currentUserIsAMember">
             <downvote-button  :vibe="vibes.show" :track="track" v-if="track.is_voted_by_user"></downvote-button>
             <upvote-button :vibe="vibes.show" :track="track" v-else></upvote-button>
         </div>
@@ -134,11 +133,11 @@
         background: green;
     }
 
-    .track {
+    .vibe-track {
         overflow: auto;
     }
 
-    .track-name {
+    .vibe-name {
         float: left;
         width: 30%;
         margin-top: 3px;

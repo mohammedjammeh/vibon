@@ -6,6 +6,7 @@ start: ## Start the pre-built environment.
 	docker-compose up -d --build
 	docker-compose exec php-fpm composer install
 	docker-compose exec -d php-fpm php artisan horizon
+	sudo n 14
 
 stop: ## Stops/pause the environment.
 	docker-compose exec -d php-fpm php artisan horizon:terminate

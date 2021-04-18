@@ -1,13 +1,18 @@
 <template>
     <div>
-        <a v-if="isPlaylistTrack" @click="playPlaylistTracks()" title="play">
+        <div v-if="this.vibes.show.destroyable">
+            <a v-if="isPlaylistTrack" @click="playPlaylistTracks()" title="play">
+                <img :src="track.album.images[0].url">
+            </a>
+            <a v-else @click="playOtherVibeTracks()" title="play">
+                <img :src="track.album.images[0].url">
+            </a>
+        </div>
+        <div v-else>
             <img :src="track.album.images[0].url">
-        </a>
-        <a v-else @click="playOtherVibeTracks()" title="play">
-            <img :src="track.album.images[0].url">
-        </a>
+        </div>
 
-        <br><br>
+        <br>
 
         <p class="artist-and-track-name" v-text="artistAndTrackName"></p>
 
@@ -25,6 +30,8 @@
         data() {
             return {
                 playback: playback,
+                user: user,
+                vibes: vibes,
             }
         },
 
@@ -55,7 +62,7 @@
                     return;
                 }
 
-                this.user.getAttributes().then(() => {
+                user.getAttributes().then(() => {
                     this.playOtherVibeTracksAction(trackUris);
                 });
             },

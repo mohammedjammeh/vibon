@@ -3,11 +3,11 @@
         <form method="POST" :action="vibes.routes.cancelPendingAttachTrack(pendingTrack.id)" @submit.prevent="onCancelPendingAttachTrackSubmit">
             <input v-if="this.pendingTrackCore.canBeRemovedByUser(pendingTrack, vibeID)"
                 type="submit" name="track-vibe-cancel-pend"
-                value="Cancel add request"
+                value="Cancel Add"
             >
             <input v-else type="submit"
                 name="track-vibe-cancel-pend"
-                value="Cancel add request"
+                value="Cancel Add"
                 disabled
             >
         </form>

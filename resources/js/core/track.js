@@ -15,7 +15,7 @@ const track = {
         let tracksNotOnVibonIDs = tracksNotOnVibon.map((track) => track.id);
 
         if(tracksNotOnVibonIDs.includes(trackApiId)) {
-            return this.tracks.categories.not_on_vibon;
+            return this.categories.not_on_vibon;
         }
 
         return category;
