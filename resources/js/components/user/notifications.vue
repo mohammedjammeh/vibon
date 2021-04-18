@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="this.vibes.show.currentUserIsAMember">
         <h4>Notifications</h4>
         <div v-if="notificationsIsEmpty">
             <p>No notifications yet..</p>
