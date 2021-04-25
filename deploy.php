@@ -4,7 +4,7 @@ namespace Deployer;
 require 'recipe/laravel.php';
 
 set('application', 'vibon');
-set('repository', 'git@github.com:mohammedjammeh/vibon.git');
+set('repository', 'https://github.com/mohammedjammeh/vibon.git');
 set('default_stage', 'production');
 set('git_tty', false);
 set('allow_anonymous_stats', false);
