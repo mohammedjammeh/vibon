@@ -46,8 +46,8 @@ trait VibeShowTrait
 
         $loadedTrack->votes_count = $track->votesCountOn($vibe);
         $loadedTrack->is_voted_by_user = $track->isVotedByAuthUserOn($vibe);
-        $loadedTrack->pending_to_attach_user = $vibe->pendingTrackToAttachUser($track);
-        $loadedTrack->pending_to_detach_user = $vibe->pendingTrackToDetachUser($track);
+        $loadedTrack->pending_to_attach_user = $this->pendingTrackUser($vibe->pendingTracksToAttach, $track);
+        $loadedTrack->pending_to_detach_user = $this->pendingTrackUser($vibe->pendingTracksToDetach, $track);
         $loadedTrack = $this->updateTrackVibonInfo($loadedTrack);
 
         return $loadedTrack;
@@ -87,5 +87,15 @@ trait VibeShowTrait
         return auth()->user()->load(['vibes.tracks' => function($query) {
             $query->where('auto_related', false);
         }]);
+    }
+
+    protected function pendingTrackUser($pendingTracks, $track)
+    {
+        $pendingTrack = $pendingTracks->where('track_id', $track->id)->first();
+        if(is_null($pendingTrack)) {
+            return null;
+        }
+
+        return $pendingTrack->user->display_name;
     }
 }

@@ -111,26 +111,6 @@ class Vibe extends Model
         return $this->pendingTracks->where('attach', false);
     }
 
-    public function pendingTrackToAttachUser($track)
-    {
-        $pendingTrack = $this->pendingTracksToAttach->where('track_id', $track->id)->first();
-        if(is_null($pendingTrack)) {
-            return null;
-        }
-
-        return $pendingTrack->user->display_name;
-    }
-
-    public function pendingTrackToDetachUser($track)
-    {
-        $pendingTrack = $this->pendingTracksToDetach->where('track_id', $track->id)->first();
-        if(is_null($pendingTrack)) {
-            return null;
-        }
-
-        return $pendingTrack->user->display_name;
-    }
-
     public function notifications()
     {
         $notifications =  auth()->user()->notificationsFor($this);
