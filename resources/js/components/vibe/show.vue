@@ -2,7 +2,7 @@
     <div>
         <div v-if="this.vibes.readyToShow()">
 
-            <div v-if="this.vibeHasMessageToShow()">
+            <div v-if="this.vibeHasMessageToShow">
                 <p v-text="this.vibes.message"></p>
                 <br>
             </div>
@@ -25,8 +25,12 @@
         </div>
 
 
-        <div v-else-if="this.vibesHaveDeletedMessage()">
+        <div v-else-if="this.vibesHaveDeletedMessage">
             <p v-text="this.vibes.deletedMessage"></p>
+        </div>
+
+        <div v-else>
+            <p v-text="this.vibeNotFoundText"></p>
         </div>
     </div>
 </template>
@@ -64,16 +68,24 @@
         },
 
         created() {
-            this.vibes.display(this.id);
+            let vibe = vibes.all.find(vibe => vibe.id === this.id);
+
+            if(vibe !== undefined) {
+                this.vibes.display(this.id);
+            }
         },
 
-        methods: {
+        computed: {
             vibeHasMessageToShow() {
                 return this.vibes.message !== '';
             },
 
             vibesHaveDeletedMessage() {
                 return this.vibes.deletedMessage !== '';
+            },
+
+            vibeNotFoundText() {
+                return 'Sorry, there is no vibe with ID of ' + this.id + '.';
             }
         }
     }
