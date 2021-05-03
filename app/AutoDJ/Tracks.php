@@ -24,7 +24,7 @@ class Tracks
 
 	public static function update($vibe) 
 	{
-		$vibe->tracks()->where('auto_related', true)->detach();
+        $vibe->tracks()->wherePivot('auto_related', true)->detach();
 		self::store($vibe);
 	}
 
