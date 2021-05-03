@@ -62,9 +62,9 @@ class Playlist
     public function load($vibe) 
     {
         $playlist = $this->api->getPlaylist($vibe->api_id);
-        $vibe->name = $playlist->name;
+        $vibe->name = $this->htmlEntityDecode($playlist->name);
+        $vibe->description = $this->htmlEntityDecode($playlist->description) ?? null;
         $vibe->uri = $playlist->uri;
-        $vibe->description = $playlist->description ?? null;
         $vibe->api_tracks = app(Tracks::class)->loadFor($vibe, $playlist);
         $vibe->synced = $this->isSynced($vibe, $playlist);
         return $vibe;
@@ -75,5 +75,10 @@ class Playlist
         $vibeTracksIDs = $vibe->showTracks->pluck('api_id')->toArray();
         $playlistTracksIDs = collect($playlist->tracks->items)->pluck('track')->pluck('id')->toArray();
         return $vibeTracksIDs === $playlistTracksIDs ? true : false;
+    }
+
+    protected function htmlEntityDecode($string)
+    {
+        return html_entity_decode($string, ENT_QUOTES, 'UTF-8');
     }
 }

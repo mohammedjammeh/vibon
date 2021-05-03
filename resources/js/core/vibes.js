@@ -156,20 +156,25 @@ let Vibes = {
     },
 
     update(form, vibeID) {
-        return form.update(this.routes.update(vibeID))
-            .then(response => {
-                this.all = this.all.map((vibe) => {
-                    if(vibe.id === response.vibe.id) {
-                        this.show = response.vibe;
-                        this.user.updateVibesIDs(response.vibe);
-                        return response.vibe;
-                    }
-                    return vibe;
-                });
+        return new Promise((resolve, reject) => {
+            return form.update(this.routes.update(vibeID))
+                .then(response => {
+                    this.all = this.all.map((vibe) => {
+                        if(vibe.id === response.vibe.id) {
+                            this.show = response.vibe;
+                            this.user.updateVibesIDs(response.vibe);
+                            return response.vibe;
+                        }
+                        return vibe;
+                    });
 
-                this.sortVibesOrder();
-            })
-            .catch(errors => console.log(errors));
+                    this.sortVibesOrder();
+                    resolve(this.all);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     },
 
     delete(form, vibeID) {
