@@ -1,8 +1,8 @@
 <template>
     <div>
         <div v-if="isNotInEditMode">
-            <p v-text="this.vibes.show.name"></p>
-            <p v-text="this.vibes.show.description"></p>
+            <p v-html="this.vibes.show.name"></p>
+            <p v-html="this.vibes.show.description"></p>
 
             <p v-if="this.vibes.show.open">Opened</p>
             <p v-else>Not Opened</p>
@@ -88,7 +88,8 @@
         methods: {
             onUpdateSubmit() {
                 this.vibes.update(this.editForm, vibes.show.id)
-                    .then(() => this.editMode = false);
+                    .then(() => this.editMode = false)
+                    .catch(errors => console.log(errors));
             },
 
 
