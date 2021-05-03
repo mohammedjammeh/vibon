@@ -16,9 +16,6 @@ class AutoVibeController extends Controller
     {
         $this->authorize('delete', $vibe);
 
-		AutoTracks::update($vibe);
-		AutoTracks::updateAPI($vibe);
-
         $loadedVibe = app(Playlist::class)->load($vibe);
         $message = $loadedVibe->name . ' has been refreshed.';
 

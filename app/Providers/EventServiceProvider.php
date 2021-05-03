@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\AutoVibeRefreshed;
 use App\Events\JoinRequestAccepted;
 use App\Events\JoinRequestRejected;
 use App\Events\PendingAttachVibeTracksAccepted;
@@ -19,6 +20,7 @@ use App\Listeners\DeletePendingDetachVibeTracks;
 use App\Listeners\DetachAcceptedPendingDetachVibeTracks;
 use App\Listeners\NotifyPendingAttachVibeTracksUsers;
 use App\Listeners\NotifyPendingDetachVibeTracksUsers;
+use App\Listeners\RefreshAutoVibeTracks;
 use App\Listeners\SendJoinRequestAcceptedNotification;
 use App\Listeners\SendJoinRequestRejectedNotification;
 use App\Listeners\SendPendingAttachVibeTracksAcceptedNotifications;
@@ -62,6 +64,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         VibeUpdated::class => [
             UpdateAutoVibeTracks::class,
+        ],
+        AutoVibeRefreshed::class => [
+            RefreshAutoVibeTracks::class,
         ],
 
         JoinRequestSent::class => [
