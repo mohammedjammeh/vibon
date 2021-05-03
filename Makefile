@@ -6,7 +6,6 @@ start: ## Start the pre-built environment.
 	docker-compose up -d --build
 	docker-compose exec php-fpm composer install
 	docker-compose exec -d php-fpm php artisan horizon
-	sudo n 14
 
 stop: ## Stops/pause the environment.
 	docker-compose exec -d php-fpm php artisan horizon:terminate
@@ -24,6 +23,7 @@ install: ## Builds the environment for the first and starts it
 	docker-compose exec db mysql -uroot -proot -e "GRANT ALL PRIVILEGES ON test.* TO 'vibon'@'%';"
 	docker-compose exec php-fpm php artisan migrate:fresh --database=test
 	docker-compose exec -d php-fpm php artisan horizon
+	sudo n 14
 	npm install
 	npm run dev
 
