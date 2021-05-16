@@ -64,15 +64,14 @@ class VibeController extends Controller
     public function destroy(Vibe $vibe, Playlist $playlist)
     {
         $this->authorize('delete', $vibe);
-        $message = $playlist->load($vibe)->name . ' has been deleted.';
 
-        broadcast(new VibeDeleted($vibe, $message))->toOthers();
+        broadcast(new VibeDeleted($vibe))->toOthers();
 
         $playlist->delete($vibe->api_id);
         $vibe->users()->detach();
         $vibe->tracks()->detach();
         $vibe->delete();
 
-        return ['message' => $message];
+        return;
     }
 }

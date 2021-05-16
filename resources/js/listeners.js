@@ -56,11 +56,11 @@ Echo.channel('vibe.updated')
 
 Echo.channel('vibe.deleted')
     .listen('VibeDeleted', (data) => {
-        vibes.all = vibes.all.filter(vibe => vibe.id !== data.vibe);
-        if (vibes.showID === data.vibe) {
-            vibes.show = {};
-            vibes.deletedMessage = data.message;
-        }
+        let vibeID = data.vibe;
+        vibes.deleted.push(vibes.all.find(vibe => vibe.id === vibeID));
+        vibes.removeVibeFromAllVibesAndTracksData(vibeID);
+        user.removeVibeFromVibesIDs(vibeID);
+        vibes.show = vibes.showID === vibeID ? {} : vibes.show;
     });
 
 

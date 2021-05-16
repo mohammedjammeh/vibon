@@ -1,36 +1,41 @@
 <template>
     <div>
-        <div v-if="this.vibes.readyToShow()">
-
-            <div v-if="this.vibeHasMessageToShow">
-                <p v-text="this.vibes.message"></p>
-                <br>
+        <div v-if="this.vibesAreLoaded">
+            <div v-if="this.vibeIsDeleted">
+                <p v-text="this.vibeDeletedMessage"></p>
             </div>
 
-            <attributes></attributes>
+            <div v-else-if="this.vibeIsReadyToShow">
 
-            <owner-buttons></owner-buttons>
+                <div v-if="this.vibeHasMessageToShow">
+                    <p v-text="this.vibes.message"></p>
+                    <br>
+                </div>
 
-            <join-requests></join-requests>
+                <attributes></attributes>
 
-            <member-buttons></member-buttons>
+                <owner-buttons></owner-buttons>
 
-            <user-notifications></user-notifications>
+                <join-requests></join-requests>
 
-            <members></members>
+                <member-buttons></member-buttons>
 
-            <tracks-requests :key="this.vibes.show.id"></tracks-requests>
+                <user-notifications></user-notifications>
 
-            <tracks></tracks>
-        </div>
+                <members></members>
 
+                <tracks-requests :key="this.vibes.show.id"></tracks-requests>
 
-        <div v-else-if="this.vibesHaveDeletedMessage">
-            <p v-text="this.vibes.deletedMessage"></p>
+                <tracks></tracks>
+            </div>
+
+            <div v-else>
+                <p v-text="this.vibeNotFoundText"></p>
+            </div>
         </div>
 
         <div v-else>
-            <p v-text="this.vibeNotFoundText"></p>
+            <p>loading..</p>
         </div>
     </div>
 </template>
@@ -68,20 +73,35 @@
         },
 
         created() {
-            let vibe = vibes.all.find(vibe => vibe.id === this.id);
+            this.vibes.showID = parseInt(this.id);
 
-            if(vibe !== undefined) {
-                this.vibes.display(this.id);
+            if (this.vibesAreLoaded) {
+                this.vibes.updateShowData();
             }
         },
 
         computed: {
+            vibesAreLoaded() {
+                return ! this.vibes.loading;
+            },
+
+            vibeIsDeleted() {
+                return vibes.deleted.find(vibe => vibe.id === this.id) !== undefined;
+            },
+
+            vibeIsReadyToShow() {
+                let vibe = vibes.all.find(vibe => vibe.id === this.id);
+
+                return vibe !== undefined && Object.keys(vibes.show).length > 0;
+            },
+
             vibeHasMessageToShow() {
                 return this.vibes.message !== '';
             },
 
-            vibesHaveDeletedMessage() {
-                return this.vibes.deletedMessage !== '';
+            vibeDeletedMessage() {
+                let vibe = vibes.deleted.find(vibe => vibe.id === this.id);
+                return vibe.name + ' has been deleted.';
             },
 
             vibeNotFoundText() {

@@ -15,19 +15,16 @@ class VibeDeleted implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $vibe;
-    public $message;
 
     /**
      * Create a new event instance.
      *
      * @param $vibe
-     * @param $message
      * @return void
      */
-    public function __construct($vibe, $message)
+    public function __construct($vibe)
     {
         $this->vibe = $vibe;
-        $this->message = $message;
     }
 
     /**
@@ -44,7 +41,6 @@ class VibeDeleted implements ShouldBroadcast
     {
         return [
             'vibe' => $this->vibe->id,
-            'message' => $this->message
         ];
     }
 }
