@@ -122,13 +122,25 @@ let Vibes = {
     },
 
     create(form) {
-        return form.post(this.routes.create)
-            .then(response => {
-                this.all.push(response.vibe);
-                this.sortVibesOrder();
-                this.user.addVibeToVibesIDs(response.vibe);
-            })
-            .catch(errors => console.log(errors));
+        return new Promise((resolve, reject) => {
+            return form.post(this.routes.create)
+                .then(response => {
+                    let vibe = response.vibe;
+
+                    this.playingTracks[vibe.id] = null;
+                    this.pendingTracksToAttachResponses[vibe.id] = {'accepted': [], 'rejected': []};
+                    this.pendingTracksToDetachResponses[vibe.id] = {'accepted': [], 'rejected': []};
+
+                    this.all.push(vibe);
+                    this.sortVibesOrder();
+
+                    this.user.addVibeToVibesIDs(vibe);
+                    resolve(vibe);
+                })
+                .catch(error => {
+                    reject(error.response.data.errors);
+                });
+        });
     },
 
     get(vibeID) {
@@ -459,15 +471,17 @@ let Vibes = {
     },
 
     updateShowData() {
-        if (this.showID !== '') {
-            this.show = this.all.find(vibe => vibe.id === this.showID);
+        if (this.showID === '') {
+            return;
         }
+
+        this.show = this.all.find(vibe => vibe.id === this.showID);
     },
 
     updatePlayingTracksData() {
         let playingVibesTracks = {};
         this.all.forEach(vibe => {
-            playingVibesTracks[vibe.id] = '';
+            playingVibesTracks[vibe.id] = null;
         });
         this.playingTracks = playingVibesTracks;
     },
@@ -531,8 +545,7 @@ let Vibes = {
         let vibesNames = this.all.map((vibe) => vibe.name);
         vibesNames.sort();
         this.all = vibesNames.map((name) => {
-            let filteredVibes = this.all.filter(vibe => vibe.name === name);
-            return filteredVibes[0];
+            return this.all.find(vibe => vibe.name === name);
         });
 
         this.user.sortVibesIDsOrder(this.all);

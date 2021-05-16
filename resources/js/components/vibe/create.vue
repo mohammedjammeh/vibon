@@ -73,10 +73,18 @@
         methods: {
             onSubmit() {
                 this.vibes.create(this.form)
-                    .then(() => {
-                        if(!this.form.errors.any()) {
-                            this.$modal.hide('create-vibe-modal');
+                    .then((vibe) => {
+                        if (this.form.errors.any()) {
+                            return;
                         }
+
+                        this.$modal.hide('create-vibe-modal');
+                        this.$router.push({
+                            name: 'showVibe',
+                            params: {
+                                id: vibe.id
+                            }
+                        }).catch(err => {});
                     });
             }
         }
