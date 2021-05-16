@@ -94,17 +94,12 @@ class VibeTest extends TestCase
 	public function test_vibe_can_be_deleted_by_owner()
 	{
 		$vibe = factory(Vibe::class)->create();
-		$vibeName = app(Playlist::class)->load($vibe)->name;
 		$user = factory(User::class)->create();
 		$vibe->users()->attach($user->id, ['owner' => true]);
 		$owner = $vibe->users()->where('owner', true)->first();
 		
 		$this->actingAs($owner);
-		$response = $this->delete(route('vibe.destroy', $vibe));
-        $responseData = $response->original;
-        $expectedMessage = $vibeName . ' has been deleted.';
 
-        $this->assertEquals($expectedMessage, $responseData['message']);
 		$this->assertDatabaseMissing('vibes', [
 			'id' => $vibe->id,
 			'description' => $vibe->description

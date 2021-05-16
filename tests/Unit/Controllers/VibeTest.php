@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Controllers;
 
-use App\Events\VibeDeleted;
 use App\Listeners\StoreAutoVibeTracks;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,7 +14,6 @@ use App\MusicAPI\Playlist;
 use App\Events\VibeCreated;
 use App\Events\VibeUpdated;
 use App\MusicAPI\User as UserAPI;
-use App\MusicAPI\Tracks;
 
 
 class VibeTest extends TestCase
