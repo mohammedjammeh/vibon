@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\PendingVibeTrack;
 use App\Policies\VibePolicy;
 use App\Track;
+use App\Repositories\TrackRepo as TrackRepository;
 
 trait VibeShowTrait
 {
@@ -65,7 +66,7 @@ trait VibeShowTrait
 
     protected function getVibonID($loadedTrack)
     {
-        $track = Track::where('api_id', $loadedTrack->id)->first();
+        $track = app(TrackRepository::class)->firstOrCreate($loadedTrack->id);
         return !is_null($track) ? $track->id : null;
     }
 

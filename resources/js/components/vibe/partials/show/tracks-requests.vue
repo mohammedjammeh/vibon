@@ -27,13 +27,12 @@
         <div v-if="this.vibeHasPendingTracksToDetach()">
             <div class="tracks-requests">
                 <div v-for="track in vibes.show.api_tracks.pending_to_detach">
-                    <pending-detach-track :track="track" :key="vibes.show.id"></pending-detach-track>
-                    <pending-attach-track
+                    <pending-detach-track
                         :track="track"
                         :acceptedPendingTracksToDetach="acceptedPendingTracksToDetach"
                         :rejectedPendingTracksToDetach="rejectedPendingTracksToDetach"
                     >
-                    </pending-attach-track>
+                    </pending-detach-track>
                 </div>
             </div>
             <form method="POST" :action="this.vibes.routes.sendPendingTracksToDetachResponses(vibes.show.id)" @submit.prevent="onSendPendingTracksToDetachResponses">
