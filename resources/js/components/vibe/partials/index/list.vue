@@ -1,15 +1,13 @@
 <template>
     <ul>
         <li v-for="vibe in filteredVibes">
-            <router-link :to="{ name: 'showVibe', params: { id: vibe.id }}" :class="isShowing(vibe)">
-                <span v-if="isPlaying(vibe)">
-                    {{ vibe.name }} - playing
-                    {{ requestsCount(vibe) }}
-                </span>
-                <span v-else>
-                    {{ vibe.name }}
-                    {{ requestsCount(vibe) }}
-                </span>
+            <router-link
+                :to="{ name: 'showVibe', params: { id: vibe.id }}"
+                :class="isShowing(vibe) ? 'showing' : ''"
+            >
+                <span>{{ vibe.name }}</span>
+                <span v-if="isPlaying(vibe)"> - playing</span>
+                <span v-if="requestsCountDisplayable(vibe)">({{ requestsCount(vibe) }})</span>
             </router-link>
             <br>
         </li>
@@ -24,25 +22,27 @@
 
         data() {
             return {
-            vibes: vibes
-        }
-    },
+                vibes: vibes
+            }
+        },
 
         methods: {
-            isShowing: function (vibe) {
-                return vibe.id === this.vibes.showID ? 'showing' : '';
+            isShowing(vibe) {
+                return vibe.id === this.vibes.showID;
             },
 
-            isPlaying: function (vibe) {
+            isPlaying(vibe) {
                 return vibe.id === this.vibes.playingID;
             },
 
-            requestsCount: function (vibe) {
-                if(vibe.join_requests.length > 0 && vibe.destroyable) {
-                    return '(' + vibe.join_requests.length + ')';
-                }
+            requestsCount(vibe) {
+                return vibe.join_requests.length + vibe.api_tracks.pending_to_attach.length + vibe.api_tracks.pending_to_detach.length;
+            },
+
+            requestsCountDisplayable(vibe) {
+                return vibe.destroyable && this.requestsCount(vibe) > 0;
             }
-        },
+        }
     }
 </script>
 
