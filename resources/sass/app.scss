@@ -47,3 +47,30 @@
     }
   }
 }
+
+.playback-buttons {
+  img {
+    max-width: 100%;
+  }
+
+  .playback-previous,
+  .playback-resume,
+  .playback-pause,
+  .playback-next {
+    width: 33.33%;
+    float: left;
+  }
+
+  .playback-previous {
+    text-align: left;
+  }
+
+  .playback-resume,
+  .playback-pause {
+    text-align: center;
+  }
+
+  .playback-next {
+    text-align: right;
+  }
+}

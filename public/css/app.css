@@ -11687,3 +11687,28 @@ a.text-dark:focus {
   max-width: 100%;
 }
 
+.playback-buttons img {
+  max-width: 100%;
+}
+
+.playback-buttons .playback-previous,
+.playback-buttons .playback-resume,
+.playback-buttons .playback-pause,
+.playback-buttons .playback-next {
+  width: 33.33%;
+  float: left;
+}
+
+.playback-buttons .playback-previous {
+  text-align: left;
+}
+
+.playback-buttons .playback-resume,
+.playback-buttons .playback-pause {
+  text-align: center;
+}
+
+.playback-buttons .playback-next {
+  text-align: right;
+}
+

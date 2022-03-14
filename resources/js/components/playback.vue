@@ -8,6 +8,11 @@
         </div>
 
         <div v-if="userIsVibeOwner">
+            <div class="playback-previous">
+                <a @click="previous">Previous</a>
+                <br><br>
+            </div>
+
             <div v-if="playback.paused" class="playback-resume">
                 <a @click="playOrResume">Play</a>
                 <br><br>
@@ -15,11 +20,6 @@
 
             <div v-else class="playback-pause">
                 <a @click="pause">Pause</a>
-                <br><br>
-            </div>
-
-            <div class="playback-previous">
-                <a @click="previous">Previous</a>
                 <br><br>
             </div>
 

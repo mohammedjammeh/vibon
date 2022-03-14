@@ -68585,6 +68585,13 @@ var render = function() {
         _vm._v(" "),
         _vm.userIsVibeOwner
           ? _c("div", [
+              _c("div", { staticClass: "playback-previous" }, [
+                _c("a", { on: { click: _vm.previous } }, [_vm._v("Previous")]),
+                _vm._v(" "),
+                _c("br"),
+                _c("br")
+              ]),
+              _vm._v(" "),
               _vm.playback.paused
                 ? _c("div", { staticClass: "playback-resume" }, [
                     _c("a", { on: { click: _vm.playOrResume } }, [
@@ -68600,13 +68607,6 @@ var render = function() {
                     _c("br"),
                     _c("br")
                   ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "playback-previous" }, [
-                _c("a", { on: { click: _vm.previous } }, [_vm._v("Previous")]),
-                _vm._v(" "),
-                _c("br"),
-                _c("br")
-              ]),
               _vm._v(" "),
               _c("div", { staticClass: "playback-next" }, [
                 _c("a", { on: { click: _vm.next } }, [_vm._v("Next")]),
