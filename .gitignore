@@ -3,6 +3,8 @@
 /public/storage
 /storage/*.key
 /vendor
+/Vibon
+/.DS_STORE
 /.idea
 /.vscode
 /nbproject
