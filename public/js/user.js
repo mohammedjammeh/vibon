@@ -1,1 +1,178 @@
-!function(e){var t={};function s(i){if(t[i])return t[i].exports;var r=t[i]={i:i,l:!1,exports:{}};return e[i].call(r.exports,r,r.exports,s),r.l=!0,r.exports}s.m=e,s.c=t,s.d=function(e,t,i){s.o(e,t)||Object.defineProperty(e,t,{configurable:!1,enumerable:!0,get:i})},s.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return s.d(t,"a",t),t},s.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},s.p="/",s(s.s=190)}({190:function(e,t,s){e.exports=s(5)},5:function(e,t,s){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i={id:null,deviceID:null,myVibesIDs:[],memberOfVibesIDs:[],routes:{attributes:"user/attributes"},getAttributes:function(){var e=this;return axios.get(this.routes.attributes).then(function(t){e.id=t.data.id,e.deviceID=t.data.device_id,e.myVibesIDs=t.data.my_vibes,e.memberOfVibesIDs=t.data.member_of_vibes}).catch(function(e){return console.log(e)})},getAccessToken:function(){var e=this,t=new Date;t.setHours(t.getHours()-1);var s=t.getTime();return new Promise(function(t,i){if(!(localStorage.token_set_at>=s))return axios.get(e.routes.attributes).then(function(e){localStorage.token_set_at=new Date(e.data.token_set_at).getTime(),localStorage.access_token=e.data.access_token,t(localStorage.access_token)}).catch(function(e){i(e.response.data.errors)});t(localStorage.access_token)})},updateVibesIDs:function(e){this.removeVibeFromVibesIDs(e.id),this.addVibeToVibesIDs(e)},removeVibeFromVibesIDs:function(e){this.myVibesIDs=this.myVibesIDs.filter(function(t){return t!==e}),this.memberOfVibesIDs=this.memberOfVibesIDs.filter(function(t){return t!==e})},addVibeToVibesIDs:function(e){e.auto_dj?this.myVibesIDs.push(e.id):this.memberOfVibesIDs.push(e.id)},sortVibesIDsOrder:function(e){this.sortMemberOfVibesIDs(e),this.sortMyVibesIDs(e)},sortMemberOfVibesIDs:function(e){var t=this,s=e.map(function(e){return t.memberOfVibesIDs.filter(function(t){return t===e.id})[0]});this.memberOfVibesIDs=s.filter(function(e){return void 0!==e})},sortMyVibesIDs:function(e){var t=this,s=e.map(function(e){return t.myVibesIDs.filter(function(t){return t===e.id})[0]});this.myVibesIDs=s.filter(function(e){return void 0!==e})}};window.user=i,t.default=i}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 200);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ 200:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(5);
+
+
+/***/ }),
+
+/***/ 5:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var user = {
+    id: null,
+    deviceID: null,
+    myVibesIDs: [],
+    memberOfVibesIDs: [],
+
+    routes: {
+        'attributes': 'user/attributes'
+    },
+
+    getAttributes: function getAttributes() {
+        var _this = this;
+
+        return axios.get(this.routes.attributes).then(function (response) {
+            _this.id = response.data.id;
+            _this.deviceID = response.data.device_id;
+            _this.myVibesIDs = response.data.my_vibes;
+            _this.memberOfVibesIDs = response.data.member_of_vibes;
+        }).catch(function (errors) {
+            return console.log(errors);
+        });
+    },
+    getAccessToken: function getAccessToken() {
+        var _this2 = this;
+
+        var now = new Date();
+        now.setHours(now.getHours() - 1);
+        var oneHourAgo = now.getTime();
+
+        return new Promise(function (resolve, reject) {
+            if (localStorage['token_set_at'] >= oneHourAgo) {
+                resolve(localStorage['access_token']);
+            } else {
+                return axios.get(_this2.routes.attributes).then(function (response) {
+                    localStorage['token_set_at'] = new Date(response.data.token_set_at).getTime();
+                    localStorage['access_token'] = response.data.access_token;
+                    resolve(localStorage['access_token']);
+                }).catch(function (error) {
+                    reject(error.response.data.errors);
+                });
+            }
+        });
+    },
+    updateVibesIDs: function updateVibesIDs(vibe) {
+        this.removeVibeFromVibesIDs(vibe.id);
+        this.addVibeToVibesIDs(vibe);
+    },
+    removeVibeFromVibesIDs: function removeVibeFromVibesIDs(vibeID) {
+        this.myVibesIDs = this.myVibesIDs.filter(function (id) {
+            return id !== vibeID;
+        });
+        this.memberOfVibesIDs = this.memberOfVibesIDs.filter(function (id) {
+            return id !== vibeID;
+        });
+    },
+    addVibeToVibesIDs: function addVibeToVibesIDs(vibe) {
+        if (vibe.auto_dj) {
+            this.myVibesIDs.push(vibe.id);
+            return;
+        }
+        this.memberOfVibesIDs.push(vibe.id);
+    },
+    sortVibesIDsOrder: function sortVibesIDsOrder(vibes) {
+        this.sortMemberOfVibesIDs(vibes);
+        this.sortMyVibesIDs(vibes);
+    },
+    sortMemberOfVibesIDs: function sortMemberOfVibesIDs(vibes) {
+        var _this3 = this;
+
+        var sortedMemberOfVibesIDs = vibes.map(function (vibe) {
+            return _this3.memberOfVibesIDs.filter(function (vibeID) {
+                return vibeID === vibe.id;
+            })[0];
+        });
+        this.memberOfVibesIDs = sortedMemberOfVibesIDs.filter(function (vibeID) {
+            return vibeID !== undefined;
+        });
+    },
+    sortMyVibesIDs: function sortMyVibesIDs(vibes) {
+        var _this4 = this;
+
+        var sortedMyVibesIDs = vibes.map(function (vibe) {
+            return _this4.myVibesIDs.filter(function (vibeID) {
+                return vibeID === vibe.id;
+            })[0];
+        });
+        this.myVibesIDs = sortedMyVibesIDs.filter(function (vibeID) {
+            return vibeID !== undefined;
+        });
+    }
+};
+
+window.user = user;
+/* harmony default export */ __webpack_exports__["default"] = (user);
+
+/***/ })
+
+/******/ });

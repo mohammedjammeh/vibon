@@ -2,7 +2,7 @@ version: '3'
 services:
     apache:
         container_name: vibon_apache
-        image: webdevops/apache:ubuntu-16.04
+        build: .
         environment:
             WEB_DOCUMENT_ROOT: /var/www/public
             WEB_ALIAS_DOMAIN: vibon.localhost
@@ -49,6 +49,7 @@ services:
             - vibon-network
         ports:
             - "6379:6379"
+        platform: linux/amd64
     selenium:
         container_name: vibon_selenium
         image: selenium/standalone-chrome:3.11.0-antimony
